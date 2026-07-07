@@ -156,6 +156,77 @@ function slug(s: string): string {
 const pullKey = (p: { pulledAt: Date; operatorName: string; rarity: number }) =>
   `${p.pulledAt.getTime()}:${p.operatorName}:${p.rarity}`;
 
+export interface StoredPull {
+  rarity: number;
+  operatorName: string;
+  pulledAt: Date;
+}
+
+/**
+ * Drop exact duplicates within a single paste (overlapping or repeated pages),
+ * except where the grouped shape makes same-key repeats legitimate, and group
+ * the survivors by banner.
+ */
+export function dedupeWithinPaste(pulls: NormalizedPull[]): {
+  byBanner: Map<string, NormalizedPull[]>;
+  skipped: number;
+} {
+  let skipped = 0;
+  const seenInPaste = new Set<string>();
+  const byBanner = new Map<string, NormalizedPull[]>();
+  for (const p of pulls) {
+    if (!p.allowDuplicates) {
+      const k = `${p.bannerId}|${pullKey(p)}`;
+      if (seenInPaste.has(k)) {
+        skipped++;
+        continue;
+      }
+      seenInPaste.add(k);
+    }
+    const list = byBanner.get(p.bannerId) ?? [];
+    list.push(p);
+    byBanner.set(p.bannerId, list);
+  }
+  return { byBanner, skipped };
+}
+
+/**
+ * Multiset merge of incoming pulls into a banner's stored history: final
+ * count per (timestamp, operator, rarity) key = max(existing, incoming).
+ * Returns the full merged list sorted chronologically, ready to be written
+ * back with a fresh dense `seq`.
+ */
+export function mergeBannerPulls(
+  existing: StoredPull[],
+  incoming: NormalizedPull[]
+): { merged: StoredPull[]; imported: number; skipped: number } {
+  let imported = 0;
+  let skipped = 0;
+
+  const existingCount = new Map<string, number>();
+  for (const p of existing) {
+    const k = pullKey(p);
+    existingCount.set(k, (existingCount.get(k) ?? 0) + 1);
+  }
+
+  const merged = [...existing];
+  const seenIncoming = new Map<string, number>();
+  for (const p of incoming) {
+    const k = pullKey(p);
+    const nth = (seenIncoming.get(k) ?? 0) + 1;
+    seenIncoming.set(k, nth);
+    if (nth > (existingCount.get(k) ?? 0)) {
+      merged.push({ rarity: p.rarity, operatorName: p.operatorName, pulledAt: p.pulledAt });
+      imported++;
+    } else {
+      skipped++;
+    }
+  }
+
+  merged.sort((a, b) => a.pulledAt.getTime() - b.pulledAt.getTime());
+  return { merged, imported, skipped };
+}
+
 export interface JsonImportResult {
   userId: string;
   nickname: string;
@@ -182,26 +253,9 @@ export async function importJsonPulls(account: string, payload: unknown): Promis
     create: { nickname: account, tokenHash },
   });
 
+  const { byBanner, skipped: dupesInPaste } = dedupeWithinPaste(pulls);
   let imported = 0;
-  let skipped = 0;
-
-  // Drop exact duplicates within the paste itself (overlapping or repeated
-  // pages), except where the grouped shape makes same-key repeats legitimate.
-  const seenInPaste = new Set<string>();
-  const byBanner = new Map<string, NormalizedPull[]>();
-  for (const p of pulls) {
-    if (!p.allowDuplicates) {
-      const k = `${p.bannerId}|${pullKey(p)}`;
-      if (seenInPaste.has(k)) {
-        skipped++;
-        continue;
-      }
-      seenInPaste.add(k);
-    }
-    const list = byBanner.get(p.bannerId) ?? [];
-    list.push(p);
-    byBanner.set(p.bannerId, list);
-  }
+  let skipped = dupesInPaste;
 
   for (const [bannerId, incoming] of byBanner) {
     const times = incoming.map((p) => p.pulledAt.getTime());
@@ -224,28 +278,10 @@ export async function importJsonPulls(account: string, payload: unknown): Promis
       select: { rarity: true, operatorName: true, pulledAt: true },
     });
 
-    // Multiset merge vs stored history: final count per key = max(existing, incoming).
-    const existingCount = new Map<string, number>();
-    for (const p of existing) {
-      const k = pullKey(p);
-      existingCount.set(k, (existingCount.get(k) ?? 0) + 1);
-    }
-
-    const merged = [...existing];
-    const seenIncoming = new Map<string, number>();
-    for (const p of incoming) {
-      const k = pullKey(p);
-      const nth = (seenIncoming.get(k) ?? 0) + 1;
-      seenIncoming.set(k, nth);
-      if (nth > (existingCount.get(k) ?? 0)) {
-        merged.push({ rarity: p.rarity, operatorName: p.operatorName, pulledAt: p.pulledAt });
-        imported++;
-      } else {
-        skipped++;
-      }
-    }
-
-    merged.sort((a, b) => a.pulledAt.getTime() - b.pulledAt.getTime());
+    const result = mergeBannerPulls(existing, incoming);
+    imported += result.imported;
+    skipped += result.skipped;
+    const merged = result.merged;
 
     await db.$transaction([
       db.pull.deleteMany({ where: { userId: user.id, bannerId } }),

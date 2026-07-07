@@ -1,40 +1,5 @@
 import { db } from "../lib/db.js";
-
-interface SixStarHit {
-  operatorName: string;
-  pityCost: number; // pulls spent since the previous 6★ (inclusive of this one)
-  bannerId: string;
-}
-
-/** Walk a user's pulls per banner in order and extract 6★ pity costs. */
-function extractSixStarHits(
-  pulls: { bannerId: string; seq: number; rarity: number; operatorName: string }[]
-): { hits: SixStarHit[]; currentPity: Record<string, number> } {
-  const byBanner = new Map<string, typeof pulls>();
-  for (const p of pulls) {
-    const list = byBanner.get(p.bannerId) ?? [];
-    list.push(p);
-    byBanner.set(p.bannerId, list);
-  }
-
-  const hits: SixStarHit[] = [];
-  const currentPity: Record<string, number> = {};
-
-  for (const [bannerId, list] of byBanner) {
-    list.sort((a, b) => a.seq - b.seq);
-    let sinceLast = 0;
-    for (const p of list) {
-      sinceLast++;
-      if (p.rarity === 6) {
-        hits.push({ operatorName: p.operatorName, pityCost: sinceLast, bannerId });
-        sinceLast = 0;
-      }
-    }
-    currentPity[bannerId] = sinceLast;
-  }
-
-  return { hits, currentPity };
-}
+import { extractSixStarHits } from "./pity.js";
 
 export async function getUserStats(userId: string) {
   const user = await db.user.findUnique({ where: { id: userId } });
@@ -70,53 +35,55 @@ export async function getUserStats(userId: string) {
  * average — i.e. 0.9 means luckier than 90% of recorded hits.
  */
 async function luckPercentile(userAvgPity: number): Promise<number | null> {
-  const total = await db.pull.count({ where: { rarity: 6 } });
-  if (total === 0) return null;
   const distribution = await communityPityDistribution();
+  const total = distribution.reduce((s, b) => s + b.count, 0);
+  if (total === 0) return null;
   const worse = distribution.reduce(
     (sum, bucket) => (bucket.pityCost > userAvgPity ? sum + bucket.count : sum),
     0
   );
-  return worse / distribution.reduce((s, b) => s + b.count, 0);
+  return worse / total;
 }
 
-/** Pity cost of every 6★ hit across all users, aggregated into counts. */
+/**
+ * Pity cost of every 6★ hit across all users, aggregated into counts.
+ *
+ * Computed entirely in SQL: because `seq` is dense and chronological within
+ * (userId, bannerId) — an invariant both import paths maintain — the pity
+ * cost of a 6★ is its seq minus the seq of the previous 6★ in the same
+ * partition (or -1 when it's the first). This only touches rarity-6 rows
+ * instead of loading every pull into memory per request. The window syntax
+ * is shared by SQLite (3.25+) and Postgres.
+ */
 async function communityPityDistribution(): Promise<{ pityCost: number; count: number }[]> {
-  const pulls = await db.pull.findMany({
-    select: { userId: true, bannerId: true, seq: true, rarity: true, operatorName: true },
-    orderBy: [{ userId: "asc" }, { bannerId: "asc" }, { seq: "asc" }],
-  });
-
-  const counts = new Map<number, number>();
-  const byUser = new Map<string, typeof pulls>();
-  for (const p of pulls) {
-    const list = byUser.get(p.userId) ?? [];
-    list.push(p);
-    byUser.set(p.userId, list);
-  }
-  for (const list of byUser.values()) {
-    for (const hit of extractSixStarHits(list).hits) {
-      counts.set(hit.pityCost, (counts.get(hit.pityCost) ?? 0) + 1);
-    }
-  }
-
-  return [...counts.entries()]
-    .map(([pityCost, count]) => ({ pityCost, count }))
-    .sort((a, b) => a.pityCost - b.pityCost);
+  const rows = await db.$queryRaw<{ pityCost: number | bigint; count: number | bigint }[]>`
+    SELECT "pityCost", COUNT(*) AS "count"
+    FROM (
+      SELECT "seq" - COALESCE(
+        LAG("seq") OVER (PARTITION BY "userId", "bannerId" ORDER BY "seq"),
+        -1
+      ) AS "pityCost"
+      FROM "Pull"
+      WHERE "rarity" = 6
+    ) AS hits
+    GROUP BY "pityCost"
+    ORDER BY "pityCost"
+  `;
+  // COUNT(*) comes back as BigInt on Postgres; normalize.
+  return rows.map((r) => ({ pityCost: Number(r.pityCost), count: Number(r.count) }));
 }
 
 export async function getCommunityStats() {
-  const [users, totalPulls, sixStars] = await Promise.all([
+  const [users, totalPulls, distribution] = await Promise.all([
     db.user.count(),
     db.pull.count(),
-    db.pull.count({ where: { rarity: 6 } }),
+    communityPityDistribution(),
   ]);
 
-  const distribution = await communityPityDistribution();
-  const totalHits = distribution.reduce((s, b) => s + b.count, 0);
+  const sixStars = distribution.reduce((s, b) => s + b.count, 0);
   const avgPity =
-    totalHits > 0
-      ? distribution.reduce((s, b) => s + b.pityCost * b.count, 0) / totalHits
+    sixStars > 0
+      ? distribution.reduce((s, b) => s + b.pityCost * b.count, 0) / sixStars
       : null;
 
   return {
