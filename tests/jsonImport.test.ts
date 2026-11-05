@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
   dedupeWithinPaste,
+  defaultNickname,
   ImportFormatError,
   mergeBannerPulls,
   parseExport,
@@ -136,6 +137,12 @@ describe("dedupeWithinPaste", () => {
     ]);
 
     expect([...byBanner.keys()].sort()).toEqual(["import-a", "import-b"]);
+  });
+});
+
+describe("defaultNickname", () => {
+  it("derives from the hash only — the typed account string must never leak", () => {
+    expect(defaultNickname("abcdef0123456789")).toBe("Doctor-abcdef");
   });
 });
 

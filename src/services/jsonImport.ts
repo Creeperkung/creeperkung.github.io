@@ -227,11 +227,26 @@ export function mergeBannerPulls(
   return { merged, imported, skipped };
 }
 
+/**
+ * Display name shown on the dashboard when the user doesn't pick one. Derived
+ * from the account hash, never from the typed account string — the identity
+ * key must not be stored or echoed anywhere (users may type an email).
+ */
+export function defaultNickname(tokenHash: string): string {
+  return `Doctor-${tokenHash.slice(0, 6)}`;
+}
+
 export interface JsonImportResult {
   userId: string;
   nickname: string;
   imported: number;
   skipped: number;
+  /** False when this import merged into an account that already had history. */
+  created: boolean;
+  /** Pulls stored for this account before this import. */
+  existingPulls: number;
+  /** Pulls stored after this import. */
+  totalPulls: number;
 }
 
 /**
@@ -243,15 +258,26 @@ export interface JsonImportResult {
  * contain pulls older than what's stored, each affected banner's sequence is
  * rewritten in chronological order (pity extraction depends on seq order).
  */
-export async function importJsonPulls(account: string, payload: unknown): Promise<JsonImportResult> {
+export async function importJsonPulls(
+  account: string,
+  payload: unknown,
+  displayName?: string
+): Promise<JsonImportResult> {
   const pulls = parseExport(payload);
   const tokenHash = createHash("sha256").update(`json:${account}`).digest("hex");
+  const pickedName = displayName?.trim() || undefined;
 
-  const user = await db.user.upsert({
-    where: { tokenHash },
-    update: {},
-    create: { nickname: account, tokenHash },
-  });
+  const existingUser = await db.user.findUnique({ where: { tokenHash } });
+  const user = existingUser
+    ? pickedName && pickedName !== existingUser.nickname
+      ? await db.user.update({ where: { tokenHash }, data: { nickname: pickedName } })
+      : existingUser
+    : await db.user.create({
+        data: { nickname: pickedName ?? defaultNickname(tokenHash), tokenHash },
+      });
+  const existingPulls = existingUser
+    ? await db.pull.count({ where: { userId: user.id } })
+    : 0;
 
   const { byBanner, skipped: dupesInPaste } = dedupeWithinPaste(pulls);
   let imported = 0;
@@ -291,5 +317,13 @@ export async function importJsonPulls(account: string, payload: unknown): Promis
     ]);
   }
 
-  return { userId: user.id, nickname: user.nickname, imported, skipped };
+  return {
+    userId: user.id,
+    nickname: user.nickname,
+    imported,
+    skipped,
+    created: !existingUser,
+    existingPulls,
+    totalPulls: existingPulls + imported,
+  };
 }

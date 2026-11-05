@@ -36,9 +36,11 @@ export default function Home() {
   const [mode, setMode] = useState<"token" | "json">("token");
   const [token, setToken] = useState("");
   const [account, setAccount] = useState("");
+  const [displayName, setDisplayName] = useState("");
   const [jsonText, setJsonText] = useState("");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [notice, setNotice] = useState<string | null>(null);
 
   async function loadCommunity() {
     const res = await fetch("/api/community/stats");
@@ -59,6 +61,7 @@ export default function Home() {
     e.preventDefault();
     setBusy(true);
     setError(null);
+    setNotice(null);
     try {
       let body: string;
       if (mode === "token") {
@@ -78,7 +81,11 @@ export default function Home() {
             );
           }
         }
-        body = JSON.stringify({ account, payload });
+        body = JSON.stringify({
+          account,
+          payload,
+          ...(displayName.trim() ? { displayName: displayName.trim() } : {}),
+        });
       }
       const res = await fetch(mode === "token" ? "/api/import" : "/api/import/json", {
         method: "POST",
@@ -89,7 +96,17 @@ export default function Home() {
         const detail = await res.json().catch(() => null);
         throw new Error(detail?.error ?? "Import failed — is the API running?");
       }
-      const { userId } = await res.json();
+      const result = await res.json();
+      const { userId } = result;
+      if (mode === "json") {
+        // Make a typo'd import name visible immediately: a returning user who
+        // sees "new account" instead of their history knows to re-check it.
+        setNotice(
+          result.created
+            ? `Created a new account "${result.nickname}" — reuse the same import name next time to keep merging into it.`
+            : `Merged into "${result.nickname}" (${result.existingPulls.toLocaleString()} pulls before this import, ${result.totalPulls.toLocaleString()} now).`
+        );
+      }
       const stats = await fetch(`/api/users/${userId}/stats`);
       setUser(await stats.json());
       await loadCommunity();
@@ -158,10 +175,23 @@ export default function Home() {
               back-to-back; imports merge, and duplicates are skipped automatically. Yostar
               only keeps 90 days — ArkPulls archives every import permanently.
             </p>
+            <div className="flex flex-col gap-1">
+              <input
+                value={account}
+                onChange={(e) => setAccount(e.target.value)}
+                placeholder="Import name — make one up, like a username (not your email)"
+                className="rounded-md border border-[var(--border)] bg-transparent px-3 py-2 text-sm outline-none placeholder:text-[var(--muted)] focus:border-[var(--series-1)]"
+              />
+              <p className="text-xs text-[var(--muted)]">
+                Your import name is your key: it&apos;s hashed, never stored or shown, and
+                typing the same one next time merges into the same history.
+              </p>
+            </div>
             <input
-              value={account}
-              onChange={(e) => setAccount(e.target.value)}
-              placeholder="Account name (pick one and reuse it every import)"
+              value={displayName}
+              onChange={(e) => setDisplayName(e.target.value)}
+              placeholder="Display name shown on the dashboard (optional)"
+              maxLength={60}
               className="rounded-md border border-[var(--border)] bg-transparent px-3 py-2 text-sm outline-none placeholder:text-[var(--muted)] focus:border-[var(--series-1)]"
             />
             <textarea
@@ -184,6 +214,7 @@ export default function Home() {
           </button>
         </div>
         {error && <p className="mt-2 text-sm text-[#d03b3b]">{error}</p>}
+        {notice && <p className="mt-2 text-sm text-[var(--ink-2)]">{notice}</p>}
       </form>
 
       {user && (

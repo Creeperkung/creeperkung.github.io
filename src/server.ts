@@ -31,6 +31,7 @@ app.post("/api/import", async (req, res, next) => {
 const jsonImportSchema = z.object({
   account: z.string().min(1),
   payload: z.unknown(),
+  displayName: z.string().max(60).optional(),
 });
 
 app.post("/api/import/json", async (req, res, next) => {
@@ -40,7 +41,9 @@ app.post("/api/import/json", async (req, res, next) => {
       res.status(400).json({ error: "account and payload are required" });
       return;
     }
-    res.json(await importJsonPulls(parsed.data.account, parsed.data.payload));
+    res.json(
+      await importJsonPulls(parsed.data.account, parsed.data.payload, parsed.data.displayName)
+    );
   } catch (err) {
     if (err instanceof ImportFormatError) {
       res.status(400).json({ error: err.message });

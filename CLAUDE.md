@@ -33,7 +33,7 @@ Tests live in `tests/` (Vitest) and cover the pure logic only: pity extraction (
 
 Data flow: ingestion → Prisma (User/Banner/Pull) → stats service → REST API → dashboard.
 
-Two import paths, both idempotent, both identify accounts by **SHA-256 hash only** (raw tokens/account names are never stored):
+Two import paths, both idempotent, both identify accounts by **SHA-256 hash only** — raw tokens/import names are never stored or echoed back. `User.nickname` is display-only: an explicit `displayName` if the user picked one, else `defaultNickname()` derived from the hash. Never set it from the account/token string (users may type an email there).
 
 - `src/services/ingest.ts` (`POST /api/import`) — token-based. Calls `fetchGachaHistory()` in `src/services/yostarClient.ts`, which is currently a **mock** that generates deterministic-per-token histories using real Arknights pity mechanics (2% base 6★, +2%/pull after 50). The planned real Yostar email-code integration replaces only that function's body; keep its interface stable. Appends new pulls by `seq`.
 - `src/services/jsonImport.ts` (`POST /api/import/json`) — paste-based import of Yostar Account Center Headhunting History responses. The real shape is **confirmed against an actual export**: `{ code, data: { rows: [{ charName, star: "4星", poolId, poolName, type, at: <ms> }], count } }`, paginated 10 rows per page. The parser also accepts arrays of page responses, flat pull arrays, and a grouped legacy shape (`data.list` + `chars`); star strings are 1-indexed by definition, numeric `rarity` fields get 0- vs 1-indexed auto-detection.
