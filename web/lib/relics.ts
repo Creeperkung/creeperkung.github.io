@@ -19,6 +19,8 @@ export interface Relic {
   kind: RelicKind;
   special: boolean;
   unlock: string | null;
+  /** true when public/relics/<id>.webp exists */
+  icon: boolean;
 }
 
 export interface RelicData {

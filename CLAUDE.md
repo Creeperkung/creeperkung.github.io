@@ -21,9 +21,10 @@ node scripts/build-relics.mjs    # regenerate data/relics.json from upstream gam
 
 ## Data
 
-- `web/data/relics.json` is **generated, committed data**. Don't hand-edit it. Regenerate it with `scripts/build-relics.mjs`, which downloads `en_US/gamedata/excel/roguelike_topic_table.json` from Kengxxiao/ArknightsGameData_YoStar (you can also pass a local path to it).
+- `web/data/relics.json` and `web/public/relics/*.webp` are **generated, committed data**. Don't hand-edit them. Regenerate it with `scripts/build-relics.mjs`, which downloads `en_US/gamedata/excel/roguelike_topic_table.json` from Kengxxiao/ArknightsGameData_YoStar (you can also pass a local path to it).
 - The canonical relic list and numbering is each theme's **Collection archive** (`details[theme].archiveComp.relic.relic`, `orderId`), joined to `details[theme].items`. Items that aren't in the archive are internal/event-only and are deliberately skipped.
 - Rarity `NORMAL/RARE/SUPER_RARE` maps to `normal/rare/superRare`. `subType` `CURSE`/`SECRET` maps to `kind`.
+- Icons come from ArknightsAssets (`cn` branch, `assets/torappu/dynamicassets/arts/ui/rogueliketopic/itempic/<relicId>.png`). The script resizes them to 128px WebP using `sharp`, downloads only missing ones (`--refresh-icons` re-fetches all, `--skip-icons` skips them), and sets `relic.icon`. 10 early IS#1 relics have no upstream icon, and the UI shows a placeholder for them.
 - Types live in `web/lib/relics.ts`. If you change the JSON shape, update the script and the types together.
 
 ## Frontend

@@ -16,6 +16,7 @@
   --rarity-rare: #2a78d6;
   --rarity-superRare: #9a5f00;
   --relic-curse: #b3261e;
+  --icon-well: #2b2b29; /* relic art is drawn for a dark in-game backdrop */
 }
 
 @media (prefers-color-scheme: dark) {
@@ -33,6 +34,7 @@
     --rarity-rare: #6aa6f0;
     --rarity-superRare: #f0b44c;
     --relic-curse: #f07a6e;
+    --icon-well: #262624;
   }
 }
 

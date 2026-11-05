@@ -182,24 +182,27 @@ function RelicCard({ relic: r, showTheme }: { relic: Relic; showTheme: boolean }
       className="flex flex-col gap-2 rounded-xl border border-[var(--border)] border-l-4 bg-[var(--surface-1)] p-4"
       style={{ borderLeftColor: accent }}
     >
-      <div className="flex items-start justify-between gap-3">
-        <h3 className="font-semibold leading-snug">{r.name}</h3>
-        <span className="shrink-0 font-mono text-xs text-[var(--muted)]">
-          {showTheme && `${themeShort(r.theme)} · `}#{String(r.no).padStart(3, "0")}
-        </span>
-      </div>
-      <div className="flex flex-wrap gap-1.5 text-xs font-medium">
-        <span className="rounded border px-1.5 py-0.5" style={{ color: `var(--rarity-${r.rarity})`, borderColor: "currentColor" }}>
-          {RARITY_LABEL[r.rarity]}
-        </span>
-        {r.kind === "curse" && (
-          <span className="rounded border px-1.5 py-0.5" style={{ color: "var(--relic-curse)", borderColor: "currentColor" }}>
-            Cursed
-          </span>
-        )}
-        {r.kind === "secret" && (
-          <span className="rounded border border-[var(--border)] px-1.5 py-0.5 text-[var(--ink-2)]">Secret</span>
-        )}
+      <div className="flex items-start gap-3">
+        <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-lg bg-[var(--icon-well)]">
+          {r.icon ? (
+            // Static, pre-sized 128px WebP files; next/image optimization adds nothing here.
+            // eslint-disable-next-line @next/next/no-img-element
+            <img src={`/relics/${r.id}.webp`} alt="" width={56} height={56} loading="lazy" decoding="async" />
+          ) : (
+            <span className="text-xl text-[var(--muted)]" aria-hidden>
+              ?
+            </span>
+          )}
+        </div>
+        <div className="flex min-w-0 flex-1 flex-col gap-1.5">
+          <div className="flex items-start justify-between gap-2">
+            <h3 className="font-semibold leading-snug">{r.name}</h3>
+            <span className="shrink-0 font-mono text-xs text-[var(--muted)]">
+              {showTheme && `${themeShort(r.theme)} · `}#{String(r.no).padStart(3, "0")}
+            </span>
+          </div>
+          <RelicTags relic={r} />
+        </div>
       </div>
       <p className="text-sm leading-relaxed">{r.effect}</p>
       {r.flavor && (
@@ -211,5 +214,23 @@ function RelicCard({ relic: r, showTheme }: { relic: Relic; showTheme: boolean }
         </p>
       )}
     </li>
+  );
+}
+
+function RelicTags({ relic: r }: { relic: Relic }) {
+  return (
+    <div className="flex flex-wrap gap-1.5 text-xs font-medium">
+      <span className="rounded border px-1.5 py-0.5" style={{ color: `var(--rarity-${r.rarity})`, borderColor: "currentColor" }}>
+        {RARITY_LABEL[r.rarity]}
+      </span>
+      {r.kind === "curse" && (
+        <span className="rounded border px-1.5 py-0.5" style={{ color: "var(--relic-curse)", borderColor: "currentColor" }}>
+          Cursed
+        </span>
+      )}
+      {r.kind === "secret" && (
+        <span className="rounded border border-[var(--border)] px-1.5 py-0.5 text-[var(--ink-2)]">Secret</span>
+      )}
+    </div>
   );
 }
