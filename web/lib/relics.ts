@@ -38,5 +38,9 @@ export const RARITY_LABEL: Record<Rarity, string> = {
   superRare: "Super Rare",
 };
 
-/** "rogue_4" → "IS#4" */
-export const themeShort = (id: string) => `IS#${id.replace(/\D/g, "")}`;
+/**
+ * Community IS numbering is one ahead of the game's internal ids: IS#1 was
+ * Ceobe's Fungimist (CN-only, removed, never in the data), so rogue_1
+ * (Phantom) is IS#2 … rogue_4 (Sarkaz) is IS#5.
+ */
+export const themeShort = (id: string) => `IS#${Number(id.replace(/\D/g, "")) + 1}`;

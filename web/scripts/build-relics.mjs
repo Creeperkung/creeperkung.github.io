@@ -70,7 +70,7 @@ async function ensureIcon(id) {
   if (flag("--skip-icons") || (!flag("--refresh-icons") && (await exists(out)))) return exists(out);
   for (let attempt = 0; attempt < 3; attempt++) {
     const res = await fetch(`${ICON_SOURCE}/${id}.png`);
-    if (res.status === 404) return false; // no icon upstream (a few early IS#1 relics)
+    if (res.status === 404) return false; // no icon upstream (a few early Phantom / IS#2 relics)
     if (!res.ok) {
       await new Promise((r) => setTimeout(r, 1000 * (attempt + 1)));
       continue;
