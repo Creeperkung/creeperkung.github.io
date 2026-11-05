@@ -13,8 +13,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "ArkPulls — Arknights Gacha Analytics",
-  description: "Track your Arknights pity and compare your gacha luck with the community",
+  title: "Relic Index — Arknights Integrated Strategies",
+  description: "Searchable list of every Arknights Integrated Strategies relic",
 };
 
 export default function RootLayout({

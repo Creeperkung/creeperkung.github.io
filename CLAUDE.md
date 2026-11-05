@@ -4,50 +4,29 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## What this is
 
-ArkPulls: an Arknights gacha pull tracker with community luck analytics. Two apps in one repo:
+**Relic Index**: a searchable list of every Arknights Integrated Strategies (roguelike) relic. It's a static Next.js 16 site in `web/`. There's no backend or database.
 
-- **Root** — Express 5 + TypeScript REST API (port 3000), Prisma ORM
-- **`web/`** — Next.js 16 dashboard (port 3001), proxies `/api/*` to the backend via rewrites in `web/next.config.ts`, so there is no CORS handling anywhere. `web/` has its own CLAUDE.md: Next 16 has breaking changes; consult `web/node_modules/next/dist/docs/` before writing Next-specific code.
+(This repo used to be ArkPulls, a gacha pull tracker with an Express/Prisma API. It was removed in favour of the relic index. The last version with it is commit `1f54551`.)
 
-## Commands
+`web/` has its own CLAUDE.md: Next 16 has breaking changes. Read `web/node_modules/next/dist/docs/` before writing Next-specific code.
+
+## Commands (run in `web/`)
 
 ```bash
-# API (repo root)
-npm run dev              # tsx watch, http://localhost:3000
-npm run db:migrate       # prisma migrate dev (also regenerates client + runs seed)
-npm run db:seed          # seed 50 simulated players (idempotent)
-npm run build            # tsc → dist/
-npm test                 # vitest run (tests/, pure logic only — no DB needed)
-
-# Dashboard
-cd web && npm run dev    # defaults to port 3000 — collides with the API
+npm run dev                      # http://localhost:3000
+npm run build                    # fully static output; also typechecks
+npm run lint
+node scripts/build-relics.mjs    # regenerate data/relics.json from upstream game data
 ```
 
-Run the dashboard on port 3001. On Windows/PowerShell, `npm run dev -- --port 3001` mangles the flag (npm passes `3001` as a directory); use `$env:PORT=3001; npm run dev` instead.
+## Data
 
-Database is SQLite (`dev.db`, gitignored) for dev. For deployment, change `provider` in `prisma/schema.prisma` to `postgresql` and point `DATABASE_URL` (in `.env`) at Postgres.
+- `web/data/relics.json` is **generated, committed data**. Don't hand-edit it. Regenerate it with `scripts/build-relics.mjs`, which downloads `en_US/gamedata/excel/roguelike_topic_table.json` from Kengxxiao/ArknightsGameData_YoStar (you can also pass a local path to it).
+- The canonical relic list and numbering is each theme's **Collection archive** (`details[theme].archiveComp.relic.relic`, `orderId`), joined to `details[theme].items`. Items that aren't in the archive are internal/event-only and are deliberately skipped.
+- Rarity `NORMAL/RARE/SUPER_RARE` maps to `normal/rare/superRare`. `subType` `CURSE`/`SECRET` maps to `kind`.
+- Types live in `web/lib/relics.ts`. If you change the JSON shape, update the script and the types together.
 
-Tests live in `tests/` (Vitest) and cover the pure logic only: pity extraction (`src/services/pity.ts`) and JSON-import parsing/dedup/merging (`parseExport`, `dedupeWithinPaste`, `mergeBannerPulls` in `jsonImport.ts`). Keep testable logic in pure exported functions, DB access in thin wrappers around them.
+## Frontend
 
-## Architecture
-
-Data flow: ingestion → Prisma (User/Banner/Pull) → stats service → REST API → dashboard.
-
-Two import paths, both idempotent, both identify accounts by **SHA-256 hash only** — raw tokens/import names are never stored or echoed back. `User.nickname` is display-only: an explicit `displayName` if the user picked one, else `defaultNickname()` derived from the hash. Never set it from the account/token string (users may type an email there).
-
-- `src/services/ingest.ts` (`POST /api/import`) — token-based. Calls `fetchGachaHistory()` in `src/services/yostarClient.ts`, which is currently a **mock** that generates deterministic-per-token histories using real Arknights pity mechanics (2% base 6★, +2%/pull after 50). The planned real Yostar email-code integration replaces only that function's body; keep its interface stable. Appends new pulls by `seq`.
-- `src/services/jsonImport.ts` (`POST /api/import/json`) — paste-based import of Yostar Account Center Headhunting History responses. The real shape is **confirmed against an actual export**: `{ code, data: { rows: [{ charName, star: "4星", poolId, poolName, type, at: <ms> }], count } }`, paginated 10 rows per page. The parser also accepts arrays of page responses, flat pull arrays, and a grouped legacy shape (`data.list` + `chars`); star strings are 1-indexed by definition, numeric `rarity` fields get 0- vs 1-indexed auto-detection.
-
-### Invariants that break stats if violated
-
-- `Pull.seq` must be **chronological AND dense (0-based, no gaps) within (userId, bannerId)** — per-user pity extraction (`src/services/pity.ts`) walks pulls in `seq` order, and the community pity distribution (`src/services/stats.ts`) computes pity in SQL as `seq - LAG(seq)` over rarity-6 rows, which is only correct if every pull occupies exactly one seq slot. `jsonImport` preserves this by deleting and re-creating a banner's pulls in timestamp order on every merge (an import can contain pulls older than what's stored); token ingest appends dense seq from the client.
-- JSON-import dedup is a **multiset** keyed by `(timestamp, operator, rarity)` — in the grouped legacy shape a ten-pull can legally contain the same operator twice at one shared timestamp, so per-key counts are compared, not key existence. But within a single paste, identical keys from **flat rows** (which carry per-pull ms timestamps) are duplicated/overlapping pages and are dropped — see `allowDuplicates` in `jsonImport.ts`.
-- Rarity is stored **1-indexed (3–6)**; Arknights game data is 0-indexed (6★ = 5). Conversion happens only at the jsonImport boundary.
-
-### Community stats
-
-The community pity distribution is aggregated in SQL (`communityPityDistribution` in `stats.ts`) with a window function that reads only rarity-6 rows — it no longer loads every pull into memory per request. The raw query uses double-quoted identifiers and `LAG ... OVER` syntax valid in both SQLite (3.25+) and Postgres; keep any changes portable across both.
-
-## Frontend conventions
-
-Chart and theme colors are CSS custom properties defined once in `web/app/globals.css` (light + dark via `prefers-color-scheme`), consumed as `var(--series-1)`, `var(--ink)`, etc. The histogram (`web/components/PityHistogram.tsx`) is hand-rolled SVG — no chart library. Palette values follow a validated accessibility method (contrast + colorblind-safety per mode); don't introduce new chart colors ad hoc.
+- `app/page.tsx` is a server component that passes the bundled data to `components/RelicBrowser.tsx` (a client component). The browser reads `?theme=&q=` through `useSearchParams`, so it must stay inside the `<Suspense>` boundary in `page.tsx`.
+- Colors are CSS custom properties in `web/app/globals.css`, with light and dark variants via `prefers-color-scheme`. Rarity accents are `--rarity-{normal,rare,superRare}` and `--relic-curse`. Always pair them with a text label, never color alone.

@@ -11,6 +11,11 @@
   --baseline: #c3c2b7;
   --border: rgba(11, 11, 11, 0.1);
   --series-1: #2a78d6;
+  /* Relic rarity accents (always paired with a text label) */
+  --rarity-normal: #6b6a65;
+  --rarity-rare: #2a78d6;
+  --rarity-superRare: #9a5f00;
+  --relic-curse: #b3261e;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -24,6 +29,10 @@
     --baseline: #383835;
     --border: rgba(255, 255, 255, 0.1);
     --series-1: #3987e5;
+    --rarity-normal: #c3c2b7;
+    --rarity-rare: #6aa6f0;
+    --rarity-superRare: #f0b44c;
+    --relic-curse: #f07a6e;
   }
 }
 
