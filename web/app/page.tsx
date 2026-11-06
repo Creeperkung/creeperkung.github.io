@@ -4,6 +4,8 @@ import { MODES } from "@/lib/modes";
 export default function Home() {
   return (
     <>
+      {/* full-screen background image for the home page (see .home-backdrop in globals.css) */}
+      <div className="home-backdrop" aria-hidden />
       <header className="flex flex-col gap-2">
         <p className="ak-kicker">Arknights · Database</p>
         <h1 className="text-3xl font-bold uppercase tracking-wide">Rosmontis</h1>

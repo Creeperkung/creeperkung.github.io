@@ -129,7 +129,7 @@ body {
   z-index: -1;
   background: var(--art) center / cover no-repeat;
   filter: blur(6px) saturate(0.85) brightness(0.55);
-  opacity: 0.35;
+  opacity: 0;
   pointer-events: none;
 }
 :root[data-theme="art"] body {
@@ -139,6 +139,24 @@ body {
 /* top bar and panels pick up a frosted look over the art */
 :root[data-theme="art"] .bg-\[var\(--surface-1\)\] {
   backdrop-filter: blur(6px);
+}
+
+/* Home page backdrop (public/backgrounds/home.webp), every theme. A fade in the page color
+   sits on top so text stays readable; the image is small, so a light blur hides upscaling. */
+.home-backdrop {
+  position: fixed;
+  inset: -12px;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    linear-gradient(
+      to bottom,
+      color-mix(in srgb, var(--page) 58%, transparent) 0%,
+      color-mix(in srgb, var(--page) 70%, transparent) 55%,
+      var(--page) 100%
+    ),
+    url("/backgrounds/home.webp") center 30% / cover no-repeat;
+  filter: blur(1.5px);
 }
 
 /* Diagonal hazard band, e.g. under the top bar */
