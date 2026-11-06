@@ -2,8 +2,8 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
+import { SourceTags, htmlLang, setUrlParams } from "@/components/lang";
 import {
-  LANGS,
   Lang,
   RARITY_LABEL,
   Rarity,
@@ -18,22 +18,6 @@ import {
 type Sort = "no" | "name" | "rarity";
 const RARITIES: Rarity[] = ["normal", "rare", "superRare"];
 const RARITY_RANK: Record<Rarity, number> = { normal: 0, rare: 1, superRare: 2 };
-const LANG_KEY = "relic-index:lang";
-const isLang = (x: unknown): x is Lang => LANGS.some((l) => l.id === x);
-const htmlLang = (l: Lang) => LANGS.find((x) => x.id === l)!.htmlLang;
-
-/** Language from ?lang=, else the last one this browser picked, else English. */
-function initialLang(param: string | null): Lang {
-  if (isLang(param)) return param;
-  try {
-    const saved = window.localStorage.getItem(LANG_KEY);
-    if (isLang(saved)) return saved;
-  } catch {
-    // storage blocked: fall through
-  }
-  return "en";
-}
-
 const chip = (active: boolean) =>
   `rounded-full border px-3 py-1 text-sm transition-colors ${
     active
@@ -41,37 +25,26 @@ const chip = (active: boolean) =>
       : "border-[var(--border)] text-[var(--ink-2)] hover:border-[var(--ink-2)]"
   }`;
 
-export function RelicBrowser({ data }: { data: RelicData }) {
+/**
+ * Relic list with search and filters. With a single theme in `data` the theme
+ * tabs are hidden. Shareable state: ?theme=rogue_2&q=shield (needs <Suspense>).
+ */
+export function RelicBrowser({ data, lang }: { data: RelicData; lang: Lang }) {
+  const single = data.themes.length === 1;
   const newest = data.themes[data.themes.length - 1]?.id ?? "all";
-  // Shareable state: ?theme=rogue_2&q=shield&lang=ja (rendered client-side under <Suspense>)
   const params = useSearchParams();
   const [theme, setTheme] = useState<string>(() => {
     const t = params.get("theme");
     return t && (t === "all" || data.themes.some((x) => x.id === t)) ? t : newest;
   });
   const [query, setQuery] = useState(() => params.get("q") ?? "");
-  const [lang, setLang] = useState<Lang>(() => initialLang(params.get("lang")));
   const [rarities, setRarities] = useState<Set<Rarity>>(new Set());
   const [kind, setKind] = useState<RelicKind | "any">("any");
   const [sort, setSort] = useState<Sort>("no");
 
   useEffect(() => {
-    const p = new URLSearchParams();
-    if (theme !== newest) p.set("theme", theme);
-    if (query) p.set("q", query);
-    if (lang !== "en") p.set("lang", lang);
-    const qs = p.toString();
-    window.history.replaceState(null, "", qs ? `?${qs}` : window.location.pathname);
-  }, [theme, query, lang, newest]);
-
-  function pickLang(l: Lang) {
-    setLang(l);
-    try {
-      window.localStorage.setItem(LANG_KEY, l);
-    } catch {
-      // storage blocked: the choice still lives in the URL
-    }
-  }
+    setUrlParams({ theme: single || theme === newest ? null : theme, q: query || null });
+  }, [theme, query, newest, single]);
 
   const currentTheme = data.themes.find((t) => t.id === theme);
 
@@ -109,67 +82,48 @@ export function RelicBrowser({ data }: { data: RelicData }) {
 
   return (
     <div className="flex flex-col gap-6">
-      <div className="flex flex-wrap items-center gap-2" role="group" aria-label="Relic text language">
-        <span className="mr-1 text-xs uppercase tracking-wide text-[var(--muted)]">Language</span>
-        <div className="inline-flex overflow-hidden rounded-lg border border-[var(--border)]">
-          {LANGS.map((l) => (
+      {!single && (
+        <nav aria-label="Integrated Strategies theme" className="flex flex-wrap gap-2">
+          {data.themes.map((t) => (
             <button
-              key={l.id}
-              onClick={() => pickLang(l.id)}
-              title={l.title}
-              aria-pressed={lang === l.id}
-              className={`px-3 py-1.5 text-sm font-medium transition-colors ${
-                lang === l.id
-                  ? "bg-[var(--ink)] text-[var(--page)]"
-                  : "text-[var(--ink-2)] hover:bg-[var(--surface-1)]"
+              key={t.id}
+              onClick={() => setTheme(t.id)}
+              className={`rounded-lg border px-4 py-2 text-left transition-colors ${
+                theme === t.id
+                  ? "border-[var(--series-1)] bg-[var(--surface-1)] shadow-sm"
+                  : "border-[var(--border)] hover:border-[var(--ink-2)]"
               }`}
+              aria-pressed={theme === t.id}
             >
-              {l.label}
+              <span className="flex items-center gap-1.5 font-mono text-xs text-[var(--muted)]">
+                {themeShort(t.id)}
+                {!t.servers.includes("en") && (
+                  <span
+                    className="rounded border border-[var(--border)] px-1 text-[10px] font-semibold text-[var(--ink-2)]"
+                    title="Only released on the CN server so far"
+                  >
+                    CN only
+                  </span>
+                )}
+              </span>
+              <span className="block text-sm font-medium" lang={htmlLang(t.names[lang] ? lang : "en")}>
+                {themeName(t, lang)}
+              </span>
             </button>
           ))}
-        </div>
-      </div>
-
-      <nav aria-label="Integrated Strategies theme" className="flex flex-wrap gap-2">
-        {data.themes.map((t) => (
           <button
-            key={t.id}
-            onClick={() => setTheme(t.id)}
-            className={`rounded-lg border px-4 py-2 text-left transition-colors ${
-              theme === t.id
+            onClick={() => setTheme("all")}
+            className={`rounded-lg border px-4 py-2 text-sm font-medium transition-colors ${
+              theme === "all"
                 ? "border-[var(--series-1)] bg-[var(--surface-1)] shadow-sm"
                 : "border-[var(--border)] hover:border-[var(--ink-2)]"
             }`}
-            aria-pressed={theme === t.id}
+            aria-pressed={theme === "all"}
           >
-            <span className="flex items-center gap-1.5 font-mono text-xs text-[var(--muted)]">
-              {themeShort(t.id)}
-              {!t.servers.includes("en") && (
-                <span
-                  className="rounded border border-[var(--border)] px-1 text-[10px] font-semibold text-[var(--ink-2)]"
-                  title="Only released on the CN server so far"
-                >
-                  CN only
-                </span>
-              )}
-            </span>
-            <span className="block text-sm font-medium" lang={htmlLang(t.names[lang] ? lang : "en")}>
-              {themeName(t, lang)}
-            </span>
+            All themes
           </button>
-        ))}
-        <button
-          onClick={() => setTheme("all")}
-          className={`rounded-lg border px-4 py-2 text-sm font-medium transition-colors ${
-            theme === "all"
-              ? "border-[var(--series-1)] bg-[var(--surface-1)] shadow-sm"
-              : "border-[var(--border)] hover:border-[var(--ink-2)]"
-          }`}
-          aria-pressed={theme === "all"}
-        >
-          All themes
-        </button>
-      </nav>
+        </nav>
+      )}
 
       <div className="flex flex-col gap-3 rounded-xl border border-[var(--border)] bg-[var(--surface-1)] p-4">
         <input
@@ -216,7 +170,7 @@ export function RelicBrowser({ data }: { data: RelicData }) {
 
       <p className="text-sm text-[var(--ink-2)]" aria-live="polite">
         Showing <strong className="text-[var(--ink)]">{visible.length}</strong> of {inTheme.length} relics
-        {currentTheme && <> in {themeName(currentTheme, lang)}</>}
+        {currentTheme && !single && <> in {themeName(currentTheme, lang)}</>}
       </p>
 
       {visible.length === 0 ? (
@@ -301,7 +255,6 @@ function RelicCard({ relic: r, lang, showTheme }: { relic: Relic; lang: Lang; sh
 }
 
 function RelicTags({ relic: r, shown, fallback }: { relic: Relic; shown: Lang; fallback: boolean }) {
-  const tl = shown === "en" ? r.text.en.tl : undefined;
   return (
     <div className="flex flex-wrap gap-1.5 text-xs font-medium">
       <span className="rounded border px-1.5 py-0.5" style={{ color: `var(--rarity-${r.rarity})`, borderColor: "currentColor" }}>
@@ -315,26 +268,7 @@ function RelicTags({ relic: r, shown, fallback }: { relic: Relic; shown: Lang; f
       {r.kind === "secret" && (
         <span className="rounded border border-[var(--border)] px-1.5 py-0.5 text-[var(--ink-2)]">Secret</span>
       )}
-      {fallback && (
-        <span
-          className="rounded border border-dashed border-[var(--border)] px-1.5 py-0.5 text-[var(--muted)]"
-          title="This theme isn't on the JP server yet, so there's no Japanese text. Showing English instead."
-        >
-          No JP text yet
-        </span>
-      )}
-      {tl && (
-        <span
-          className="rounded border border-dashed border-[var(--border)] px-1.5 py-0.5 text-[var(--muted)]"
-          title={
-            tl === "fan"
-              ? "CN-only relic: unofficial English translation. Switch to CN to see the original text."
-              : "Some text on this CN-only relic hasn't been translated yet."
-          }
-        >
-          {tl === "fan" ? "Fan translation" : "Untranslated"}
-        </span>
-      )}
+      <SourceTags tl={shown === "en" ? r.text.en.tl : undefined} fallback={fallback} />
     </div>
   );
 }

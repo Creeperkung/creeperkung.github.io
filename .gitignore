@@ -4,3 +4,4 @@ dist/
 *.db-journal
 .env
 web/data/untranslated.json
+web/data/untranslated-strings.json

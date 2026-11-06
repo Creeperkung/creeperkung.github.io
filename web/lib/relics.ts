@@ -67,10 +67,12 @@ export const RARITY_LABEL: Record<Rarity, string> = {
  * The relic's text in `lang`. JP text doesn't exist for themes not yet on the JP
  * server; those fall back to English (`fallback: true`).
  */
-export function relicText(r: Relic, lang: Lang): { text: RelicText; lang: Lang; fallback: boolean } {
-  if (lang === "ja" && !r.text.ja) return { text: r.text.en, lang: "en", fallback: true };
-  return { text: r.text[lang] ?? r.text.en, lang, fallback: false };
+export function pickText<T>(text: { en: T; ja?: T; zh: T }, lang: Lang): { text: T; lang: Lang; fallback: boolean } {
+  if (lang === "ja" && !text.ja) return { text: text.en, lang: "en", fallback: true };
+  return { text: text[lang] ?? text.en, lang, fallback: false };
 }
+
+export const relicText = (r: Relic, lang: Lang) => pickText<RelicText>(r.text, lang);
 
 export const themeName = (t: Theme, lang: Lang) => t.names[lang] ?? t.names.en;
 
@@ -79,4 +81,8 @@ export const themeName = (t: Theme, lang: Lang) => t.names[lang] ?? t.names.en;
  * Ceobe's Fungimist (CN-only, removed, never in the data), so rogue_1
  * (Phantom) is IS#2 … rogue_6 is IS#7.
  */
-export const themeShort = (id: string) => `IS#${Number(id.replace(/\D/g, "")) + 1}`;
+export const themeNo = (id: string) => Number(id.replace(/\D/g, "")) + 1;
+export const themeShort = (id: string) => `IS#${themeNo(id)}`;
+/** URL of a theme's page: /is/<community IS number> */
+export const themeHref = (id: string) => `/is/${themeNo(id)}`;
+export const themeIdFromNo = (no: string | number) => `rogue_${Number(no) - 1}`;

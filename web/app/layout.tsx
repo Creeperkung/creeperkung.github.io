@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { Geist, Geist_Mono } from "next/font/google";
+import { relicData } from "@/lib/relics";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -14,7 +16,8 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "Relic Index — Arknights Integrated Strategies",
-  description: "Searchable list of every Arknights Integrated Strategies relic",
+  description:
+    "Every Arknights Integrated Strategies relic, buff, debuff and mechanic item, in English, Japanese and Chinese",
 };
 
 export default function RootLayout({
@@ -23,11 +26,39 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html
-      lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
-    >
-      <body className="min-h-full flex flex-col">{children}</body>
+    <html lang="en" className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}>
+      <body className="flex min-h-full flex-col">
+        <div className="border-b border-[var(--border)]">
+          <nav className="mx-auto flex w-full max-w-6xl items-center gap-5 px-4 py-3 text-sm sm:px-6">
+            <Link href="/" className="font-semibold">
+              Relic Index
+            </Link>
+            <Link href="/relics" className="text-[var(--ink-2)] hover:text-[var(--ink)]">
+              All relics
+            </Link>
+          </nav>
+        </div>
+        <main className="mx-auto flex w-full max-w-6xl flex-1 flex-col gap-8 px-4 py-10 sm:px-6">
+          {children}
+          <footer className="mt-auto border-t border-[var(--border)] pt-4 text-xs text-[var(--muted)]">
+            Data from the EN, JP and CN game clients ({relicData.generatedAt}) via{" "}
+            <a className="underline" href="https://github.com/ArknightsAssets/ArknightsGamedata">
+              ArknightsGamedata
+            </a>
+            ; icons and banners via ArknightsAssets,{" "}
+            <a className="underline" href="https://prts.wiki">
+              PRTS
+            </a>{" "}
+            and the{" "}
+            <a className="underline" href="https://arknights.wiki.gg">
+              Arknights Terra Wiki
+            </a>
+            . English text for CN-only content is official wording where it was reused from an earlier theme, and an
+            unofficial fan translation otherwise. CN-only theme names and section summaries are unofficial. Fan-made,
+            not affiliated with Hypergryph or Yostar.
+          </footer>
+        </main>
+      </body>
     </html>
   );
 }

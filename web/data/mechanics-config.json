@@ -1,0 +1,124 @@
+{
+ "_readme": "Hand-maintained. One list of sections per theme, shown on the theme page. extract = which extractor in scripts/build-mechanics.mjs pulls the entries from the game data. kind = debuff | buff | mixed (shown under 'Buffs & Debuffs') or item (shown under 'Special Items'). title, summary and groups (EN group names) are free text: edit them, then run node scripts/build-mechanics.mjs --skip-icons.",
+ "themes": {
+  "rogue_1": [
+   {
+    "id": "plays",
+    "extract": "plays",
+    "kind": "item",
+    "title": "Plays",
+    "summary": "One-use items: a Play takes effect in the next battle on the current floor."
+   },
+   {
+    "id": "devices",
+    "extract": "devices",
+    "kind": "item",
+    "title": "Support Devices",
+    "summary": "Devices your squad brings along and can deploy in every battle."
+   }
+  ],
+  "rogue_2": [
+   {
+    "id": "light",
+    "extract": "light",
+    "kind": "debuff",
+    "title": "Light",
+    "summary": "Light runs down as you explore. The dimmer it gets, the worse things get for your run."
+   },
+   {
+    "id": "rejections",
+    "extract": "mizukiBuffs:2",
+    "kind": "debuff",
+    "title": "Rejections",
+    "summary": "Debuffs that afflict individual operators."
+   },
+   {
+    "id": "echoes",
+    "extract": "mizukiBuffs:3",
+    "kind": "mixed",
+    "title": "Echoes",
+    "summary": "Floor-wide changes that usually trade a benefit for a cost."
+   },
+   {
+    "id": "virtues",
+    "extract": "mizukiBuffs:1",
+    "kind": "buff",
+    "title": "Virtues",
+    "summary": "Nation blessings that give your squad an edge in battle."
+   }
+  ],
+  "rogue_3": [
+   {
+    "id": "collapse",
+    "extract": "collapse",
+    "kind": "debuff",
+    "title": "Collapsal Paradigms",
+    "summary": "Collapse builds up over a run. Each threshold adds a Collapsal Paradigm, a run-wide debuff that can intensify further."
+   },
+   {
+    "id": "foldartals",
+    "extract": "foldartals",
+    "kind": "item",
+    "title": "Foldartals",
+    "summary": "Used in pairs: an upper Foldartal picks which nodes are affected, a lower one decides what happens there.",
+    "groups": { "TOTEM_UPPER": "Upper (where)", "TOTEM_LOWER": "Lower (what)" }
+   }
+  ],
+  "rogue_4": [
+   {
+    "id": "epochs",
+    "extract": "epochs",
+    "kind": "debuff",
+    "title": "Epochs",
+    "summary": "An Epoch changes battles for the rest of the run and grows worse over three stages."
+   },
+   {
+    "id": "thoughts",
+    "extract": "thoughts",
+    "kind": "item",
+    "title": "Thoughts",
+    "summary": "Usable items: some are spent for a one-off effect, others are combined with another Thought."
+   }
+  ],
+  "rogue_5": [
+   {
+    "id": "hours",
+    "extract": "hours",
+    "kind": "debuff",
+    "title": "Hours of Sui",
+    "summary": "Run-wide debuffs that escalate over four stages."
+   },
+   {
+    "id": "tongbao",
+    "extract": "tongbao",
+    "kind": "buff",
+    "title": "Tongbao",
+    "summary": "Coins you toss and keep in your Coffer. Each grants its effect while you hold it."
+   }
+  ],
+  "rogue_6": [
+   {
+    "id": "weather",
+    "extract": "weather",
+    "kind": "mixed",
+    "title": "Weather",
+    "summary": "Weather changes battles and the map, growing stronger over three stages. Most of it hurts; a little helps.",
+    "groups": { "main": "Weather", "sub": "Sub-weather" }
+   },
+   {
+    "id": "variations",
+    "extract": "variations",
+    "kind": "mixed",
+    "title": "Floor Variations",
+    "summary": "Special battle conditions that apply on some floors."
+   },
+   {
+    "id": "scrap",
+    "extract": "scrap",
+    "kind": "item",
+    "title": "Scrap",
+    "summary": "Three kinds: processed goods let you move on the map, natural objects sell for Originium Ingots, and concepts trigger when you move onto certain nodes."
+   }
+  ]
+ }
+}

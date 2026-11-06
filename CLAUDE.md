@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## What this is
 
-**Relic Index**: a searchable list of every Arknights Integrated Strategies (roguelike) relic, covering both the EN server and CN-only themes (with English translations). It's a static Next.js 16 site in `web/`. There's no backend or database.
+**Relic Index**: every Arknights Integrated Strategies (roguelike) theme with its relics and its own mechanics (buffs, debuffs, special items), in EN / JP / CN, covering CN-only themes too (with English fan translations). It's a static Next.js 16 site in `web/`. There's no backend or database.
 
 (This repo used to be ArkPulls, a gacha pull tracker with an Express/Prisma API. It was removed in favour of the relic index. The last version with it is commit `1f54551`.)
 
@@ -19,6 +19,8 @@ npm run lint
 node scripts/build-relics.mjs    # regenerate data/relics.json + icons from upstream game data
 node scripts/build-relics.mjs --skip-icons --export-untranslated   # list CN text still needing translation
 node scripts/apply-translations.mjs batch.json                       # merge a batch into data/translations.json
+node scripts/build-mechanics.mjs # regenerate data/mechanics.json + mechanic icons + theme banners
+node scripts/build-mechanics.mjs --skip-icons --export-untranslated  # list CN mechanic strings needing translation
 ```
 
 ## Data
@@ -31,9 +33,23 @@ node scripts/apply-translations.mjs batch.json                       # merge a b
 - Rarity `NORMAL/RARE/SUPER_RARE` maps to `normal/rare/superRare`. `subType` `CURSE`/`SECRET` maps to `kind`.
 - Icons are resized to 128px WebP with `sharp`. Sources, in priority order: (1) hand-placed `web/scripts/icon-overrides/<relicId>.(png|webp|jpg)`, always applied; (2) the ArknightsAssets mirror (`cn` branch, `.../ui/rogueliketopic/itempic/<relicId>.png`), which stopped before the CN-only themes; (3) PRTS, `torappu.prts.wiki/assets/roguelike_topic_itempic/<relicId>.png`, which has every CN-only relic but is hosted in China and flaky from abroad, so the script uses concurrency 3 and retries; (4) Arknights Terra Wiki (arknights.wiki.gg) `File:<EN Relic Name>.png` (colons stripped) for whatever is still missing. Phantom's 6 "Reforged" relics and 4 Playwright's Manuscripts come from the wiki. Only missing icons are fetched. `--refresh-icons` re-fetches them all, and you need it after deleting an override. `--skip-icons` fetches nothing.
 - IS numbering: `themeShort()` labels `rogue_N` as IS#(N+1), since IS#1 (Ceobe's Fungimist, CN-only) isn't in the data. So rogue_5 is IS#6 and rogue_6 is IS#7.
-- Types live in `web/lib/relics.ts`. If you change the JSON shape, update the script and the types together.
+- **Mechanics.** `scripts/build-mechanics.mjs` generates `data/mechanics.json`, icons in `public/mechanics/` and banners in `public/themes/<themeId>.webp`.
+  - `data/mechanics-config.json` is **hand-maintained**. It lists each theme's sections as `{id, extract, kind, title, summary, groups?}`. The user tunes the titles and summaries there.
+  - `extract` names an extractor in the script. Each one reads one Collection-archive tab or module: capsules, sanCheck, chaos, totems, fragments, disasters, wraths, coppers, weather, variations or scrap.
+  - `kind` is `debuff`, `buff` or `mixed` (shown on the "Buffs & Debuffs" tab), or `item` (shown on the "Special Items" tab).
+  - EN text for themes not on the EN server comes from the plain `strings` dictionary (CN string → EN) in `translations.json`. `--export-untranslated` writes untranslated strings to `data/untranslated-strings.json`.
+  - Icon sources, in order: overrides in `scripts/icon-overrides/mechanics/<entryId>.png`, then item pictures (mirror, then PRTS), then Terra Wiki file-name patterns per section (`WIKI_FILES`).
+  - Mizuki's buffs and IS#7 weather and variations have no known icon source yet.
+  - Banners come from the wiki's `CN <EN theme name> banner.png`.
+- Types live in `web/lib/relics.ts` and `web/lib/mechanics.ts`. If you change a JSON shape, update the script and the types together.
 
 ## Frontend
 
-- `app/page.tsx` is a server component that passes the bundled data to `components/RelicBrowser.tsx` (a client component). The browser reads `?theme=&q=` through `useSearchParams`, so it must stay inside the `<Suspense>` boundary in `page.tsx`.
+- **Routes.** Server pages pass each client component only the data it needs.
+  - `/`: theme cards (`HomeThemes`).
+  - `/is/[n]`: one theme, by community IS number (2–7), statically generated. `ThemeView` shows Relics, Buffs & Debuffs and Special Items tabs, selected with `?tab=`.
+  - `/relics`: all relics (`AllRelics`).
+- **Language** lives in `components/lang.tsx`. `useLang()` reads `?lang=`, then localStorage. `setUrlParams()` only touches the params a component owns.
+- Everything that uses `useSearchParams` must stay inside the page's `<Suspense>` boundary.
+- Game text switches language. UI chrome (tabs, section titles, summaries) is English only.
 - Colors are CSS custom properties in `web/app/globals.css`, with light and dark variants via `prefers-color-scheme`. Rarity accents are `--rarity-{normal,rare,superRare}` and `--relic-curse`. Always pair them with a text label, never color alone.
