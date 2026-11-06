@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useSearchParams } from "next/navigation";
-import { LangSwitch, htmlLang, setUrlParams, useLang } from "@/components/lang";
+import { htmlLang, setUrlParams, useLang } from "@/components/lang";
 import { MechanicList } from "@/components/MechanicList";
 import { RelicBrowser } from "@/components/RelicBrowser";
 import { MechanicSection } from "@/lib/mechanics";
@@ -27,7 +27,7 @@ export function ThemeView({
   banner: boolean;
 }) {
   const theme = data.themes[0];
-  const [lang, setLang] = useLang();
+  const [lang] = useLang();
   const params = useSearchParams();
   const [tab, setTabState] = useState<Tab>(() => {
     const t = params.get("tab");
@@ -81,7 +81,6 @@ export function ThemeView({
               {theme.enNameOfficial === false && " · English name unofficial"}
             </p>
           </div>
-          <LangSwitch lang={lang} onChange={setLang} />
         </div>
       </header>
 

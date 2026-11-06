@@ -1,16 +1,11 @@
 "use client";
 
-import { LangSwitch, useLang } from "@/components/lang";
+import { useLang } from "@/components/lang";
 import { RelicBrowser } from "@/components/RelicBrowser";
 import { RelicData } from "@/lib/relics";
 
-/** /is/relics: every theme's relics in one searchable list. */
+/** /is/relics: every theme's relics in one searchable list (language comes from the top bar). */
 export function AllRelics({ data }: { data: RelicData }) {
-  const [lang, setLang] = useLang();
-  return (
-    <div className="flex flex-col gap-6">
-      <LangSwitch lang={lang} onChange={setLang} />
-      <RelicBrowser data={data} lang={lang} />
-    </div>
-  );
+  const [lang] = useLang();
+  return <RelicBrowser data={data} lang={lang} />;
 }

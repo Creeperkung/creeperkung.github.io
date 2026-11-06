@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { LangSwitch, htmlLang, useLang, withLang } from "@/components/lang";
+import { htmlLang, useLang, withLang } from "@/components/lang";
 import { Theme, themeHref, themeName, themeShort } from "@/lib/relics";
 
 export interface ThemeSummary {
@@ -14,14 +14,13 @@ export interface ThemeSummary {
 
 /** Home page: one clickable card per IS theme, newest first. */
 export function HomeThemes({ summaries }: { summaries: ThemeSummary[] }) {
-  const [lang, setLang] = useLang();
+  const [lang] = useLang();
   return (
     <div className="flex flex-col gap-6">
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <LangSwitch lang={lang} onChange={setLang} />
+      <div className="flex flex-wrap items-center justify-end gap-3">
         <Link
           href={withLang("/is/relics", lang)}
-          className="rounded-lg border border-[var(--border)] px-3 py-1.5 text-sm font-medium text-[var(--ink-2)] hover:border-[var(--ink-2)]"
+          className="rounded-sm border border-[var(--border)] px-3 py-1.5 font-mono text-xs font-semibold uppercase tracking-widest text-[var(--ink-2)] hover:border-[var(--series-1)] hover:text-[var(--series-1)]"
         >
           Search all relics →
         </Link>

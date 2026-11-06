@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Geist, Geist_Mono } from "next/font/google";
-import { THEME_INIT_SCRIPT, ThemeSwitch } from "@/components/theme";
+import { LangSelect } from "@/components/lang";
+import { THEME_INIT_SCRIPT, ThemeToggle } from "@/components/theme";
 import { MODES } from "@/lib/modes";
 import { relicData } from "@/lib/relics";
 import "./globals.css";
@@ -50,7 +51,10 @@ export default function RootLayout({
                 {m.name}
               </Link>
             ))}
-            <ThemeSwitch />
+            <div className="ml-auto flex items-center gap-2">
+              <LangSelect />
+              <ThemeToggle />
+            </div>
           </nav>
           <div className="ak-stripes" aria-hidden />
         </div>
