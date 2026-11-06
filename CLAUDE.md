@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## What this is
 
-**Relic Index**: every Arknights Integrated Strategies (roguelike) theme with its relics and its own mechanics (buffs, debuffs, special items), in EN / JP / CN, covering CN-only themes too (with English fan translations). It's a static Next.js 16 site in `web/`. There's no backend or database.
+**Rosmontis** (the site's name; formerly "Relic Index"): reference pages for Arknights game modes, in EN / JP / CN. The first mode is Integrated Strategies (roguelike): every theme with its relics and its own mechanics (buffs, debuffs, special items), CN-only themes included (with English fan translations). Stronghold Protocol is a placeholder. It's a static Next.js 16 site in `web/`. There's no backend or database. The site icon (`web/app/icon.png`, `apple-icon.png`) is Rosmontis's default in-game avatar (`char_391_rosmon`) from the ArknightsAssets mirror.
 
 (This repo used to be ArkPulls, a gacha pull tracker with an Express/Prisma API. It was removed in favour of the relic index. The last version with it is commit `1f54551`.)
 

@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Crumbs } from "@/components/Crumbs";
 
 export const metadata: Metadata = {
-  title: "Stronghold Protocol — Relic Index",
+  title: "Stronghold Protocol — Rosmontis",
   description: "Arknights Stronghold Protocol: coming soon",
 };
 

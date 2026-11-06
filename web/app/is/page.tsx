@@ -6,7 +6,7 @@ import { mechanicData } from "@/lib/mechanics";
 import { relicData } from "@/lib/relics";
 
 export const metadata: Metadata = {
-  title: "Integrated Strategies — Relic Index",
+  title: "Integrated Strategies — Rosmontis",
   description: "Every Arknights Integrated Strategies theme: relics, buffs, debuffs and special mechanic items",
 };
 

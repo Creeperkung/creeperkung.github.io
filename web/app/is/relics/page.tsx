@@ -5,7 +5,7 @@ import { Crumbs } from "@/components/Crumbs";
 import { relicData } from "@/lib/relics";
 
 export const metadata: Metadata = {
-  title: "All Relics — Relic Index",
+  title: "All Relics — Rosmontis",
   description: "Search every Arknights Integrated Strategies relic across all themes",
 };
 

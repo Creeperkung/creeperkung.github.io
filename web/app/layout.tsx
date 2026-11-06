@@ -16,7 +16,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Relic Index — Arknights",
+  title: "Rosmontis — Arknights",
   description: "Reference pages for Arknights game modes, in English, Japanese and Chinese",
 };
 
@@ -34,7 +34,7 @@ export default function RootLayout({
               {/* the site icon (app/icon.png), served by Next at /icon.png */}
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img src="/icon.png" alt="" width={28} height={28} className="rounded-md" />
-              Relic Index
+              Rosmontis
             </Link>
             {MODES.map((m) => (
               <Link key={m.id} href={m.href} className="text-[var(--ink-2)] hover:text-[var(--ink)]">

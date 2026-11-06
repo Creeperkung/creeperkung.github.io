@@ -6,7 +6,7 @@ export default function Home() {
     <>
       <header className="flex flex-col gap-2">
         <p className="font-mono text-xs uppercase tracking-widest text-[var(--muted)]">Arknights</p>
-        <h1 className="text-3xl font-bold tracking-tight">Relic Index</h1>
+        <h1 className="text-3xl font-bold tracking-tight">Rosmontis</h1>
         <p className="max-w-2xl text-[var(--ink-2)]">
           Reference pages for Arknights game modes, in English, Japanese and Chinese. Pick a mode to start.
         </p>

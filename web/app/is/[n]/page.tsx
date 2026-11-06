@@ -16,7 +16,7 @@ const themeFor = (n: string) => relicData.themes.find((t) => t.id === themeIdFro
 
 export async function generateMetadata({ params }: PageProps<"/is/[n]">): Promise<Metadata> {
   const theme = themeFor((await params).n);
-  return theme ? { title: `${themeShort(theme.id)} ${theme.names.en} — Relic Index` } : {};
+  return theme ? { title: `${themeShort(theme.id)} ${theme.names.en} — Rosmontis` } : {};
 }
 
 export default async function ThemePage({ params }: PageProps<"/is/[n]">) {
