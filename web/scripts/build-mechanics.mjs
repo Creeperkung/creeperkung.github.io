@@ -25,6 +25,7 @@ const MIRROR_ITEMPIC =
   "https://raw.githubusercontent.com/ArknightsAssets/ArknightsAssets/cn/assets/torappu/dynamicassets/arts/ui/rogueliketopic/itempic";
 const PRTS_ITEMPIC = "https://torappu.prts.wiki/assets/roguelike_topic_itempic";
 const WIKI_API = "https://arknights.wiki.gg/api.php";
+const PRTS_API = "https://prts.wiki/api.php";
 const UA = { "User-Agent": "relic-index-build-script/1.0" };
 
 const DATA_DIR = new URL("../data/", import.meta.url);
@@ -289,9 +290,23 @@ const WIKI_FILES = {
   thoughts: (e) => [`Thought-${strip(e.text.en.name)}.png`, `${strip(e.text.en.name)}.png`],
   epochs: (e) => [`Epoch-${strip(e.text.en.name)}.png`],
   // EN names carry a luck prefix ("Risk-West Stones"); wiki files don't
-  tongbao: (e) => [strip(e.text.en.name), strip(e.text.en.name).replace(/^[A-Za-z]{2,6}-/, "")].map((n) => `Tongbao-${n}.png`),
+  // EN names carry a luck prefix ("Risk-West Stones"); wiki files don't; "YAN" is "Yan" there
+  tongbao: (e) => {
+    const n = strip(e.text.en.name).replace(/^[A-Za-z]{2,6}-/, "");
+    return [strip(e.text.en.name), n, n.replace(/\b([A-Z])([A-Z]+)\b/g, (_, a, b) => a + b.toLowerCase())].map((x) => `Tongbao-${x}.png`);
+  },
   mizukiBuffs: (e) => [`${strip(e.text.en.name)}.png`],
   hours: (e) => [`Hour of Sui-${strip(e.text.en.name)}.png`],
+};
+
+// PRTS (prts.wiki) file names, for what neither item pictures nor the Terra Wiki have.
+// (e, i) = entry and its 1-based position in the section; the Mizuki files are numbered
+// in Collection-archive order (checked against 水月与深蓝之树/深蓝记录仪).
+const MIZUKI_PRTS = { 1: "启示", 2: "排异", 3: "回响" }; // virtues, rejections, echoes; light levels have no icon
+const PRTS_FILES = {
+  mizukiBuffs: (e, i, group) => (MIZUKI_PRTS[group] ? [`集成战略 3 ${MIZUKI_PRTS[group]} ${i}.png`] : []),
+  weather: (e) => [`沉沦者的黑流树海 乌托邦幸福论 ${e.text.zh.name}.png`],
+  variations: (e) => [`沉沦者的黑流树海 乌托邦幸福论 ${e.text.zh.name}.png`],
 };
 
 // ---------------------------------------------------------------------------
@@ -366,7 +381,10 @@ for (const [themeId, sections] of Object.entries(config.themes)) {
       kind: sec.kind,
       summary: sec.summary ?? null,
       ...(groups && { groups }),
-      entries: entries.map((e) => ({ ...e, _wiki: WIKI_FILES[sec.extract.split(":")[0]]?.(e) ?? [] })),
+      entries: entries.map((e, i) => {
+        const [kind, arg] = sec.extract.split(":");
+        return { ...e, _wiki: WIKI_FILES[kind]?.(e) ?? [], _prts: PRTS_FILES[kind]?.(e, i + 1, Number(arg)) ?? [] };
+      }),
     });
   }
 }
@@ -413,7 +431,7 @@ async function pool(items, fn, width = 6) {
   }));
 }
 
-async function wikiUrls(files) {
+async function wikiUrls(files, api = WIKI_API) {
   const out = new Map();
   for (let i = 0; i < files.length; i += 50) {
     const batch = files.slice(i, i + 50);
@@ -421,7 +439,7 @@ async function wikiUrls(files) {
       action: "query", prop: "imageinfo", iiprop: "url", format: "json",
       titles: batch.map((f) => `File:${f}`).join("|"),
     });
-    const body = await get(`${WIKI_API}?${qs}`);
+    const body = await get(`${api}?${qs}`, 4, 60_000);
     if (!body) continue;
     const q = JSON.parse(body.toString()).query ?? {};
     const norm = new Map((q.normalized ?? []).map((n) => [n.from, n.to]));
@@ -473,6 +491,17 @@ if (!flag("--skip-icons")) {
     Object.assign(e, { icon: true, _done: true });
     await sleep(200);
   }
+  // 4. PRTS wiki files
+  const wantP = todo().filter((e) => e._prts.length);
+  const pUrls = await wikiUrls([...new Set(wantP.flatMap((e) => e._prts))], PRTS_API);
+  for (const e of wantP) {
+    const file = e._prts.find((f) => pUrls.has(f));
+    const img = file && (await get(pUrls.get(file), 4, 60_000));
+    if (!img) continue;
+    await writeIcon(iconUrl(e.id), img);
+    Object.assign(e, { icon: true, _done: true });
+    await sleep(200);
+  }
 
   // Theme banners (Terra Wiki: "CN <EN theme name> banner.png")
   const relics = JSON.parse(await readFile(new URL("relics.json", DATA_DIR), "utf8"));
@@ -497,6 +526,7 @@ for (const id of Object.keys(themes)) banners[id] = await exists(new URL(`${id}.
 
 for (const e of all) {
   delete e._wiki;
+  delete e._prts;
   delete e._done;
   delete e._override;
   delete e.iconId;

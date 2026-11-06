@@ -38,8 +38,8 @@ node scripts/build-mechanics.mjs --skip-icons --export-untranslated  # list CN m
   - `extract` names an extractor in the script. Each one reads one Collection-archive tab or module: capsules, sanCheck, chaos, totems, fragments, disasters, wraths, coppers, weather, variations or scrap.
   - `kind` is `debuff`, `buff` or `mixed` (shown on the "Buffs & Debuffs" tab), or `item` (shown on the "Special Items" tab).
   - EN text for themes not on the EN server comes from the plain `strings` dictionary (CN string → EN) in `translations.json`. `--export-untranslated` writes untranslated strings to `data/untranslated-strings.json`.
-  - Icon sources, in order: overrides in `scripts/icon-overrides/mechanics/<entryId>.png`, then item pictures (mirror, then PRTS), then Terra Wiki file-name patterns per section (`WIKI_FILES`).
-  - Mizuki's buffs and IS#7 weather and variations have no known icon source yet.
+  - Icon sources, in order: overrides in `scripts/icon-overrides/mechanics/<entryId>.png`, then item pictures (mirror, then PRTS), then Terra Wiki file-name patterns per section (`WIKI_FILES`), then PRTS wiki file names (`PRTS_FILES`: Mizuki's 启示/排异/回响 numbered in archive order, IS#7 `沉沦者的黑流树海 乌托邦幸福论 <CN name>.png`). prts.wiki often times out from abroad; just rerun.
+  - Mizuki's 4 Light levels have no icon in the game, so they keep the letter placeholder.
   - Banners come from the wiki's `CN <EN theme name> banner.png`.
 - Types live in `web/lib/relics.ts` and `web/lib/mechanics.ts`. If you change a JSON shape, update the script and the types together.
 
