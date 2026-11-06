@@ -13,7 +13,7 @@ export default function Home() {
         <p className="max-w-2xl text-[var(--ink-2)]">
           Every collectible relic from all {relicData.themes.length} Integrated Strategies themes (
           {relicData.relics.length} total), including themes so far only on the CN server, with
-          effects, descriptions and unlock conditions. Search in English or Chinese and filter by
+          effects, descriptions and unlock conditions in English, Japanese and Chinese. Filter by
           theme, rarity and type.
         </p>
       </header>
@@ -23,13 +23,9 @@ export default function Home() {
       </Suspense>
 
       <footer className="border-t border-[var(--border)] pt-4 text-xs text-[var(--muted)]">
-        Data from the EN and CN game clients ({relicData.generatedAt}) via{" "}
-        <a className="underline" href="https://github.com/Kengxxiao/ArknightsGameData_YoStar">
-          ArknightsGameData_YoStar
-        </a>{" "}
-        and{" "}
-        <a className="underline" href="https://github.com/Kengxxiao/ArknightsGameData">
-          ArknightsGameData
+        Data from the EN, JP and CN game clients ({relicData.generatedAt}) via{" "}
+        <a className="underline" href="https://github.com/ArknightsAssets/ArknightsGamedata">
+          ArknightsGamedata
         </a>
         ; icons via ArknightsAssets,{" "}
         <a className="underline" href="https://prts.wiki">

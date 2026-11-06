@@ -1,10 +1,13 @@
 // Regenerates web/data/relics.json from the public game-data dumps, and fetches
 // relic icons into web/public/relics/<id>.webp.
 //
-// Text: themes on the EN server use official EN text (plus the CN name, for search).
-// CN-only themes use CN data; each field is the official EN string when the exact
-// same CN string exists in an EN theme (reprinted relics), else the fan translation
-// in data/translations.json, else the untranslated Chinese.
+// Text, per relic, in three languages (en / ja / zh):
+//   zh  always (CN is a superset of the other servers)
+//   ja  official JP text, for themes on the JP server
+//   en  official EN text for themes on the EN server. For CN-only themes each field is
+//       the official EN string when the exact same CN string exists in an EN theme
+//       (reprinted relics), else the fan translation in data/translations.json, else
+//       the untranslated Chinese (and `tl` says which).
 //
 // Icon sources, in priority order:
 //   1. scripts/icon-overrides/<id>.(png|webp|jpg)  — hand-placed, always applied
@@ -12,20 +15,22 @@
 //   3. PRTS (torappu.prts.wiki)                    — by relic id; has CN-only themes
 //   4. Arknights Terra Wiki (arknights.wiki.gg)    — by EN relic name
 //
-// Usage: node scripts/build-relics.mjs [--en=file.json] [--cn=file.json]
+// Usage: node scripts/build-relics.mjs [--en=file.json] [--ja=file.json] [--cn=file.json]
 //                                      [--skip-icons] [--refresh-icons] [--export-untranslated]
-//   --en / --cn             local copies of roguelike_topic_table.json (EN / CN)
+//                                      [--prune-translations]
+//   --en / --ja / --cn      local copies of roguelike_topic_table.json
 //   --skip-icons            don't fetch anything; `icon` flags reflect files already on disk
 //   --refresh-icons         re-download icons that already exist
-//   --export-untranslated   write data/untranslated.json: CN strings with no translation yet
+//   --export-untranslated   write data/untranslated.json: CN strings with no EN text yet
+//   --prune-translations    drop fan translations no relic uses any more
 import { readFile, writeFile, mkdir, access, readdir } from "node:fs/promises";
 import { fileURLToPath } from "node:url";
 import sharp from "sharp";
 
-const SOURCE =
-  "https://raw.githubusercontent.com/Kengxxiao/ArknightsGameData_YoStar/main/en_US/gamedata/excel/roguelike_topic_table.json";
-const SOURCE_CN =
-  "https://raw.githubusercontent.com/Kengxxiao/ArknightsGameData/master/zh_CN/gamedata/excel/roguelike_topic_table.json";
+// ArknightsAssets/ArknightsGamedata: every server, updated automatically from the game clients.
+const GAMEDATA = "https://raw.githubusercontent.com/ArknightsAssets/ArknightsGamedata/master";
+const TABLE = "gamedata/excel/roguelike_topic_table.json";
+const SOURCES = { en: `${GAMEDATA}/en/${TABLE}`, ja: `${GAMEDATA}/jp/${TABLE}`, zh: `${GAMEDATA}/cn/${TABLE}` };
 
 const ICON_SOURCE =
   "https://raw.githubusercontent.com/ArknightsAssets/ArknightsAssets/cn/assets/torappu/dynamicassets/arts/ui/rogueliketopic/itempic";
@@ -48,10 +53,17 @@ async function load(local, url) {
   return res.json();
 }
 
-const clean = (s) => (s ?? "").replace(/\\n/g, "\n").trim();
+// also strips rich-text tags like <@ba.vup>…</> in case a server leaves them in
+const clean = (s) => (s ?? "").replace(/\\n/g, "\n").replace(/<[@$/][^>]*>/g, "").trim();
 const kindOf = (item) => (item.subType === "CURSE" ? "curse" : item.subType === "SECRET" ? "secret" : "standard");
+const textOf = (item) =>
+  Object.fromEntries(Object.entries(FIELDS).map(([f, ours]) => [ours, clean(item?.[f]) || null]));
 
-const [en, cn] = await Promise.all([load(opt("en"), SOURCE), load(opt("cn"), SOURCE_CN)]);
+const [en, ja, cn] = await Promise.all([
+  load(opt("en"), SOURCES.en),
+  load(opt("ja"), SOURCES.ja),
+  load(opt("cn"), SOURCES.zh),
+]);
 const translations = JSON.parse(
   await readFile(new URL("translations.json", DATA_DIR), "utf8").catch(() => '{"themes":{},"relics":{}}')
 );
@@ -72,6 +84,7 @@ for (const [themeId, enDetail] of Object.entries(en.details)) {
 const fan = Object.fromEntries(Object.values(FIELDS).map((f) => [f, new Map()]));
 for (const tl of Object.values(translations.relics ?? {}))
   for (const f of Object.values(FIELDS)) if (tl[f] && tl.src?.[f]) fan[f].set(tl.src[f], tl[f]);
+const usedFan = new Set();
 
 const archiveOf = (detail) =>
   Object.values(detail?.archiveComp?.relic?.relic ?? {}).filter((e) => detail.items[e.relicId]?.type === "RELIC");
@@ -80,71 +93,76 @@ const themes = [];
 const relics = [];
 const untranslated = {};
 
-// CN is a superset of EN; iterate it so CN-only themes are included.
+// CN is a superset of the other servers; iterate it so CN-only themes are included.
 for (const [themeId, cnTopic] of Object.entries(cn.topics)) {
   const cnDetail = cn.details[themeId];
   const enDetail = en.details[themeId];
-  const cnOnly = !enDetail;
+  const jaDetail = ja.details[themeId];
   const tName = translations.themes?.[themeId];
   themes.push({
     id: themeId,
-    name: cnOnly ? tName?.name ?? cnTopic.name : en.topics[themeId].name,
-    nameZh: cnTopic.name,
-    cnOnly,
-    ...(cnOnly && { nameOfficial: Boolean(tName?.official) }),
+    names: {
+      en: enDetail ? en.topics[themeId].name : tName?.name ?? cnTopic.name,
+      ...(jaDetail && { ja: ja.topics[themeId].name }),
+      zh: cnTopic.name,
+    },
+    servers: ["zh", ...(jaDetail ? ["ja"] : []), ...(enDetail ? ["en"] : [])],
+    ...(!enDetail && { enNameOfficial: Boolean(tName?.official) }),
   });
 
   // The in-game Collection archive is the canonical list and numbering;
   // items missing from it are internal/event-only entries.
-  const detail = enDetail ?? cnDetail;
-  for (const entry of archiveOf(detail)) {
-    const item = detail.items[entry.relicId];
-    const cnItem = cnDetail?.items[entry.relicId];
-    const relic = {
-      id: item.id,
+  for (const entry of archiveOf(cnDetail)) {
+    const id = entry.relicId;
+    const item = cnDetail.items[id];
+    const zh = textOf(item);
+    let enText;
+    if (enDetail?.items[id]) {
+      enText = textOf(enDetail.items[id]);
+    } else {
+      // tl: "fan" (some fields are fan translations) or "partial" (some are still Chinese)
+      let tl = null;
+      enText = {};
+      for (const [f, ours] of Object.entries(FIELDS)) {
+        const src = zh[ours];
+        if (!src) {
+          enText[ours] = null;
+        } else if (official[f].has(src)) {
+          enText[ours] = official[f].get(src);
+        } else if (fan[ours].has(src)) {
+          enText[ours] = fan[ours].get(src);
+          usedFan.add(`${ours}\0${src}`);
+          tl ??= "fan";
+        } else {
+          enText[ours] = src;
+          tl = "partial";
+          (untranslated[id] ??= { theme: themeId })[ours] = src;
+        }
+      }
+      if (tl) enText.tl = tl;
+    }
+    relics.push({
+      id,
       theme: themeId,
       no: Number(entry.orderId),
       rarity: RARITY[item.rarity] ?? "normal",
       kind: kindOf(item),
       special: Boolean(entry.isSpRelic),
-    };
-    if (!cnOnly) {
-      for (const [f, ours] of Object.entries(FIELDS)) relic[ours] = clean(item[f]) || null;
-      if (cnItem) relic.nameZh = clean(cnItem.name);
-    } else {
-      // translation: "official" (every field reuses official EN text), "fan", or
-      // "partial" (some fields are still Chinese)
-      let status = "official";
-      const zh = {};
-      for (const [f, ours] of Object.entries(FIELDS)) {
-        const src = clean(item[f]);
-        zh[ours] = src || null;
-        if (!src) {
-          relic[ours] = null;
-          continue;
-        }
-        const off = official[f].get(src);
-        if (off) {
-          relic[ours] = off;
-          continue;
-        }
-        // a fan translation only counts if it was made from this exact source text
-        const fanText = fan[ours].get(src);
-        if (fanText) {
-          relic[ours] = fanText;
-          if (status === "official") status = "fan";
-          continue;
-        }
-        relic[ours] = src;
-        status = "partial";
-        (untranslated[item.id] ??= { theme: themeId })[ours] = src;
-      }
-      relic.nameZh = zh.name;
-      relic.zh = zh;
-      relic.translation = status;
-    }
-    relics.push(relic);
+      text: { en: enText, ...(jaDetail?.items[id] && { ja: textOf(jaDetail.items[id]) }), zh },
+    });
   }
+}
+
+// Fan translations that no relic uses any more (official text exists now, or the CN text changed).
+const staleIds = Object.entries(translations.relics ?? {})
+  .filter(([, tl]) => !Object.values(FIELDS).some((f) => tl.src?.[f] && usedFan.has(`${f}\0${tl.src[f]}`)))
+  .map(([id]) => id);
+if (staleIds.length)
+  console.log(`${staleIds.length} fan translation(s) in data/translations.json are unused (--prune-translations removes them)`);
+if (flag("--prune-translations") && staleIds.length) {
+  for (const id of staleIds) delete translations.relics[id];
+  await writeFile(new URL("translations.json", DATA_DIR), JSON.stringify(translations, null, 1) + "\n");
+  console.log(`pruned ${staleIds.length} unused fan translation(s)`);
 }
 
 relics.sort((a, b) => a.theme.localeCompare(b.theme) || a.no - b.no);
@@ -248,7 +266,7 @@ async function fromWiki(missing) {
     const batch = missing.slice(i, i + 50);
     const qs = new URLSearchParams({
       action: "query", prop: "imageinfo", iiprop: "url", format: "json",
-      titles: batch.map((r) => wikiTitle(r.name)).join("|"),
+      titles: batch.map((r) => wikiTitle(r.text.en.name)).join("|"),
     });
     const body = await download(`${WIKI_API}?${qs}`, { headers: WIKI_HEADERS });
     if (!body) continue;
@@ -260,14 +278,14 @@ async function fromWiki(missing) {
         .map((p) => [p.title, p.imageinfo[0].url])
     );
     for (const r of batch) {
-      const t = wikiTitle(r.name);
+      const t = wikiTitle(r.text.en.name);
       const url = urlByTitle.get(norm.get(t) ?? t);
       if (!url) continue;
       const img = await download(url, { headers: WIKI_HEADERS });
       if (!img) continue;
       await writeIcon(r.id, img);
       r.icon = true;
-      console.log(`icon from wiki.gg: ${r.id} (${r.name})`);
+      console.log(`icon from wiki.gg: ${r.id} (${r.text.en.name})`);
       await sleep(250); // be polite to the wiki
     }
   }
@@ -304,7 +322,7 @@ if (!flag("--skip-icons")) {
     );
   }
   // wiki.gg is looked up by EN name, so skip relics whose name is still Chinese
-  const stillMissing = relics.filter((r) => !r.icon && r.name !== r.nameZh);
+  const stillMissing = relics.filter((r) => !r.icon && r.text.en.tl !== "partial");
   if (stillMissing.length) await fromWiki(stillMissing);
 }
 
@@ -312,14 +330,14 @@ for (const r of relics) delete r.overridden;
 const noIcon = relics.filter((r) => !r.icon);
 if (noIcon.length && !flag("--skip-icons")) {
   console.log(`no icon found for ${noIcon.length} relic(s) — drop an image in scripts/icon-overrides/<id>.png:`);
-  for (const r of noIcon.slice(0, 25)) console.log(`  ${r.id}  ${r.name}`);
+  for (const r of noIcon.slice(0, 25)) console.log(`  ${r.id}  ${r.text.en.name}`);
   if (noIcon.length > 25) console.log(`  …and ${noIcon.length - 25} more`);
 }
 
 await mkdir(new URL("../data/", import.meta.url), { recursive: true });
 await writeFile(
   new URL("../data/relics.json", import.meta.url),
-  JSON.stringify({ source: SOURCE, sourceCn: SOURCE_CN, generatedAt: new Date().toISOString().slice(0, 10), themes, relics })
+  JSON.stringify({ sources: SOURCES, generatedAt: new Date().toISOString().slice(0, 10), themes, relics })
 );
 console.log(
   `${themes.length} themes, ${relics.length} relics, ${relics.filter((r) => r.icon).length} with icons`

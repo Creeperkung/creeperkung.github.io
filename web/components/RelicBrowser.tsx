@@ -3,17 +3,36 @@
 import { useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import {
+  LANGS,
+  Lang,
   RARITY_LABEL,
   Rarity,
   Relic,
   RelicData,
   RelicKind,
+  relicText,
+  themeName,
   themeShort,
 } from "@/lib/relics";
 
 type Sort = "no" | "name" | "rarity";
 const RARITIES: Rarity[] = ["normal", "rare", "superRare"];
 const RARITY_RANK: Record<Rarity, number> = { normal: 0, rare: 1, superRare: 2 };
+const LANG_KEY = "relic-index:lang";
+const isLang = (x: unknown): x is Lang => LANGS.some((l) => l.id === x);
+const htmlLang = (l: Lang) => LANGS.find((x) => x.id === l)!.htmlLang;
+
+/** Language from ?lang=, else the last one this browser picked, else English. */
+function initialLang(param: string | null): Lang {
+  if (isLang(param)) return param;
+  try {
+    const saved = window.localStorage.getItem(LANG_KEY);
+    if (isLang(saved)) return saved;
+  } catch {
+    // storage blocked: fall through
+  }
+  return "en";
+}
 
 const chip = (active: boolean) =>
   `rounded-full border px-3 py-1 text-sm transition-colors ${
@@ -24,13 +43,14 @@ const chip = (active: boolean) =>
 
 export function RelicBrowser({ data }: { data: RelicData }) {
   const newest = data.themes[data.themes.length - 1]?.id ?? "all";
-  // Shareable state: ?theme=rogue_2&q=shield (rendered client-side under <Suspense>)
+  // Shareable state: ?theme=rogue_2&q=shield&lang=ja (rendered client-side under <Suspense>)
   const params = useSearchParams();
   const [theme, setTheme] = useState<string>(() => {
     const t = params.get("theme");
     return t && (t === "all" || data.themes.some((x) => x.id === t)) ? t : newest;
   });
   const [query, setQuery] = useState(() => params.get("q") ?? "");
+  const [lang, setLang] = useState<Lang>(() => initialLang(params.get("lang")));
   const [rarities, setRarities] = useState<Set<Rarity>>(new Set());
   const [kind, setKind] = useState<RelicKind | "any">("any");
   const [sort, setSort] = useState<Sort>("no");
@@ -39,14 +59,21 @@ export function RelicBrowser({ data }: { data: RelicData }) {
     const p = new URLSearchParams();
     if (theme !== newest) p.set("theme", theme);
     if (query) p.set("q", query);
+    if (lang !== "en") p.set("lang", lang);
     const qs = p.toString();
     window.history.replaceState(null, "", qs ? `?${qs}` : window.location.pathname);
-  }, [theme, query, newest]);
+  }, [theme, query, lang, newest]);
 
-  const themeName = useMemo(
-    () => Object.fromEntries(data.themes.map((t) => [t.id, t.name])),
-    [data.themes]
-  );
+  function pickLang(l: Lang) {
+    setLang(l);
+    try {
+      window.localStorage.setItem(LANG_KEY, l);
+    } catch {
+      // storage blocked: the choice still lives in the URL
+    }
+  }
+
+  const currentTheme = data.themes.find((t) => t.id === theme);
 
   const inTheme = useMemo(
     () => (theme === "all" ? data.relics : data.relics.filter((r) => r.theme === theme)),
@@ -61,11 +88,13 @@ export function RelicBrowser({ data }: { data: RelicData }) {
         (kind === "any" || r.kind === kind) &&
         (!q || searchText(r).includes(q))
     );
-    if (sort === "name") out.sort((a, b) => a.name.localeCompare(b.name));
-    else if (sort === "rarity")
+    if (sort === "name") {
+      const name = (r: Relic) => relicText(r, lang).text.name;
+      out.sort((a, b) => name(a).localeCompare(name(b), htmlLang(lang)));
+    } else if (sort === "rarity")
       out.sort((a, b) => RARITY_RANK[b.rarity] - RARITY_RANK[a.rarity] || a.no - b.no);
     return out;
-  }, [inTheme, query, rarities, kind, sort]);
+  }, [inTheme, query, rarities, kind, sort, lang]);
 
   const kindsInTheme = useMemo(() => new Set(inTheme.map((r) => r.kind)), [inTheme]);
 
@@ -80,6 +109,27 @@ export function RelicBrowser({ data }: { data: RelicData }) {
 
   return (
     <div className="flex flex-col gap-6">
+      <div className="flex flex-wrap items-center gap-2" role="group" aria-label="Relic text language">
+        <span className="mr-1 text-xs uppercase tracking-wide text-[var(--muted)]">Language</span>
+        <div className="inline-flex overflow-hidden rounded-lg border border-[var(--border)]">
+          {LANGS.map((l) => (
+            <button
+              key={l.id}
+              onClick={() => pickLang(l.id)}
+              title={l.title}
+              aria-pressed={lang === l.id}
+              className={`px-3 py-1.5 text-sm font-medium transition-colors ${
+                lang === l.id
+                  ? "bg-[var(--ink)] text-[var(--page)]"
+                  : "text-[var(--ink-2)] hover:bg-[var(--surface-1)]"
+              }`}
+            >
+              {l.label}
+            </button>
+          ))}
+        </div>
+      </div>
+
       <nav aria-label="Integrated Strategies theme" className="flex flex-wrap gap-2">
         {data.themes.map((t) => (
           <button
@@ -94,18 +144,17 @@ export function RelicBrowser({ data }: { data: RelicData }) {
           >
             <span className="flex items-center gap-1.5 font-mono text-xs text-[var(--muted)]">
               {themeShort(t.id)}
-              {t.cnOnly && (
+              {!t.servers.includes("en") && (
                 <span
                   className="rounded border border-[var(--border)] px-1 text-[10px] font-semibold text-[var(--ink-2)]"
                   title="Only released on the CN server so far"
                 >
-                  CN
+                  CN only
                 </span>
               )}
             </span>
-            <span className="block text-sm font-medium">{t.name}</span>
-            <span className="block text-xs text-[var(--muted)]" lang="zh-CN">
-              {t.nameZh}
+            <span className="block text-sm font-medium" lang={htmlLang(t.names[lang] ? lang : "en")}>
+              {themeName(t, lang)}
             </span>
           </button>
         ))}
@@ -127,7 +176,7 @@ export function RelicBrowser({ data }: { data: RelicData }) {
           type="search"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
-          placeholder="Search in English or 中文: name, effect, description… (e.g. “ATK”, “Hope”, “希望”)"
+          placeholder="Search names, effects and unlock conditions in English, 日本語 or 中文 (e.g. “ATK”, “Hope”, “希望”)"
           className="w-full rounded-lg border border-[var(--border)] bg-[var(--page)] px-3 py-2 outline-none focus:border-[var(--series-1)]"
           aria-label="Search relics"
         />
@@ -167,7 +216,7 @@ export function RelicBrowser({ data }: { data: RelicData }) {
 
       <p className="text-sm text-[var(--ink-2)]" aria-live="polite">
         Showing <strong className="text-[var(--ink)]">{visible.length}</strong> of {inTheme.length} relics
-        {theme !== "all" && <> in {themeName[theme]}</>}
+        {currentTheme && <> in {themeName(currentTheme, lang)}</>}
       </p>
 
       {visible.length === 0 ? (
@@ -177,7 +226,7 @@ export function RelicBrowser({ data }: { data: RelicData }) {
       ) : (
         <ul className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
           {visible.map((r) => (
-            <RelicCard key={r.id} relic={r} showTheme={theme === "all"} />
+            <RelicCard key={r.id} relic={r} lang={lang} showTheme={theme === "all"} />
           ))}
         </ul>
       )}
@@ -185,12 +234,14 @@ export function RelicBrowser({ data }: { data: RelicData }) {
   );
 }
 
-// Lowercased EN + CN text for search, cached per relic.
+// Lowercased name, effect and unlock condition in every language, cached per relic.
+// The flavor text (the grey description) is left out on purpose: it matches too loosely.
 const searchCache = new WeakMap<Relic, string>();
 function searchText(r: Relic) {
   let s = searchCache.get(r);
   if (s === undefined) {
-    s = [r.name, r.effect, r.flavor, r.unlock, r.nameZh, r.zh?.effect, r.zh?.flavor, r.zh?.unlock]
+    s = Object.values(r.text)
+      .flatMap((t) => (t ? [t.name, t.effect, t.unlock] : []))
       .filter(Boolean)
       .join("\n")
       .toLowerCase();
@@ -199,11 +250,10 @@ function searchText(r: Relic) {
   return s;
 }
 
-function RelicCard({ relic: r, showTheme }: { relic: Relic; showTheme: boolean }) {
+function RelicCard({ relic: r, lang, showTheme }: { relic: Relic; lang: Lang; showTheme: boolean }) {
   const accent = r.kind === "curse" ? "var(--relic-curse)" : `var(--rarity-${r.rarity})`;
-  const [showOriginal, setShowOriginal] = useState(false);
-  const text = showOriginal && r.zh ? r.zh : r;
-  const lang = showOriginal && r.zh ? "zh-CN" : undefined;
+  const { text, lang: shown, fallback } = relicText(r, lang);
+  const textLang = htmlLang(shown);
   return (
     <li
       className="flex flex-col gap-2 rounded-xl border border-[var(--border)] border-l-4 bg-[var(--surface-1)] p-4"
@@ -223,56 +273,35 @@ function RelicCard({ relic: r, showTheme }: { relic: Relic; showTheme: boolean }
         </div>
         <div className="flex min-w-0 flex-1 flex-col gap-1.5">
           <div className="flex items-start justify-between gap-2">
-            <div className="min-w-0">
-              <h3 className="font-semibold leading-snug" lang={lang}>
-                {text.name}
-              </h3>
-              {r.nameZh && r.nameZh !== text.name && (
-                <p className="text-xs text-[var(--muted)]" lang="zh-CN">
-                  {r.nameZh}
-                </p>
-              )}
-            </div>
+            <h3 className="min-w-0 font-semibold leading-snug" lang={textLang}>
+              {text.name}
+            </h3>
             <span className="shrink-0 font-mono text-xs text-[var(--muted)]">
               {showTheme && `${themeShort(r.theme)} · `}#{String(r.no).padStart(3, "0")}
             </span>
           </div>
-          <RelicTags relic={r} />
+          <RelicTags relic={r} shown={shown} fallback={fallback} />
         </div>
       </div>
-      <p className="text-sm leading-relaxed" lang={lang}>
+      <p className="text-sm leading-relaxed" lang={textLang}>
         {text.effect}
       </p>
       {text.flavor && (
-        <p className="whitespace-pre-line text-sm italic leading-relaxed text-[var(--muted)]" lang={lang}>
+        <p className="whitespace-pre-line text-sm italic leading-relaxed text-[var(--muted)]" lang={textLang}>
           {text.flavor}
         </p>
       )}
-      {(text.unlock || r.zh) && (
-        <div className="mt-auto flex items-end justify-between gap-3 border-t border-[var(--border)] pt-2 text-xs text-[var(--ink-2)]">
-          <p lang={lang}>
-            {text.unlock && (
-              <>
-                <span className="font-medium">Unlock:</span> {text.unlock}
-              </>
-            )}
-          </p>
-          {r.zh && (
-            <button
-              onClick={() => setShowOriginal((v) => !v)}
-              className="shrink-0 rounded border border-[var(--border)] px-1.5 py-0.5 hover:border-[var(--ink-2)]"
-              aria-pressed={showOriginal}
-            >
-              {showOriginal ? "English" : "原文 Original"}
-            </button>
-          )}
-        </div>
+      {text.unlock && (
+        <p className="mt-auto border-t border-[var(--border)] pt-2 text-xs text-[var(--ink-2)]">
+          <span className="font-medium">Unlock:</span> <span lang={textLang}>{text.unlock}</span>
+        </p>
       )}
     </li>
   );
 }
 
-function RelicTags({ relic: r }: { relic: Relic }) {
+function RelicTags({ relic: r, shown, fallback }: { relic: Relic; shown: Lang; fallback: boolean }) {
+  const tl = shown === "en" ? r.text.en.tl : undefined;
   return (
     <div className="flex flex-wrap gap-1.5 text-xs font-medium">
       <span className="rounded border px-1.5 py-0.5" style={{ color: `var(--rarity-${r.rarity})`, borderColor: "currentColor" }}>
@@ -286,16 +315,24 @@ function RelicTags({ relic: r }: { relic: Relic }) {
       {r.kind === "secret" && (
         <span className="rounded border border-[var(--border)] px-1.5 py-0.5 text-[var(--ink-2)]">Secret</span>
       )}
-      {r.translation && r.translation !== "official" && (
+      {fallback && (
+        <span
+          className="rounded border border-dashed border-[var(--border)] px-1.5 py-0.5 text-[var(--muted)]"
+          title="This theme isn't on the JP server yet, so there's no Japanese text. Showing English instead."
+        >
+          No JP text yet
+        </span>
+      )}
+      {tl && (
         <span
           className="rounded border border-dashed border-[var(--border)] px-1.5 py-0.5 text-[var(--muted)]"
           title={
-            r.translation === "fan"
-              ? "CN-only relic: unofficial translation. Use 原文 to see the original text."
+            tl === "fan"
+              ? "CN-only relic: unofficial English translation. Switch to CN to see the original text."
               : "Some text on this CN-only relic hasn't been translated yet."
           }
         >
-          {r.translation === "fan" ? "Fan translation" : "Untranslated"}
+          {tl === "fan" ? "Fan translation" : "Untranslated"}
         </span>
       )}
     </div>

@@ -2,16 +2,23 @@ import data from "@/data/relics.json";
 
 export type Rarity = "normal" | "rare" | "superRare";
 export type RelicKind = "standard" | "curse" | "secret";
+/** Text languages, named by server: en = EN server, ja = JP server, zh = CN server */
+export type Lang = "en" | "ja" | "zh";
+
+export const LANGS: { id: Lang; label: string; title: string; htmlLang: string }[] = [
+  { id: "en", label: "EN", title: "English", htmlLang: "en" },
+  { id: "ja", label: "JP", title: "日本語", htmlLang: "ja" },
+  { id: "zh", label: "CN", title: "简体中文", htmlLang: "zh-CN" },
+];
 
 export interface Theme {
   id: string;
-  /** EN name: official for EN-server themes, otherwise from data/translations.json */
-  name: string;
-  nameZh: string;
-  /** only released on the CN server */
-  cnOnly: boolean;
-  /** CN-only themes: whether `name` is the official EN title */
-  nameOfficial?: boolean;
+  /** en is always present (unofficial for CN-only themes, see enNameOfficial) */
+  names: { en: string; ja?: string; zh: string };
+  /** servers the theme has been released on */
+  servers: Lang[];
+  /** themes not on the EN server: whether names.en is the official title */
+  enNameOfficial?: boolean;
 }
 
 export interface RelicText {
@@ -21,29 +28,28 @@ export interface RelicText {
   unlock: string | null;
 }
 
-export interface Relic extends RelicText {
+export interface EnRelicText extends RelicText {
+  /**
+   * Only on relics not released on the EN server: "fan" = some fields are fan
+   * translations, "partial" = some fields are still Chinese. Absent = all official.
+   */
+  tl?: "fan" | "partial";
+}
+
+export interface Relic {
   id: string;
   theme: string;
   no: number;
   rarity: Rarity;
   kind: RelicKind;
   special: boolean;
-  /** CN name (all relics), for display and search */
-  nameZh?: string;
-  /** CN-only themes: original Chinese text */
-  zh?: RelicText;
-  /**
-   * CN-only themes: "official" = every field reuses official EN text from a reprint,
-   * "fan" = some fields are fan translations, "partial" = some fields are still Chinese
-   */
-  translation?: "official" | "fan" | "partial";
+  text: { en: EnRelicText; ja?: RelicText; zh: RelicText };
   /** true when public/relics/<id>.webp exists */
   icon: boolean;
 }
 
 export interface RelicData {
-  source: string;
-  sourceCn: string;
+  sources: Record<Lang, string>;
   generatedAt: string;
   themes: Theme[];
   relics: Relic[];
@@ -58,8 +64,19 @@ export const RARITY_LABEL: Record<Rarity, string> = {
 };
 
 /**
+ * The relic's text in `lang`. JP text doesn't exist for themes not yet on the JP
+ * server; those fall back to English (`fallback: true`).
+ */
+export function relicText(r: Relic, lang: Lang): { text: RelicText; lang: Lang; fallback: boolean } {
+  if (lang === "ja" && !r.text.ja) return { text: r.text.en, lang: "en", fallback: true };
+  return { text: r.text[lang] ?? r.text.en, lang, fallback: false };
+}
+
+export const themeName = (t: Theme, lang: Lang) => t.names[lang] ?? t.names.en;
+
+/**
  * Community IS numbering is one ahead of the game's internal ids: IS#1 was
  * Ceobe's Fungimist (CN-only, removed, never in the data), so rogue_1
- * (Phantom) is IS#2 … rogue_4 (Sarkaz) is IS#5.
+ * (Phantom) is IS#2 … rogue_6 is IS#7.
  */
 export const themeShort = (id: string) => `IS#${Number(id.replace(/\D/g, "")) + 1}`;
