@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { htmlLang, setUrlParams, useLang } from "@/components/lang";
 import { MechanicList } from "@/components/MechanicList";
@@ -33,6 +33,16 @@ export function ThemeView({
     const t = params.get("tab");
     return TABS.some((x) => x.id === t) ? (t as Tab) : "relics";
   });
+  // Art mode backdrop: this theme's banner while the page is open
+  useEffect(() => {
+    if (!banner) return;
+    const root = document.documentElement;
+    root.style.setProperty("--art", `url("/themes/${theme.id}.webp")`);
+    return () => {
+      root.style.removeProperty("--art");
+    };
+  }, [banner, theme.id]);
+
   function setTab(t: Tab) {
     setTabState(t);
     setUrlParams({ tab: t === "relics" ? null : t, q: null });

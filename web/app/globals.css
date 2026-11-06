@@ -7,14 +7,15 @@
    The two dark blocks below must stay identical. */
 :root {
   color-scheme: light;
-  --page: #f4f7fb;
-  --surface-1: #fbfcfe;
-  --ink: #0a0f1a;
-  --ink-2: #475569;
-  --muted: #7a8699;
-  --grid: #dde3ec;
-  --baseline: #c0c9d6;
-  --border: rgba(16, 36, 70, 0.12);
+  /* light mode is light blue */
+  --page: #e6f0fb;
+  --surface-1: #f6faff;
+  --ink: #0a1526;
+  --ink-2: #41546d;
+  --muted: #6f8299;
+  --grid: #d0deee;
+  --baseline: #b3c5da;
+  --border: rgba(20, 70, 140, 0.16);
   --series-1: #0877a3; /* accent: tabs, hover, focus, Buff badge */
   /* Relic rarity accents (always paired with a text label) */
   --rarity-normal: #64707f;
@@ -70,7 +71,7 @@
    blueprint grid, hazard-stripe bands, cut-corner frames and corner brackets.
    ------------------------------------------------------------------------------------------ */
 :root {
-  --grid-line: rgba(16, 36, 70, 0.05);
+  --grid-line: rgba(30, 100, 190, 0.07);
   --cut: 14px;
 }
 :root[data-theme="dark"] {
@@ -91,6 +92,53 @@ body {
   background-attachment: fixed;
   color: var(--ink);
   font-family: var(--font-geist-sans), system-ui, sans-serif;
+}
+
+/* ------------------------------------------------------------------------------------------
+   Art mode (<html data-theme="art">): dark tokens with see-through panels over a fixed
+   backdrop of official IS banner art, blurred and dimmed so it stays easy on the eyes.
+   --art is the banner URL: the current theme's on /is/[n] (set by ThemeView), else the
+   newest theme's. Placed after the dark blocks so it wins over them.
+   ------------------------------------------------------------------------------------------ */
+:root {
+  --art: url("/themes/rogue_6.webp");
+}
+:root[data-theme="art"] {
+  color-scheme: dark;
+  --page: #070b14;
+  --surface-1: rgba(14, 21, 34, 0.84);
+  --ink: #f2f6fc;
+  --ink-2: #bcc8d8;
+  --muted: #8b97ab;
+  --grid: #1f2a3b;
+  --baseline: #2c3a50;
+  --border: rgba(170, 200, 255, 0.14);
+  --series-1: #4cc3eb;
+  --rarity-normal: #bcc8d8;
+  --rarity-rare: #7f9ff5;
+  --rarity-superRare: #f0b44c;
+  --relic-curse: #f07a6e;
+  --kind-item: #b7a0f2;
+  --icon-well: rgba(10, 16, 26, 0.9);
+  --grid-line: rgba(140, 180, 255, 0.035);
+}
+:root[data-theme="art"] body::before {
+  content: "";
+  position: fixed;
+  inset: -24px; /* bleed so the blur has no hard edge */
+  z-index: -1;
+  background: var(--art) center / cover no-repeat;
+  filter: blur(6px) saturate(0.85) brightness(0.55);
+  opacity: 0.35;
+  pointer-events: none;
+}
+:root[data-theme="art"] body {
+  background-color: var(--page);
+  isolation: isolate;
+}
+/* top bar and panels pick up a frosted look over the art */
+:root[data-theme="art"] .bg-\[var\(--surface-1\)\] {
+  backdrop-filter: blur(6px);
 }
 
 /* Diagonal hazard band, e.g. under the top bar */
