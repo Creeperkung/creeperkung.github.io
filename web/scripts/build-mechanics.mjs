@@ -171,19 +171,34 @@ const EXTRACT = {
       }),
     };
   },
-  // IS#6 Sui: Tongbao (coins), grouped by coin type
+  // IS#6 Sui: Tongbao (coins), grouped by luck: the plain Dayan Tongbao, then Risk / Flower / Balance
   tongbao: (d) => {
     const ac = d.details.rogue_5.archiveComp.copper;
     const items = d.details.rogue_5.items;
+    const luck = d.modules.rogue_5.copper.copperData;
+    const entries = vals(ac.coppers)
+      .filter((c) => c.archiveType === "COPPER" && items[c.displayCopperId])
+      .sort((a, b) => a.sortId - b.sortId)
+      .map((c) => {
+        const it = items[c.displayCopperId];
+        // the base coin is the only one outside the luck categories (CN name has no 厉-/衡-/花- prefix)
+        const base = c.copperType === "BLANK" && luck[c.displayCopperId]?.groupId === "rogue_5_copper_B_01";
+        return { id: c.id, group: base ? "DAYAN" : luck[c.displayCopperId]?.luckyLevel, iconId: it.iconId, text: itemText(it) };
+      });
+    const dayan = entries.find((e) => e.group === "DAYAN");
+    const lv = ac.luckyLevels ?? {};
+    const PRTS = { LOW: "厉钱", HIGH: "花钱", MID: "衡钱" };
     return {
-      groups: vals(ac.copperTypes).map((t) => ({ id: t.copperType, name: clean(t.typeName) })),
-      entries: vals(ac.coppers)
-        .filter((c) => c.archiveType === "COPPER" && items[c.displayCopperId])
-        .sort((a, b) => a.sortId - b.sortId)
-        .map((c) => {
-          const it = items[c.displayCopperId];
-          return { id: c.id, group: c.copperType, iconId: it.iconId, text: itemText(it) };
-        }),
+      groups: [
+        { id: "DAYAN", name: dayan?.text.name ?? null, prtsIcon: "通宝 大炎通宝.png" },
+        ...["LOW", "HIGH", "MID"].map((k) => ({
+          id: k,
+          name: clean(lv[k]?.luckyName) || null,
+          note: clean(lv[k]?.luckyUsage) || null,
+          prtsIcon: `通宝 币制 ${PRTS[k]}.png`,
+        })),
+      ],
+      entries,
     };
   },
   // IS#6 Sui: Hours of Sui (wraths), 4 levels each
@@ -373,7 +388,7 @@ for (const [themeId, sections] of Object.entries(config.themes)) {
         if (n) note[lang] = n;
       }
       if (!note.en && note.zh) note.en = fan[note.zh] ?? (untranslated.add(note.zh), note.zh);
-      return { id: g.id, name, ...(note.en && { note }) };
+      return { id: g.id, name, ...(note.en && { note }), ...(g.prtsIcon && { _prtsIcon: g.prtsIcon }) };
     });
     themes[themeId].push({
       id: sec.id,
@@ -519,6 +534,26 @@ if (!flag("--skip-icons")) {
     await sharp(img).resize({ width: 960, withoutEnlargement: true }).webp({ quality: 80 }).toFile(fileURLToPath(new URL(`${t.id}.webp`, BANNER_DIR)));
     console.log(`banner: ${t.id}`);
   }
+}
+
+// Group icons (e.g. Tongbao luck categories), from PRTS: public/mechanics/group-<sectionId>-<groupId>.webp
+const allGroups = Object.values(themes).flatMap((secs) =>
+  secs.flatMap((s) => (s.groups ?? []).map((g) => ({ g, file: new URL(`group-${s.id}-${g.id}.webp`, ICON_DIR) }))),
+);
+if (!flag("--skip-icons")) {
+  const want = [];
+  for (const x of allGroups) if (x.g._prtsIcon && (flag("--refresh-icons") || !(await exists(x.file)))) want.push(x);
+  const urls = await wikiUrls([...new Set(want.map((x) => x.g._prtsIcon))], PRTS_API);
+  for (const x of want) {
+    const u = urls.get(x.g._prtsIcon);
+    const img = u && (await get(u, 4, 60_000));
+    if (img) await writeIcon(x.file, img);
+    else console.warn(`no group icon: ${x.g._prtsIcon}`);
+  }
+}
+for (const x of allGroups) {
+  x.g.icon = await exists(x.file);
+  delete x.g._prtsIcon;
 }
 
 const banners = {};

@@ -30,7 +30,13 @@ export interface MechanicSection {
   title: string;
   kind: MechanicKind;
   summary: string | null;
-  groups?: { id: string; name: Partial<Record<Lang, string>>; note?: Partial<Record<Lang, string>> }[];
+  groups?: {
+    id: string;
+    name: Partial<Record<Lang, string>>;
+    note?: Partial<Record<Lang, string>>;
+    /** true when public/mechanics/group-<sectionId>-<groupId>.webp exists */
+    icon?: boolean;
+  }[];
   entries: MechanicEntry[];
 }
 

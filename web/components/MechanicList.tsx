@@ -61,13 +61,21 @@ function Section({ section: s, lang }: { section: MechanicSection; lang: Lang })
       </header>
       {groups.map((g) => (
         <div key={g.id} className="flex flex-col gap-3">
-          <h3 className="text-sm font-semibold text-[var(--ink-2)]">
-            <span lang={htmlLang(g.name[lang] ? lang : "en")}>{g.name[lang] ?? g.name.en ?? g.id}</span>
-            {g.note && (
-              <span className="ml-2 font-normal text-[var(--muted)]" lang={htmlLang(g.note[lang] ? lang : "en")}>
-                — {g.note[lang] ?? g.note.en}
+          <h3 className="flex items-center gap-2.5 text-sm font-semibold text-[var(--ink-2)]">
+            {g.icon && (
+              <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md bg-[var(--icon-well)]">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={`/mechanics/group-${s.id}-${g.id}.webp`} alt="" width={30} height={30} loading="lazy" decoding="async" />
               </span>
             )}
+            <span>
+              <span lang={htmlLang(g.name[lang] ? lang : "en")}>{g.name[lang] ?? g.name.en ?? g.id}</span>
+              {g.note && (
+                <span className="ml-2 font-normal text-[var(--muted)]" lang={htmlLang(g.note[lang] ? lang : "en")}>
+                  — {g.note[lang] ?? g.note.en}
+                </span>
+              )}
+            </span>
           </h3>
           <Grid entries={s.entries.filter((e) => e.group === g.id)} kind={s.kind} lang={lang} />
         </div>

@@ -40,6 +40,7 @@ node scripts/build-mechanics.mjs --skip-icons --export-untranslated  # list CN m
   - `kind` is `debuff`, `buff` or `mixed` (shown on the "Buffs & Debuffs" tab), or `item` (shown on the "Special Items" tab).
   - EN text for themes not on the EN server comes from the plain `strings` dictionary (CN string → EN) in `translations.json`. `--export-untranslated` writes untranslated strings to `data/untranslated-strings.json`.
   - Icon sources, in order: overrides in `scripts/icon-overrides/mechanics/<entryId>.png`, then item pictures (mirror, then PRTS), then Terra Wiki file-name patterns per section (`WIKI_FILES`), then PRTS wiki file names (`PRTS_FILES`: Mizuki's 启示/排异/回响 numbered in archive order, IS#7 `沉沦者的黑流树海 乌托邦幸福论 <CN name>.png`). prts.wiki often times out from abroad; just rerun.
+  - Groups can carry an icon: an extractor sets `prtsIcon` (a PRTS file name) and it's saved as `public/mechanics/group-<sectionId>-<groupId>.webp`. IS#6 Tongbao are grouped by luck (`copperData[].luckyLevel`), in the order Dayan Tongbao (the base coin), Risk, Flower, Balance. They're not grouped by coin type.
   - Mizuki's 4 Light levels have no icon in the game, so they keep the letter placeholder.
   - Banners come from the wiki's `CN <EN theme name> banner.png`.
 - Types live in `web/lib/relics.ts` and `web/lib/mechanics.ts`. If you change a JSON shape, update the script and the types together.

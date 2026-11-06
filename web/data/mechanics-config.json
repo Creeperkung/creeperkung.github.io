@@ -61,7 +61,10 @@
     "kind": "item",
     "title": "Foldartals",
     "summary": "Used in pairs: an upper Foldartal picks which nodes are affected, a lower one decides what happens there.",
-    "groups": { "TOTEM_UPPER": "Upper (where)", "TOTEM_LOWER": "Lower (what)" }
+    "groups": {
+     "TOTEM_UPPER": "Upper (where)",
+     "TOTEM_LOWER": "Lower (what)"
+    }
    }
   ],
   "rogue_4": [
@@ -91,9 +94,9 @@
    {
     "id": "tongbao",
     "extract": "tongbao",
-    "kind": "buff",
+    "kind": "item",
     "title": "Tongbao",
-    "summary": "Coins you toss and keep in your Coffer. Each grants its effect while you hold it."
+    "summary": "Coins you toss and keep in your Coffer, each granting its effect while you hold it. Sorted by luck: the plain Dayan Tongbao, then Risk, Flower and Balance coins."
    }
   ],
   "rogue_6": [
@@ -103,7 +106,10 @@
     "kind": "mixed",
     "title": "Weather",
     "summary": "Weather changes battles and the map, growing stronger over three stages. Most of it hurts; a little helps.",
-    "groups": { "main": "Weather", "sub": "Sub-weather" }
+    "groups": {
+     "main": "Weather",
+     "sub": "Sub-weather"
+    }
    },
    {
     "id": "variations",
