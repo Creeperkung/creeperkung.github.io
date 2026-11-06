@@ -5,26 +5,45 @@ export type RelicKind = "standard" | "curse" | "secret";
 
 export interface Theme {
   id: string;
+  /** EN name: official for EN-server themes, otherwise from data/translations.json */
   name: string;
+  nameZh: string;
+  /** only released on the CN server */
+  cnOnly: boolean;
+  /** CN-only themes: whether `name` is the official EN title */
+  nameOfficial?: boolean;
 }
 
-export interface Relic {
+export interface RelicText {
+  name: string;
+  effect: string;
+  flavor: string | null;
+  unlock: string | null;
+}
+
+export interface Relic extends RelicText {
   id: string;
   theme: string;
   no: number;
-  name: string;
-  effect: string;
-  flavor: string;
   rarity: Rarity;
   kind: RelicKind;
   special: boolean;
-  unlock: string | null;
+  /** CN name (all relics), for display and search */
+  nameZh?: string;
+  /** CN-only themes: original Chinese text */
+  zh?: RelicText;
+  /**
+   * CN-only themes: "official" = every field reuses official EN text from a reprint,
+   * "fan" = some fields are fan translations, "partial" = some fields are still Chinese
+   */
+  translation?: "official" | "fan" | "partial";
   /** true when public/relics/<id>.webp exists */
   icon: boolean;
 }
 
 export interface RelicData {
   source: string;
+  sourceCn: string;
   generatedAt: string;
   themes: Theme[];
   relics: Relic[];

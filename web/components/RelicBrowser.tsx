@@ -59,10 +59,7 @@ export function RelicBrowser({ data }: { data: RelicData }) {
       (r) =>
         (rarities.size === 0 || rarities.has(r.rarity)) &&
         (kind === "any" || r.kind === kind) &&
-        (!q ||
-          r.name.toLowerCase().includes(q) ||
-          r.effect.toLowerCase().includes(q) ||
-          r.flavor.toLowerCase().includes(q))
+        (!q || searchText(r).includes(q))
     );
     if (sort === "name") out.sort((a, b) => a.name.localeCompare(b.name));
     else if (sort === "rarity")
@@ -95,8 +92,21 @@ export function RelicBrowser({ data }: { data: RelicData }) {
             }`}
             aria-pressed={theme === t.id}
           >
-            <span className="block font-mono text-xs text-[var(--muted)]">{themeShort(t.id)}</span>
+            <span className="flex items-center gap-1.5 font-mono text-xs text-[var(--muted)]">
+              {themeShort(t.id)}
+              {t.cnOnly && (
+                <span
+                  className="rounded border border-[var(--border)] px-1 text-[10px] font-semibold text-[var(--ink-2)]"
+                  title="Only released on the CN server so far"
+                >
+                  CN
+                </span>
+              )}
+            </span>
             <span className="block text-sm font-medium">{t.name}</span>
+            <span className="block text-xs text-[var(--muted)]" lang="zh-CN">
+              {t.nameZh}
+            </span>
           </button>
         ))}
         <button
@@ -117,7 +127,7 @@ export function RelicBrowser({ data }: { data: RelicData }) {
           type="search"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
-          placeholder="Search name, effect or description… (e.g. “ATK”, “Hope”, “Ingots”)"
+          placeholder="Search in English or 中文: name, effect, description… (e.g. “ATK”, “Hope”, “希望”)"
           className="w-full rounded-lg border border-[var(--border)] bg-[var(--page)] px-3 py-2 outline-none focus:border-[var(--series-1)]"
           aria-label="Search relics"
         />
@@ -175,8 +185,25 @@ export function RelicBrowser({ data }: { data: RelicData }) {
   );
 }
 
+// Lowercased EN + CN text for search, cached per relic.
+const searchCache = new WeakMap<Relic, string>();
+function searchText(r: Relic) {
+  let s = searchCache.get(r);
+  if (s === undefined) {
+    s = [r.name, r.effect, r.flavor, r.unlock, r.nameZh, r.zh?.effect, r.zh?.flavor, r.zh?.unlock]
+      .filter(Boolean)
+      .join("\n")
+      .toLowerCase();
+    searchCache.set(r, s);
+  }
+  return s;
+}
+
 function RelicCard({ relic: r, showTheme }: { relic: Relic; showTheme: boolean }) {
   const accent = r.kind === "curse" ? "var(--relic-curse)" : `var(--rarity-${r.rarity})`;
+  const [showOriginal, setShowOriginal] = useState(false);
+  const text = showOriginal && r.zh ? r.zh : r;
+  const lang = showOriginal && r.zh ? "zh-CN" : undefined;
   return (
     <li
       className="flex flex-col gap-2 rounded-xl border border-[var(--border)] border-l-4 bg-[var(--surface-1)] p-4"
@@ -196,7 +223,16 @@ function RelicCard({ relic: r, showTheme }: { relic: Relic; showTheme: boolean }
         </div>
         <div className="flex min-w-0 flex-1 flex-col gap-1.5">
           <div className="flex items-start justify-between gap-2">
-            <h3 className="font-semibold leading-snug">{r.name}</h3>
+            <div className="min-w-0">
+              <h3 className="font-semibold leading-snug" lang={lang}>
+                {text.name}
+              </h3>
+              {r.nameZh && r.nameZh !== text.name && (
+                <p className="text-xs text-[var(--muted)]" lang="zh-CN">
+                  {r.nameZh}
+                </p>
+              )}
+            </div>
             <span className="shrink-0 font-mono text-xs text-[var(--muted)]">
               {showTheme && `${themeShort(r.theme)} · `}#{String(r.no).padStart(3, "0")}
             </span>
@@ -204,14 +240,33 @@ function RelicCard({ relic: r, showTheme }: { relic: Relic; showTheme: boolean }
           <RelicTags relic={r} />
         </div>
       </div>
-      <p className="text-sm leading-relaxed">{r.effect}</p>
-      {r.flavor && (
-        <p className="whitespace-pre-line text-sm italic leading-relaxed text-[var(--muted)]">{r.flavor}</p>
-      )}
-      {r.unlock && (
-        <p className="mt-auto border-t border-[var(--border)] pt-2 text-xs text-[var(--ink-2)]">
-          <span className="font-medium">Unlock:</span> {r.unlock}
+      <p className="text-sm leading-relaxed" lang={lang}>
+        {text.effect}
+      </p>
+      {text.flavor && (
+        <p className="whitespace-pre-line text-sm italic leading-relaxed text-[var(--muted)]" lang={lang}>
+          {text.flavor}
         </p>
+      )}
+      {(text.unlock || r.zh) && (
+        <div className="mt-auto flex items-end justify-between gap-3 border-t border-[var(--border)] pt-2 text-xs text-[var(--ink-2)]">
+          <p lang={lang}>
+            {text.unlock && (
+              <>
+                <span className="font-medium">Unlock:</span> {text.unlock}
+              </>
+            )}
+          </p>
+          {r.zh && (
+            <button
+              onClick={() => setShowOriginal((v) => !v)}
+              className="shrink-0 rounded border border-[var(--border)] px-1.5 py-0.5 hover:border-[var(--ink-2)]"
+              aria-pressed={showOriginal}
+            >
+              {showOriginal ? "English" : "原文 Original"}
+            </button>
+          )}
+        </div>
       )}
     </li>
   );
@@ -230,6 +285,18 @@ function RelicTags({ relic: r }: { relic: Relic }) {
       )}
       {r.kind === "secret" && (
         <span className="rounded border border-[var(--border)] px-1.5 py-0.5 text-[var(--ink-2)]">Secret</span>
+      )}
+      {r.translation && r.translation !== "official" && (
+        <span
+          className="rounded border border-dashed border-[var(--border)] px-1.5 py-0.5 text-[var(--muted)]"
+          title={
+            r.translation === "fan"
+              ? "CN-only relic: unofficial translation. Use 原文 to see the original text."
+              : "Some text on this CN-only relic hasn't been translated yet."
+          }
+        >
+          {r.translation === "fan" ? "Fan translation" : "Untranslated"}
+        </span>
       )}
     </div>
   );

@@ -12,8 +12,9 @@ export default function Home() {
         <h1 className="text-3xl font-bold tracking-tight">Relic Index</h1>
         <p className="max-w-2xl text-[var(--ink-2)]">
           Every collectible relic from all {relicData.themes.length} Integrated Strategies themes (
-          {relicData.relics.length} total), with effects, descriptions and unlock conditions. Search
-          and filter by theme, rarity and type.
+          {relicData.relics.length} total), including themes so far only on the CN server, with
+          effects, descriptions and unlock conditions. Search in English or Chinese and filter by
+          theme, rarity and type.
         </p>
       </header>
 
@@ -22,11 +23,25 @@ export default function Home() {
       </Suspense>
 
       <footer className="border-t border-[var(--border)] pt-4 text-xs text-[var(--muted)]">
-        Data from the EN game client ({relicData.generatedAt}) via{" "}
+        Data from the EN and CN game clients ({relicData.generatedAt}) via{" "}
         <a className="underline" href="https://github.com/Kengxxiao/ArknightsGameData_YoStar">
           ArknightsGameData_YoStar
+        </a>{" "}
+        and{" "}
+        <a className="underline" href="https://github.com/Kengxxiao/ArknightsGameData">
+          ArknightsGameData
         </a>
-        . Fan-made, not affiliated with Hypergryph or Yostar.
+        ; icons via ArknightsAssets,{" "}
+        <a className="underline" href="https://prts.wiki">
+          PRTS
+        </a>{" "}
+        and the{" "}
+        <a className="underline" href="https://arknights.wiki.gg">
+          Arknights Terra Wiki
+        </a>
+        . Text for CN-only relics is the official EN wording where the relic was reprinted from an
+        earlier theme, and an unofficial fan translation otherwise. CN-only theme names are
+        unofficial. Fan-made, not affiliated with Hypergryph or Yostar.
       </footer>
     </main>
   );
