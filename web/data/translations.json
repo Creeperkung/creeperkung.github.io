@@ -36,7 +36,7 @@
    },
    "name": "Plant Sap",
    "effect": "Gain [Hound Plant Sap] after completing 1 [Pursuit] operation",
-   "flavor": "A simple potion made from the sap of Blackstream Treesea trees that can mask your scent."
+   "flavor": "A simple potion made from the sap of Black Flow trees that can mask your scent."
   },
   "rogue_6_relic_artifact_4": {
    "src": {
@@ -352,7 +352,7 @@
     "effect": "每探索一种新节点叠加1层，每层使作战后获得收藏品的概率提升",
     "flavor": "一本被反复增加过内容的笔记本，纸张上不同的字体说明它已几经易手。它似乎永远在等待着下一位记录者。"
    },
-   "name": "Blackstream Treesea Notes",
+   "name": "Black Flow Notes",
    "effect": "Gain 1 stack for each new node type explored; each stack increases the chance of obtaining collectibles after operations",
    "flavor": "A notebook added to again and again; the different handwriting on its pages shows it has changed hands many times. It seems to be forever waiting for its next recorder."
   },
@@ -424,7 +424,7 @@
    },
    "name": "\"Go Set Foot\"",
    "effect": "If every node in the current Area has been revealed, immediately gain some Originium Ingots",
-   "flavor": "Trending: Unknown mysterious life found in the Blackstream Treesea? Excavated relics point to a legendary lost ancient civilization? The expedition team welcomes qualified volunteers!"
+   "flavor": "Trending: Unknown mysterious life found in the Black Flow? Excavated relics point to a legendary lost ancient civilization? The expedition team welcomes qualified volunteers!"
   },
   "rogue_6_relic_cargo_21": {
    "src": {
@@ -660,7 +660,7 @@
    },
    "name": "Fire in Ice",
    "effect": "Enemies take +75% Elemental Injury and Elemental Damage",
-   "flavor": "The fire keeps burning, yet the ice never melts. It looks hot but feels cold to the touch, just like everything you see in the Blackstream Treesea."
+   "flavor": "The fire keeps burning, yet the ice never melts. It looks hot but feels cold to the touch, just like everything you see in the Black Flow."
   },
   "rogue_6_relic_fight_22": {
    "src": {
@@ -851,7 +851,7 @@
    },
    "name": "Blueprint of Life",
    "effect": "Enemy units gain +30% ATK and Movement Speed and +50% Max HP; Elite and Leader enemies take -50% Physical and Arts Damage for 30 seconds after appearing; Dreadful Foes in What the Blind See gain additional enemies",
-   "flavor": "Why would there be such a strange blueprint in the jungle, and what language are the annotations in? What about the bizarre creature it depicts? Could the rumors of life from beyond the sky descending on the Blackstream Treesea be true?",
+   "flavor": "Why would there be such a strange blueprint in the jungle, and what language are the annotations in? What about the bizarre creature it depicts? Could the rumors of life from beyond the sky descending on the Black Flow be true?",
    "unlock": "After [Expansion I], complete an adventure"
   },
   "rogue_6_relic_final_2": {
