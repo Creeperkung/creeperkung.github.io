@@ -10,7 +10,7 @@ const KIND_COLOR: Record<MechanicKind, string> = {
   debuff: "var(--relic-curse)",
   buff: "var(--series-1)",
   mixed: "var(--ink-2)",
-  item: "var(--rarity-superRare)",
+  item: "var(--kind-item)",
 };
 
 const chip = (active: boolean) =>

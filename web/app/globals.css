@@ -1,40 +1,43 @@
 @import "tailwindcss";
 
-/* Chart chrome + series tokens (light/dark selected per palette, not flipped) */
+/* Blue theme: blue-tinted neutrals, a sky/cyan accent (--series-1) kept apart from the
+   royal blue of the Rare rarity so the two never read as the same thing. */
 :root {
-  --page: #f9f9f7;
-  --surface-1: #fcfcfb;
-  --ink: #0b0b0b;
-  --ink-2: #52514e;
-  --muted: #898781;
-  --grid: #e1e0d9;
-  --baseline: #c3c2b7;
-  --border: rgba(11, 11, 11, 0.1);
-  --series-1: #2a78d6;
+  --page: #f4f7fb;
+  --surface-1: #fbfcfe;
+  --ink: #0a0f1a;
+  --ink-2: #475569;
+  --muted: #7a8699;
+  --grid: #dde3ec;
+  --baseline: #c0c9d6;
+  --border: rgba(16, 36, 70, 0.12);
+  --series-1: #0877a3; /* accent: tabs, hover, focus, Buff badge */
   /* Relic rarity accents (always paired with a text label) */
-  --rarity-normal: #6b6a65;
-  --rarity-rare: #2a78d6;
+  --rarity-normal: #64707f;
+  --rarity-rare: #2f5fd0;
   --rarity-superRare: #9a5f00;
   --relic-curse: #b3261e;
-  --icon-well: #2b2b29; /* relic art is drawn for a dark in-game backdrop */
+  --kind-item: #7652c4; /* "Item" badge on Special Items: not a rarity color */
+  --icon-well: #1c2633; /* relic art is drawn for a dark in-game backdrop */
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --page: #0d0d0d;
-    --surface-1: #1a1a19;
-    --ink: #ffffff;
-    --ink-2: #c3c2b7;
-    --muted: #898781;
-    --grid: #2c2c2a;
-    --baseline: #383835;
-    --border: rgba(255, 255, 255, 0.1);
-    --series-1: #3987e5;
-    --rarity-normal: #c3c2b7;
-    --rarity-rare: #6aa6f0;
+    --page: #0a0f1a;
+    --surface-1: #121a28;
+    --ink: #f5f8fc;
+    --ink-2: #b4c0d0;
+    --muted: #7f8ba0;
+    --grid: #1f2a3b;
+    --baseline: #2c3a50;
+    --border: rgba(170, 200, 255, 0.12);
+    --series-1: #4cc3eb;
+    --rarity-normal: #b4c0d0;
+    --rarity-rare: #7f9ff5;
     --rarity-superRare: #f0b44c;
     --relic-curse: #f07a6e;
-    --icon-well: #262624;
+    --kind-item: #b7a0f2;
+    --icon-well: #18212e;
   }
 }
 
