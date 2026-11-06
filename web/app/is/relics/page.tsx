@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
 import { AllRelics } from "@/components/AllRelics";
+import { Crumbs } from "@/components/Crumbs";
 import { relicData } from "@/lib/relics";
 
 export const metadata: Metadata = {
@@ -12,6 +13,9 @@ export default function RelicsPage() {
   return (
     <>
       <header className="flex flex-col gap-2">
+        <Crumbs
+          items={[{ label: "Home", href: "/" }, { label: "Integrated Strategies", href: "/is" }, { label: "All relics" }]}
+        />
         <h1 className="text-3xl font-bold tracking-tight">All relics</h1>
         <p className="max-w-2xl text-[var(--ink-2)]">
           All {relicData.relics.length} collectible relics from {relicData.themes.length} themes. Search names,

@@ -20,7 +20,7 @@ export function HomeThemes({ summaries }: { summaries: ThemeSummary[] }) {
       <div className="flex flex-wrap items-center justify-between gap-3">
         <LangSwitch lang={lang} onChange={setLang} />
         <Link
-          href={withLang("/relics", lang)}
+          href={withLang("/is/relics", lang)}
           className="rounded-lg border border-[var(--border)] px-3 py-1.5 text-sm font-medium text-[var(--ink-2)] hover:border-[var(--ink-2)]"
         >
           Search all relics →

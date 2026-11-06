@@ -4,7 +4,7 @@ import { LangSwitch, useLang } from "@/components/lang";
 import { RelicBrowser } from "@/components/RelicBrowser";
 import { RelicData } from "@/lib/relics";
 
-/** /relics: every theme's relics in one searchable list. */
+/** /is/relics: every theme's relics in one searchable list. */
 export function AllRelics({ data }: { data: RelicData }) {
   const [lang, setLang] = useLang();
   return (

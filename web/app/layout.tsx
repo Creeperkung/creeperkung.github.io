@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Geist, Geist_Mono } from "next/font/google";
+import { MODES } from "@/lib/modes";
 import { relicData } from "@/lib/relics";
 import "./globals.css";
 
@@ -15,9 +16,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Relic Index — Arknights Integrated Strategies",
-  description:
-    "Every Arknights Integrated Strategies relic, buff, debuff and mechanic item, in English, Japanese and Chinese",
+  title: "Relic Index — Arknights",
+  description: "Reference pages for Arknights game modes, in English, Japanese and Chinese",
 };
 
 export default function RootLayout({
@@ -33,9 +33,11 @@ export default function RootLayout({
             <Link href="/" className="font-semibold">
               Relic Index
             </Link>
-            <Link href="/relics" className="text-[var(--ink-2)] hover:text-[var(--ink)]">
-              All relics
-            </Link>
+            {MODES.map((m) => (
+              <Link key={m.id} href={m.href} className="text-[var(--ink-2)] hover:text-[var(--ink)]">
+                {m.name}
+              </Link>
+            ))}
           </nav>
         </div>
         <main className="mx-auto flex w-full max-w-6xl flex-1 flex-col gap-8 px-4 py-10 sm:px-6">

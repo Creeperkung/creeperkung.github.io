@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
+import { Crumbs } from "@/components/Crumbs";
 import { ThemeView } from "@/components/ThemeView";
 import { mechanicData } from "@/lib/mechanics";
 import { relicData, themeIdFromNo, themeNo, themeShort } from "@/lib/relics";
@@ -24,12 +25,17 @@ export default async function ThemePage({ params }: PageProps<"/is/[n]">) {
   // Only this theme's data goes to the client.
   const data = { ...relicData, themes: [theme], relics: relicData.relics.filter((r) => r.theme === theme.id) };
   return (
-    <Suspense fallback={<p className="text-sm text-[var(--muted)]">Loading…</p>}>
-      <ThemeView
-        data={data}
-        sections={mechanicData.themes[theme.id] ?? []}
-        banner={Boolean(mechanicData.banners[theme.id])}
+    <>
+      <Crumbs
+        items={[{ label: "Home", href: "/" }, { label: "Integrated Strategies", href: "/is" }, { label: themeShort(theme.id) }]}
       />
-    </Suspense>
+      <Suspense fallback={<p className="text-sm text-[var(--muted)]">Loading…</p>}>
+        <ThemeView
+          data={data}
+          sections={mechanicData.themes[theme.id] ?? []}
+          banner={Boolean(mechanicData.banners[theme.id])}
+        />
+      </Suspense>
+    </>
   );
 }

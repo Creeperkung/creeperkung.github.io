@@ -1,36 +1,38 @@
-import { Suspense } from "react";
-import { HomeThemes, ThemeSummary } from "@/components/HomeThemes";
-import { mechanicData } from "@/lib/mechanics";
-import { relicData } from "@/lib/relics";
+import Link from "next/link";
+import { MODES } from "@/lib/modes";
 
 export default function Home() {
-  const summaries: ThemeSummary[] = [...relicData.themes].reverse().map((theme) => {
-    const sections = mechanicData.themes[theme.id] ?? [];
-    const sum = (item: boolean) =>
-      sections.filter((s) => (s.kind === "item") === item).reduce((n, s) => n + s.entries.length, 0);
-    return {
-      theme,
-      banner: Boolean(mechanicData.banners[theme.id]),
-      relics: relicData.relics.filter((r) => r.theme === theme.id).length,
-      effects: sum(false),
-      items: sum(true),
-    };
-  });
-
   return (
     <>
       <header className="flex flex-col gap-2">
-        <p className="font-mono text-xs uppercase tracking-widest text-[var(--muted)]">
-          Arknights · Integrated Strategies
-        </p>
+        <p className="font-mono text-xs uppercase tracking-widest text-[var(--muted)]">Arknights</p>
         <h1 className="text-3xl font-bold tracking-tight">Relic Index</h1>
         <p className="max-w-2xl text-[var(--ink-2)]">
-          {`Every Integrated Strategies theme, including those so far only on the CN server: all ${relicData.relics.length} relics, plus each theme's own buffs, debuffs and special mechanic items, in English, Japanese and Chinese. Pick a theme to start.`}
+          Reference pages for Arknights game modes, in English, Japanese and Chinese. Pick a mode to start.
         </p>
       </header>
-      <Suspense fallback={<p className="text-sm text-[var(--muted)]">Loading…</p>}>
-        <HomeThemes summaries={summaries} />
-      </Suspense>
+      <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        {MODES.map((m) => (
+          <li key={m.id}>
+            <Link
+              href={m.href}
+              className="group flex h-full flex-col overflow-hidden rounded-xl border border-[var(--border)] bg-[var(--surface-1)] transition-colors hover:border-[var(--series-1)]"
+            >
+              <div className="aspect-[2/1] w-full bg-[var(--icon-well)]">
+                {m.image && (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img src={m.image} alt="" className="h-full w-full object-cover" loading="lazy" decoding="async" />
+                )}
+              </div>
+              <div className="flex flex-1 flex-col gap-2 p-4">
+                <h2 className="text-lg font-semibold leading-snug group-hover:underline">{m.name}</h2>
+                <p className="text-sm text-[var(--ink-2)]">{m.blurb}</p>
+                <p className="mt-auto text-xs text-[var(--muted)]">{m.stats.join(" · ")}</p>
+              </div>
+            </Link>
+          </li>
+        ))}
+      </ul>
     </>
   );
 }

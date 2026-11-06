@@ -46,9 +46,11 @@ node scripts/build-mechanics.mjs --skip-icons --export-untranslated  # list CN m
 ## Frontend
 
 - **Routes.** Server pages pass each client component only the data it needs.
-  - `/`: theme cards (`HomeThemes`).
+  - `/`: hub with one card per game mode. Modes are listed in `lib/modes.ts` (`MODES`, which also drives the top nav). Each mode lives under its own route prefix; add a new mode there plus its `app/<prefix>/` pages.
+  - `/is`: Integrated Strategies home, theme cards (`HomeThemes`).
   - `/is/[n]`: one theme, by community IS number (2–7), statically generated. `ThemeView` shows Relics, Buffs & Debuffs and Special Items tabs, selected with `?tab=`.
-  - `/relics`: all relics (`AllRelics`).
+  - `/is/relics`: all relics (`AllRelics`). The static segment wins over `[n]`.
+  - Section pages start with `Crumbs` (breadcrumbs).
 - **Language** lives in `components/lang.tsx`. `useLang()` reads `?lang=`, then localStorage. `setUrlParams()` only touches the params a component owns.
 - Everything that uses `useSearchParams` must stay inside the page's `<Suspense>` boundary.
 - Game text switches language. UI chrome (tabs, section titles, summaries) is English only.
