@@ -46,6 +46,23 @@ export interface Relic {
   text: { en: EnRelicText; ja?: RelicText; zh: RelicText };
   /** true when public/relics/<id>.webp exists */
   icon: boolean;
+  /**
+   * IS#4 on: stronger versions (-α/-β/-γ) that replace this relic from a difficulty grade up,
+   * lowest grade first. Flavor and unlock are the base relic's.
+   */
+  upgrades?: RelicUpgrade[];
+}
+
+export interface UpgradeText {
+  name: string;
+  effect: string;
+}
+
+export interface RelicUpgrade {
+  id: string;
+  /** applies at this difficulty and above */
+  grade: number;
+  text: { en: UpgradeText & { tl?: "fan" | "partial" }; ja?: UpgradeText; zh: UpgradeText };
 }
 
 export interface RelicData {

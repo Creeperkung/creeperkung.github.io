@@ -10,6 +10,8 @@ import {
   Relic,
   RelicData,
   RelicKind,
+  UpgradeText,
+  pickText,
   relicText,
   themeName,
   themeShort,
@@ -41,6 +43,7 @@ export function RelicBrowser({ data, lang }: { data: RelicData; lang: Lang }) {
   const [rarities, setRarities] = useState<Set<Rarity>>(new Set());
   const [kind, setKind] = useState<RelicKind | "any">("any");
   const [sort, setSort] = useState<Sort>("no");
+  const [upgradableOnly, setUpgradableOnly] = useState(false);
 
   useEffect(() => {
     setUrlParams({ theme: single || theme === newest ? null : theme, q: query || null });
@@ -59,6 +62,7 @@ export function RelicBrowser({ data, lang }: { data: RelicData; lang: Lang }) {
       (r) =>
         (rarities.size === 0 || rarities.has(r.rarity)) &&
         (kind === "any" || r.kind === kind) &&
+        (!upgradableOnly || Boolean(r.upgrades)) &&
         (!q || searchText(r).includes(q))
     );
     if (sort === "name") {
@@ -67,9 +71,10 @@ export function RelicBrowser({ data, lang }: { data: RelicData; lang: Lang }) {
     } else if (sort === "rarity")
       out.sort((a, b) => RARITY_RANK[b.rarity] - RARITY_RANK[a.rarity] || a.no - b.no);
     return out;
-  }, [inTheme, query, rarities, kind, sort, lang]);
+  }, [inTheme, query, rarities, kind, upgradableOnly, sort, lang]);
 
   const kindsInTheme = useMemo(() => new Set(inTheme.map((r) => r.kind)), [inTheme]);
+  const upgradableInTheme = useMemo(() => inTheme.filter((r) => r.upgrades).length, [inTheme]);
 
   function toggleRarity(r: Rarity) {
     setRarities((prev) => {
@@ -153,6 +158,16 @@ export function RelicBrowser({ data, lang }: { data: RelicData; lang: Lang }) {
                 ))}
             </>
           )}
+          {upgradableInTheme > 0 && (
+            <button
+              onClick={() => setUpgradableOnly((v) => !v)}
+              className={`ml-3 ${chip(upgradableOnly)}`}
+              aria-pressed={upgradableOnly}
+              title="Relics that get stronger -α/-β/-γ versions at higher difficulty"
+            >
+              Difficulty upgrades <span className="opacity-70">{upgradableInTheme}</span>
+            </button>
+          )}
           <label className="ml-auto flex items-center gap-2 text-sm text-[var(--ink-2)]">
             Sort
             <select
@@ -194,8 +209,10 @@ const searchCache = new WeakMap<Relic, string>();
 function searchText(r: Relic) {
   let s = searchCache.get(r);
   if (s === undefined) {
-    s = Object.values(r.text)
-      .flatMap((t) => (t ? [t.name, t.effect, t.unlock] : []))
+    s = [
+      ...Object.values(r.text).flatMap((t) => (t ? [t.name, t.effect, t.unlock] : [])),
+      ...(r.upgrades ?? []).flatMap((u) => Object.values(u.text).flatMap((t) => (t ? [t.name, t.effect] : []))),
+    ]
       .filter(Boolean)
       .join("\n")
       .toLowerCase();
@@ -245,12 +262,52 @@ function RelicCard({ relic: r, lang, showTheme }: { relic: Relic; lang: Lang; sh
           {text.flavor}
         </p>
       )}
+      {r.upgrades && <Upgrades relic={r} lang={lang} />}
       {text.unlock && (
         <p className="mt-auto border-t border-[var(--border)] pt-2 text-xs text-[var(--ink-2)]">
           <span className="font-medium">Unlock:</span> <span lang={textLang}>{text.unlock}</span>
         </p>
       )}
     </li>
+  );
+}
+
+/** The -α/-β/-γ versions that replace this relic at higher difficulty. Collapsed by default. */
+function Upgrades({ relic: r, lang }: { relic: Relic; lang: Lang }) {
+  const base = relicText(r, lang).text.name;
+  return (
+    <details className="group rounded-lg border border-[var(--border)] text-sm">
+      <summary className="flex cursor-pointer list-none items-center justify-between gap-2 px-3 py-2 font-medium text-[var(--ink-2)] hover:text-[var(--ink)]">
+        <span>Difficulty upgrades</span>
+        <span className="text-xs font-normal text-[var(--muted)]">
+          from {r.upgrades!.map((u) => u.grade).join(" / ")}
+          <span aria-hidden className="ml-1.5 inline-block transition-transform group-open:rotate-90">
+            ›
+          </span>
+        </span>
+      </summary>
+      <dl className="flex flex-col gap-2 border-t border-[var(--border)] px-3 py-2">
+        {r.upgrades!.map((u) => {
+          const { text, lang: shown, fallback } = pickText<UpgradeText>(u.text, lang);
+          // "Topographical Map - α" → "α"
+          const tier = text.name.startsWith(base) ? text.name.slice(base.length).replace(/^[\s\-－·・]+/, "") : text.name;
+          return (
+            <div key={u.id} className="flex flex-col gap-0.5">
+              <dt className="flex flex-wrap items-center gap-1.5 font-medium">
+                <span lang={htmlLang(shown)} title={text.name}>
+                  {tier || text.name}
+                </span>
+                <span className="text-xs font-normal text-[var(--muted)]">Difficulty {u.grade}+</span>
+                <SourceTags tl={shown === "en" ? u.text.en.tl : undefined} fallback={fallback} />
+              </dt>
+              <dd className="leading-relaxed" lang={htmlLang(shown)}>
+                {text.effect}
+              </dd>
+            </div>
+          );
+        })}
+      </dl>
+    </details>
   );
 }
 
@@ -267,6 +324,14 @@ function RelicTags({ relic: r, shown, fallback }: { relic: Relic; shown: Lang; f
       )}
       {r.kind === "secret" && (
         <span className="rounded border border-[var(--border)] px-1.5 py-0.5 text-[var(--ink-2)]">Secret</span>
+      )}
+      {r.upgrades && (
+        <span
+          className="rounded border border-[var(--border)] px-1.5 py-0.5 text-[var(--ink-2)]"
+          title={`Gets stronger at difficulty ${r.upgrades.map((u) => u.grade).join(", ")} and above`}
+        >
+          Upgradable
+        </span>
       )}
       <SourceTags tl={shown === "en" ? r.text.en.tl : undefined} fallback={fallback} />
     </div>

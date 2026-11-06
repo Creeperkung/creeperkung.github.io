@@ -112,35 +112,72 @@ for (const [themeId, cnTopic] of Object.entries(cn.topics)) {
 
   // The in-game Collection archive is the canonical list and numbering;
   // items missing from it are internal/event-only entries.
+  /**
+   * EN text for one item: official if the EN server has it, else per field: official text of an
+   * identical CN string (reprint) → fan translation → raw Chinese. `fields` limits which fields.
+   * `derived` gives ready EN values for some fields (used for upgrade names).
+   */
+  function enTextFor(id, zh, fields = Object.entries(FIELDS), derived = {}) {
+    if (enDetail?.items[id]) {
+      const t = textOf(enDetail.items[id]);
+      return Object.fromEntries(fields.map(([, ours]) => [ours, t[ours]]));
+    }
+    // tl: "fan" (some fields are fan translations) or "partial" (some are still Chinese)
+    let tl = null;
+    const out = {};
+    for (const [f, ours] of fields) {
+      const src = zh[ours];
+      if (!src) {
+        out[ours] = null;
+      } else if (official[f].has(src)) {
+        out[ours] = official[f].get(src);
+      } else if (fan[ours].has(src)) {
+        out[ours] = fan[ours].get(src);
+        usedFan.add(`${ours}\0${src}`);
+        tl ??= "fan";
+      } else if (derived[ours]) {
+        out[ours] = derived[ours];
+        tl ??= "fan";
+      } else {
+        out[ours] = src;
+        tl = "partial";
+        (untranslated[id] ??= { theme: themeId })[ours] = src;
+      }
+    }
+    if (tl) out.tl = tl;
+    return out;
+  }
+
+  // Difficulty upgrades (IS#4 on): base relic → stronger -α/-β/-γ versions from a difficulty grade up.
+  // Only name and effect change; the flavor text is the base relic's.
+  const upgradesOf = new Map();
+  for (const g of Object.values(cnDetail.difficultyUpgradeRelicGroups ?? {})) {
+    const [base, ...ups] = [...g.relicData].sort((a, b) => a.equivalentGrade - b.equivalentGrade);
+    upgradesOf.set(base.relicId, ups.filter((u) => cnDetail.items[u.relicId]));
+  }
+  const UPGRADE_FIELDS = Object.entries(FIELDS).filter(([, ours]) => ours === "name" || ours === "effect");
+
   for (const entry of archiveOf(cnDetail)) {
     const id = entry.relicId;
     const item = cnDetail.items[id];
     const zh = textOf(item);
-    let enText;
-    if (enDetail?.items[id]) {
-      enText = textOf(enDetail.items[id]);
-    } else {
-      // tl: "fan" (some fields are fan translations) or "partial" (some are still Chinese)
-      let tl = null;
-      enText = {};
-      for (const [f, ours] of Object.entries(FIELDS)) {
-        const src = zh[ours];
-        if (!src) {
-          enText[ours] = null;
-        } else if (official[f].has(src)) {
-          enText[ours] = official[f].get(src);
-        } else if (fan[ours].has(src)) {
-          enText[ours] = fan[ours].get(src);
-          usedFan.add(`${ours}\0${src}`);
-          tl ??= "fan";
-        } else {
-          enText[ours] = src;
-          tl = "partial";
-          (untranslated[id] ??= { theme: themeId })[ours] = src;
-        }
-      }
-      if (tl) enText.tl = tl;
-    }
+    const enText = enTextFor(id, zh);
+    const upgrades = (upgradesOf.get(id) ?? []).map((u) => {
+      const uzh = textOf(cnDetail.items[u.relicId]);
+      // "地形图-α" → "<EN base name> - α", the official EN naming
+      const suffix = uzh.name?.startsWith(zh.name) ? uzh.name.slice(zh.name.length).replace(/^[-－·・\s]+/, "") : null;
+      const derived = suffix && enText.name !== zh.name ? { name: `${enText.name} - ${suffix}` } : {};
+      const pick = (t) => t && { name: clean(t.name) || null, effect: clean(t.usage) || null };
+      return {
+        id: u.relicId,
+        grade: u.equivalentGrade,
+        text: {
+          en: enTextFor(u.relicId, uzh, UPGRADE_FIELDS, derived),
+          ...(jaDetail?.items[u.relicId] && { ja: pick(jaDetail.items[u.relicId]) }),
+          zh: { name: uzh.name, effect: uzh.effect },
+        },
+      };
+    });
     relics.push({
       id,
       theme: themeId,
@@ -149,6 +186,7 @@ for (const [themeId, cnTopic] of Object.entries(cn.topics)) {
       kind: kindOf(item),
       special: Boolean(entry.isSpRelic),
       text: { en: enText, ...(jaDetail?.items[id] && { ja: textOf(jaDetail.items[id]) }), zh },
+      ...(upgrades.length && { upgrades }),
     });
   }
 }
