@@ -21,7 +21,7 @@ type Sort = "no" | "name" | "rarity";
 const RARITIES: Rarity[] = ["normal", "rare", "superRare"];
 const RARITY_RANK: Record<Rarity, number> = { normal: 0, rare: 1, superRare: 2 };
 const chip = (active: boolean) =>
-  `rounded-full border px-3 py-1 text-sm transition-colors ${
+  `rounded-sm border px-3 py-1 text-sm transition-colors ${
     active
       ? "border-[var(--ink)] bg-[var(--ink)] text-[var(--page)]"
       : "border-[var(--border)] text-[var(--ink-2)] hover:border-[var(--ink-2)]"
@@ -130,7 +130,7 @@ export function RelicBrowser({ data, lang }: { data: RelicData; lang: Lang }) {
         </nav>
       )}
 
-      <div className="flex flex-col gap-3 rounded-xl border border-[var(--border)] bg-[var(--surface-1)] p-4">
+      <div className="flex flex-col gap-3 rounded-sm border border-[var(--border)] bg-[var(--surface-1)] p-4">
         <input
           type="search"
           value={query}
@@ -189,7 +189,7 @@ export function RelicBrowser({ data, lang }: { data: RelicData; lang: Lang }) {
       </p>
 
       {visible.length === 0 ? (
-        <p className="rounded-xl border border-dashed border-[var(--border)] p-10 text-center text-[var(--muted)]">
+        <p className="rounded-sm border border-dashed border-[var(--border)] p-10 text-center text-[var(--muted)]">
           No relics match those filters.
         </p>
       ) : (
@@ -227,7 +227,7 @@ function RelicCard({ relic: r, lang, showTheme }: { relic: Relic; lang: Lang; sh
   const textLang = htmlLang(shown);
   return (
     <li
-      className="flex flex-col gap-2 rounded-xl border border-[var(--border)] border-l-4 bg-[var(--surface-1)] p-4"
+      className="ak-brackets flex flex-col gap-2 rounded-sm border border-[var(--border)] border-l-4 bg-[var(--surface-1)] p-4"
       style={{ borderLeftColor: accent }}
     >
       <div className="flex items-start gap-3">

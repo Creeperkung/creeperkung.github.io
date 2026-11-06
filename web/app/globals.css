@@ -65,8 +65,123 @@
   --icon-well: #18212e;
 }
 
+/* ------------------------------------------------------------------------------------------
+   Tactical-terminal look (original; in the spirit of sci-fi game UIs): sharp corners, a faint
+   blueprint grid, hazard-stripe bands, cut-corner frames and corner brackets.
+   ------------------------------------------------------------------------------------------ */
+:root {
+  --grid-line: rgba(16, 36, 70, 0.05);
+  --cut: 14px;
+}
+:root[data-theme="dark"] {
+  --grid-line: rgba(140, 180, 255, 0.045);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --grid-line: rgba(140, 180, 255, 0.045);
+  }
+}
+
 body {
-  background: var(--page);
+  background-color: var(--page);
+  background-image:
+    linear-gradient(var(--grid-line) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
+  background-size: 40px 40px;
+  background-attachment: fixed;
   color: var(--ink);
   font-family: var(--font-geist-sans), system-ui, sans-serif;
+}
+
+/* Diagonal hazard band, e.g. under the top bar */
+.ak-stripes {
+  height: 4px;
+  background: repeating-linear-gradient(-45deg, var(--series-1) 0 8px, transparent 8px 16px);
+  opacity: 0.55;
+}
+
+/* Small mono label with a leading accent block: "■ INTEGRATED STRATEGIES" */
+.ak-kicker {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: var(--font-geist-mono), ui-monospace, monospace;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color: var(--muted);
+}
+.ak-kicker::before {
+  content: "";
+  width: 0.5rem;
+  height: 0.5rem;
+  background: var(--series-1);
+}
+
+/* Heading with an accent bar on the left */
+.ak-heading {
+  border-left: 3px solid var(--series-1);
+  padding-left: 0.75rem;
+}
+
+/* Cut-corner frame: outer element is the 1px border, .ak-frame-inner the fill.
+   Corners cut: top-right and bottom-left. The border turns accent on hover. */
+.ak-frame,
+.ak-frame-inner {
+  clip-path: polygon(
+    0 0,
+    calc(100% - var(--cut)) 0,
+    100% var(--cut),
+    100% 100%,
+    var(--cut) 100%,
+    0 calc(100% - var(--cut))
+  );
+}
+.ak-frame {
+  display: block;
+  height: 100%;
+  padding: 1px;
+  background: var(--border);
+  transition: background-color 150ms;
+}
+.ak-frame:hover,
+.ak-frame:focus-visible {
+  background: var(--series-1);
+}
+.ak-frame-inner {
+  height: 100%;
+  background: var(--surface-1);
+}
+
+/* Corner brackets on cards: top-right and bottom-right, brighter on hover */
+.ak-brackets {
+  position: relative;
+}
+.ak-brackets::before,
+.ak-brackets::after {
+  content: "";
+  position: absolute;
+  right: -1px;
+  width: 12px;
+  height: 12px;
+  border-color: var(--series-1);
+  opacity: 0.45;
+  pointer-events: none;
+  transition: opacity 150ms;
+}
+.ak-brackets::before {
+  top: -1px;
+  border-top: 2px solid;
+  border-right: 2px solid;
+  border-color: var(--series-1);
+}
+.ak-brackets::after {
+  bottom: -1px;
+  border-bottom: 2px solid;
+  border-right: 2px solid;
+  border-color: var(--series-1);
+}
+.ak-brackets:hover::before,
+.ak-brackets:hover::after {
+  opacity: 1;
 }

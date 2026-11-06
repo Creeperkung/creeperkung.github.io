@@ -29,7 +29,7 @@ export default function IsHome() {
     <>
       <header className="flex flex-col gap-2">
         <Crumbs items={[{ label: "Home", href: "/" }, { label: "Integrated Strategies" }]} />
-        <h1 className="text-3xl font-bold tracking-tight">Integrated Strategies</h1>
+        <h1 className="text-3xl font-bold uppercase tracking-wide">Integrated Strategies</h1>
         <p className="max-w-2xl text-[var(--ink-2)]">
           {`Every Integrated Strategies theme, including those so far only on the CN server: all ${relicData.relics.length} relics, plus each theme's own buffs, debuffs and special mechanic items, in English, Japanese and Chinese. Pick a theme to start.`}
         </p>

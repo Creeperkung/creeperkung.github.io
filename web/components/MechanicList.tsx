@@ -14,7 +14,7 @@ const KIND_COLOR: Record<MechanicKind, string> = {
 };
 
 const chip = (active: boolean) =>
-  `inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-sm transition-colors ${
+  `inline-flex items-center gap-1.5 rounded-sm border px-3 py-1 text-sm transition-colors ${
     active
       ? "border-[var(--ink)] bg-[var(--ink)] text-[var(--page)]"
       : "border-[var(--border)] text-[var(--ink-2)] hover:border-[var(--ink-2)]"
@@ -57,13 +57,13 @@ export function MechanicList({ sections, lang }: { sections: MechanicSection[]; 
 
   if (sections.length === 0)
     return (
-      <p className="rounded-xl border border-dashed border-[var(--border)] p-10 text-center text-[var(--muted)]">
+      <p className="rounded-sm border border-dashed border-[var(--border)] p-10 text-center text-[var(--muted)]">
         Nothing here for this theme yet.
       </p>
     );
   return (
     <div className="flex flex-col gap-8">
-      <div className="flex flex-col gap-3 rounded-xl border border-[var(--border)] bg-[var(--surface-1)] p-4">
+      <div className="flex flex-col gap-3 rounded-sm border border-[var(--border)] bg-[var(--surface-1)] p-4">
         <input
           type="search"
           value={query}
@@ -78,7 +78,7 @@ export function MechanicList({ sections, lang }: { sections: MechanicSection[]; 
               <a
                 key={s.id}
                 href={`#${s.id}`}
-                className="rounded-full border border-[var(--border)] px-3 py-1 text-sm text-[var(--ink-2)] hover:border-[var(--ink-2)]"
+                className="rounded-sm border border-[var(--border)] px-3 py-1 text-sm text-[var(--ink-2)] hover:border-[var(--ink-2)]"
               >
                 {s.title} <span className="text-[var(--muted)]">{s.entries.length}</span>
               </a>
@@ -102,7 +102,7 @@ export function MechanicList({ sections, lang }: { sections: MechanicSection[]; 
         </p>
       )}
       {q && matching === 0 ? (
-        <p className="rounded-xl border border-dashed border-[var(--border)] p-10 text-center text-[var(--muted)]">
+        <p className="rounded-sm border border-dashed border-[var(--border)] p-10 text-center text-[var(--muted)]">
           Nothing matches “{query}”.
         </p>
       ) : (
@@ -146,7 +146,7 @@ function Section({ section: s, lang, q, sort }: { section: MechanicSection; lang
     <section id={s.id} className="flex scroll-mt-6 flex-col gap-4">
       <header className="flex flex-col gap-1">
         <div className="flex flex-wrap items-center gap-2">
-          <h2 className="text-xl font-bold tracking-tight">{s.title}</h2>
+          <h2 className="ak-heading text-xl font-bold tracking-tight">{s.title}</h2>
           <span
             className="rounded border px-1.5 py-0.5 text-xs font-medium"
             style={{ color: KIND_COLOR[s.kind], borderColor: "currentColor" }}
@@ -218,7 +218,7 @@ function Card({ entry: e, kind, lang }: { entry: MechanicEntry; kind: MechanicKi
   const effective: MechanicKind = e.positive === undefined ? kind : e.positive ? "buff" : "debuff";
   return (
     <li
-      className="flex flex-col gap-2 rounded-xl border border-[var(--border)] border-l-4 bg-[var(--surface-1)] p-4"
+      className="ak-brackets flex flex-col gap-2 rounded-sm border border-[var(--border)] border-l-4 bg-[var(--surface-1)] p-4"
       style={{ borderLeftColor: KIND_COLOR[effective] }}
     >
       <div className="flex items-start gap-3">

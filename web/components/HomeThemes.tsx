@@ -29,11 +29,12 @@ export function HomeThemes({ summaries }: { summaries: ThemeSummary[] }) {
       <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {summaries.map(({ theme: t, banner, relics, effects, items }) => (
           <li key={t.id}>
-            <Link
-              href={withLang(themeHref(t.id), lang)}
-              className="group flex h-full flex-col overflow-hidden rounded-xl border border-[var(--border)] bg-[var(--surface-1)] transition-colors hover:border-[var(--series-1)]"
-            >
-              <div className="aspect-[2/1] w-full bg-[var(--icon-well)]">
+            <Link href={withLang(themeHref(t.id), lang)} className="ak-frame group">
+             <div className="ak-frame-inner flex flex-col">
+              <div className="relative aspect-[2/1] w-full overflow-hidden bg-[var(--icon-well)]">
+                <span className="absolute left-0 top-0 z-10 bg-[var(--series-1)] px-2 py-0.5 font-mono text-[10px] font-semibold tracking-widest text-[var(--page)]">
+                  {themeShort(t.id)}
+                </span>
                 {banner && (
                   // eslint-disable-next-line @next/next/no-img-element
                   <img
@@ -44,21 +45,19 @@ export function HomeThemes({ summaries }: { summaries: ThemeSummary[] }) {
                 )}
               </div>
               <div className="flex flex-1 flex-col gap-1 p-4">
-                <p className="flex items-center gap-2 font-mono text-xs text-[var(--muted)]">
-                  {themeShort(t.id)}
-                  {!t.servers.includes("en") && (
-                    <span className="rounded border border-[var(--border)] px-1 text-[10px] font-semibold text-[var(--ink-2)]">
-                      CN only
-                    </span>
-                  )}
-                </p>
+                {!t.servers.includes("en") && (
+                  <p className="font-mono text-[10px] font-semibold uppercase tracking-widest text-[var(--ink-2)]">
+                    <span className="border border-[var(--border)] px-1">CN only</span>
+                  </p>
+                )}
                 <h2 className="text-lg font-semibold leading-snug" lang={htmlLang(t.names[lang] ? lang : "en")}>
                   {themeName(t, lang)}
                 </h2>
-                <p className="mt-auto pt-2 text-sm text-[var(--ink-2)]">
-                  {relics} relics · {effects} buffs/debuffs · {items} special items
+                <p className="mt-auto pt-2 font-mono text-xs uppercase tracking-wider text-[var(--muted)]">
+                  {relics} relics / {effects} buffs·debuffs / {items} items
                 </p>
               </div>
+             </div>
             </Link>
           </li>
         ))}

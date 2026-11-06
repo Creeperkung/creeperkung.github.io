@@ -33,21 +33,26 @@ export default function RootLayout({
         <script dangerouslySetInnerHTML={{ __html: THEME_INIT_SCRIPT }} />
       </head>
       <body className="flex min-h-full flex-col">
-        <div className="border-b border-[var(--border)]">
-          <nav className="mx-auto flex w-full max-w-6xl items-center gap-5 px-4 py-3 text-sm sm:px-6">
-            <Link href="/" className="flex items-center gap-2 font-semibold">
+        <div className="border-b border-[var(--border)] bg-[var(--surface-1)]">
+          <nav className="mx-auto flex w-full max-w-6xl flex-wrap items-center gap-x-5 gap-y-2 px-4 py-3 text-sm sm:px-6">
+            <Link href="/" className="flex items-center gap-2 font-mono font-bold uppercase tracking-[0.2em]">
               {/* the site icon (app/icon.png), served by Next at /icon.png */}
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img src="/icon.png" alt="" width={28} height={28} className="rounded-md" />
               Rosmontis
             </Link>
             {MODES.map((m) => (
-              <Link key={m.id} href={m.href} className="text-[var(--ink-2)] hover:text-[var(--ink)]">
+              <Link
+                key={m.id}
+                href={m.href}
+                className="font-mono text-xs uppercase tracking-[0.14em] text-[var(--ink-2)] hover:text-[var(--series-1)]"
+              >
                 {m.name}
               </Link>
             ))}
             <ThemeSwitch />
           </nav>
+          <div className="ak-stripes" aria-hidden />
         </div>
         <main className="mx-auto flex w-full max-w-6xl flex-1 flex-col gap-8 px-4 py-10 sm:px-6">
           {children}

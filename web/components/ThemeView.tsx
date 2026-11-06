@@ -55,15 +55,15 @@ export function ThemeView({
           <img
             src={`/themes/${theme.id}.webp`}
             alt=""
-            className="aspect-[3/1] w-full rounded-xl border border-[var(--border)] object-cover"
+            className="aspect-[3/1] w-full rounded-sm border border-[var(--border)] object-cover"
           />
         )}
         <div className="flex flex-wrap items-end justify-between gap-4">
           <div className="flex flex-col gap-1">
-            <p className="flex items-center gap-2 font-mono text-xs uppercase tracking-widest text-[var(--muted)]">
-              {themeShort(theme.id)}
+            <p className="flex items-center gap-2">
+              <span className="ak-kicker">Integrated Strategies · {themeShort(theme.id)}</span>
               {!theme.servers.includes("en") && (
-                <span className="rounded border border-[var(--border)] px-1 text-[10px] font-semibold normal-case tracking-normal text-[var(--ink-2)]">
+                <span className="border border-[var(--border)] px-1 font-mono text-[10px] font-semibold uppercase tracking-widest text-[var(--ink-2)]">
                   CN only
                 </span>
               )}
@@ -91,13 +91,13 @@ export function ThemeView({
             key={t.id}
             onClick={() => setTab(t.id)}
             aria-pressed={tab === t.id}
-            className={`-mb-px shrink-0 border-b-2 px-4 py-2 text-sm font-medium transition-colors ${
+            className={`-mb-px shrink-0 border-b-2 px-4 py-2 font-mono text-xs font-semibold uppercase tracking-[0.14em] transition-colors ${
               tab === t.id
-                ? "border-[var(--series-1)] text-[var(--ink)]"
+                ? "border-[var(--series-1)] bg-[var(--surface-1)] text-[var(--ink)]"
                 : "border-transparent text-[var(--ink-2)] hover:text-[var(--ink)]"
             }`}
           >
-            {t.label} <span className="text-[var(--muted)]">{count[t.id]}</span>
+            {t.label} <span className="ml-1 text-[var(--series-1)]">{String(count[t.id]).padStart(2, "0")}</span>
           </button>
         ))}
       </nav>

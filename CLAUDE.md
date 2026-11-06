@@ -56,5 +56,12 @@ node scripts/build-mechanics.mjs --skip-icons --export-untranslated  # list CN m
   - Section pages start with `Crumbs` (breadcrumbs).
 - **Language** lives in `components/lang.tsx`. `useLang()` reads `?lang=`, then localStorage. `setUrlParams()` only touches the params a component owns.
 - Everything that uses `useSearchParams` must stay inside the page's `<Suspense>` boundary.
+- **Look.** An original tactical-terminal style. Corners are sharp (`rounded-sm`), and there's a blueprint grid behind the body. The utility classes live in `globals.css`:
+  - `.ak-stripes`: the hazard band under the top bar.
+  - `.ak-kicker`: a mono uppercase label with an accent block.
+  - `.ak-heading`: a left accent bar on section titles.
+  - `.ak-frame` / `.ak-frame-inner`: a cut-corner card. The outer element draws the 1px border, which turns accent on hover.
+  - `.ak-brackets`: corner brackets on relic and mechanic cards.
+  - Nav links, tabs and stats use Geist Mono in uppercase.
 - Game text switches language. UI chrome (tabs, section titles, summaries) is English only.
 - Colors are CSS custom properties in `web/app/globals.css`. Light is the default. Dark applies under `prefers-color-scheme: dark` unless `<html data-theme="light">`, or always with `data-theme="dark"`; the two dark blocks must stay identical. `components/theme.tsx` has the System / Light / Dark switch in the top bar (localStorage `rosmontis:theme`) and `THEME_INIT_SCRIPT`, which the root layout puts in `<head>` so a saved choice applies before first paint. The theme is blue: blue-tinted neutrals, navy in dark mode. The accent `--series-1` is a sky/cyan blue, kept visibly different from `--rarity-rare` (royal blue). The Special Items "Item" badge uses `--kind-item` (violet), not a rarity color. Rarity accents are `--rarity-{normal,rare,superRare}` and `--relic-curse`. Always pair them with a text label, never color alone.

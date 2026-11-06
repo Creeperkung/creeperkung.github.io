@@ -16,7 +16,7 @@ export default function RelicsPage() {
         <Crumbs
           items={[{ label: "Home", href: "/" }, { label: "Integrated Strategies", href: "/is" }, { label: "All relics" }]}
         />
-        <h1 className="text-3xl font-bold tracking-tight">All relics</h1>
+        <h1 className="text-3xl font-bold uppercase tracking-wide">All relics</h1>
         <p className="max-w-2xl text-[var(--ink-2)]">
           All {relicData.relics.length} collectible relics from {relicData.themes.length} themes. Search names,
           effects and unlock conditions in English, Japanese or Chinese, and filter by theme, rarity and type.
