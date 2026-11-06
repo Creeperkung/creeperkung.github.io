@@ -12,6 +12,8 @@ export interface Mode {
   image?: string;
   /** short facts shown on the card */
   stats: string[];
+  /** not released yet: card shows a "Coming soon" badge */
+  comingSoon?: boolean;
 }
 
 const latestIs = relicData.themes[relicData.themes.length - 1];
@@ -28,5 +30,13 @@ export const MODES: Mode[] = [
     blurb: "The roguelike mode: every theme's relics, buffs, debuffs and special mechanic items, including CN-only themes.",
     image: latestIs && mechanicData.banners[latestIs.id] ? `/themes/${latestIs.id}.webp` : undefined,
     stats: [`${relicData.themes.length} themes`, `${relicData.relics.length} relics`, `${isEntries} effects & items`],
+  },
+  {
+    id: "stronghold",
+    name: "Stronghold Protocol",
+    href: "/stronghold",
+    blurb: "A new game mode. Not released on the CN server yet; its data will be added once it's out.",
+    stats: [],
+    comingSoon: true,
   },
 ];

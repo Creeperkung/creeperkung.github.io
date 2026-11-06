@@ -85,7 +85,7 @@ export function ThemeView({
         </div>
       </header>
 
-      <nav aria-label="Theme sections" className="flex gap-1 overflow-x-auto border-b border-[var(--border)]">
+      <nav aria-label="Theme sections" className="flex flex-wrap gap-1 border-b border-[var(--border)]">
         {TABS.map((t) => (
           <button
             key={t.id}

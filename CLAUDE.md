@@ -51,6 +51,7 @@ node scripts/build-mechanics.mjs --skip-icons --export-untranslated  # list CN m
   - `/is`: Integrated Strategies home, theme cards (`HomeThemes`).
   - `/is/[n]`: one theme, by community IS number (2–7), statically generated. `ThemeView` shows Relics, Buffs & Debuffs and Special Items tabs, selected with `?tab=`.
   - `/is/relics`: all relics (`AllRelics`). The static segment wins over `[n]`.
+  - `/stronghold`: Stronghold Protocol, a placeholder (`comingSoon` in `MODES`) until the mode is out on CN and has data.
   - Section pages start with `Crumbs` (breadcrumbs).
 - **Language** lives in `components/lang.tsx`. `useLang()` reads `?lang=`, then localStorage. `setUrlParams()` only touches the params a component owns.
 - Everything that uses `useSearchParams` must stay inside the page's `<Suspense>` boundary.
