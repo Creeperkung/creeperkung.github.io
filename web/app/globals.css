@@ -1,8 +1,12 @@
 @import "tailwindcss";
 
 /* Blue theme: blue-tinted neutrals, a sky/cyan accent (--series-1) kept apart from the
-   royal blue of the Rare rarity so the two never read as the same thing. */
+   royal blue of the Rare rarity so the two never read as the same thing.
+   Light tokens on :root; dark tokens apply when <html data-theme="dark">, or when the OS
+   is dark and the visitor hasn't picked light (data-theme is set by components/theme.tsx).
+   The two dark blocks below must stay identical. */
 :root {
+  color-scheme: light;
   --page: #f4f7fb;
   --surface-1: #fbfcfe;
   --ink: #0a0f1a;
@@ -22,7 +26,8 @@
 }
 
 @media (prefers-color-scheme: dark) {
-  :root {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
     --page: #0a0f1a;
     --surface-1: #121a28;
     --ink: #f5f8fc;
@@ -39,6 +44,25 @@
     --kind-item: #b7a0f2;
     --icon-well: #18212e;
   }
+}
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --page: #0a0f1a;
+  --surface-1: #121a28;
+  --ink: #f5f8fc;
+  --ink-2: #b4c0d0;
+  --muted: #7f8ba0;
+  --grid: #1f2a3b;
+  --baseline: #2c3a50;
+  --border: rgba(170, 200, 255, 0.12);
+  --series-1: #4cc3eb;
+  --rarity-normal: #b4c0d0;
+  --rarity-rare: #7f9ff5;
+  --rarity-superRare: #f0b44c;
+  --relic-curse: #f07a6e;
+  --kind-item: #b7a0f2;
+  --icon-well: #18212e;
 }
 
 body {

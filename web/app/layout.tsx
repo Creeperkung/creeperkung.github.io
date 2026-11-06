@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Geist, Geist_Mono } from "next/font/google";
+import { THEME_INIT_SCRIPT, ThemeSwitch } from "@/components/theme";
 import { MODES } from "@/lib/modes";
 import { relicData } from "@/lib/relics";
 import "./globals.css";
@@ -26,7 +27,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}>
+    // suppressHydrationWarning: THEME_INIT_SCRIPT sets data-theme on <html> before React hydrates
+    <html lang="en" className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`} suppressHydrationWarning>
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: THEME_INIT_SCRIPT }} />
+      </head>
       <body className="flex min-h-full flex-col">
         <div className="border-b border-[var(--border)]">
           <nav className="mx-auto flex w-full max-w-6xl items-center gap-5 px-4 py-3 text-sm sm:px-6">
@@ -41,6 +46,7 @@ export default function RootLayout({
                 {m.name}
               </Link>
             ))}
+            <ThemeSwitch />
           </nav>
         </div>
         <main className="mx-auto flex w-full max-w-6xl flex-1 flex-col gap-8 px-4 py-10 sm:px-6">
