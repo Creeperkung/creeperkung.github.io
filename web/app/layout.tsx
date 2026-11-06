@@ -30,7 +30,10 @@ export default function RootLayout({
       <body className="flex min-h-full flex-col">
         <div className="border-b border-[var(--border)]">
           <nav className="mx-auto flex w-full max-w-6xl items-center gap-5 px-4 py-3 text-sm sm:px-6">
-            <Link href="/" className="font-semibold">
+            <Link href="/" className="flex items-center gap-2 font-semibold">
+              {/* the site icon (app/icon.png), served by Next at /icon.png */}
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src="/icon.png" alt="" width={28} height={28} className="rounded-md" />
               Relic Index
             </Link>
             {MODES.map((m) => (
