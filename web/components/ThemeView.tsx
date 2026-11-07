@@ -33,7 +33,7 @@ export function ThemeView({
     const t = params.get("tab");
     return TABS.some((x) => x.id === t) ? (t as Tab) : "relics";
   });
-  // Art mode backdrop: this theme's banner while the page is open
+  // Page backdrop (--art): this theme's banner while the page is open
   useEffect(() => {
     if (!banner) return;
     const root = document.documentElement;

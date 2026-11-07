@@ -1,69 +1,29 @@
 @import "tailwindcss";
 
-/* Blue theme: blue-tinted neutrals, a sky/cyan accent (--series-1) kept apart from the
-   royal blue of the Rare rarity so the two never read as the same thing.
-   Light tokens on :root; dark tokens apply when <html data-theme="dark">, or when the OS
-   is dark and the visitor hasn't picked light (data-theme is set by components/theme.tsx).
-   The two dark blocks below must stay identical. */
+/* One look: dark blue tokens with see-through panels over a fixed backdrop of official IS
+   banner art, blurred and dimmed so it stays easy on the eyes. The accent (--series-1) is a
+   sky/cyan blue kept apart from the royal blue of the Rare rarity.
+   --art is the banner URL: the current theme's on /is/[n] (set by ThemeView), else the
+   newest theme's. */
 :root {
-  color-scheme: light;
-  /* light mode is light blue */
-  --page: #e6f0fb;
-  --surface-1: #f6faff;
-  --ink: #0a1526;
-  --ink-2: #41546d;
-  --muted: #6f8299;
-  --grid: #d0deee;
-  --baseline: #b3c5da;
-  --border: rgba(20, 70, 140, 0.16);
-  --series-1: #0877a3; /* accent: tabs, hover, focus, Buff badge */
-  /* Relic rarity accents (always paired with a text label) */
-  --rarity-normal: #64707f;
-  --rarity-rare: #2f5fd0;
-  --rarity-superRare: #9a5f00;
-  --relic-curse: #b3261e;
-  --kind-item: #7652c4; /* "Item" badge on Special Items: not a rarity color */
-  --icon-well: #1c2633; /* relic art is drawn for a dark in-game backdrop */
-}
-
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) {
-    color-scheme: dark;
-    --page: #0a0f1a;
-    --surface-1: #121a28;
-    --ink: #f5f8fc;
-    --ink-2: #b4c0d0;
-    --muted: #7f8ba0;
-    --grid: #1f2a3b;
-    --baseline: #2c3a50;
-    --border: rgba(170, 200, 255, 0.12);
-    --series-1: #4cc3eb;
-    --rarity-normal: #b4c0d0;
-    --rarity-rare: #7f9ff5;
-    --rarity-superRare: #f0b44c;
-    --relic-curse: #f07a6e;
-    --kind-item: #b7a0f2;
-    --icon-well: #18212e;
-  }
-}
-
-:root[data-theme="dark"] {
   color-scheme: dark;
-  --page: #0a0f1a;
-  --surface-1: #121a28;
-  --ink: #f5f8fc;
-  --ink-2: #b4c0d0;
-  --muted: #7f8ba0;
+  --art: url("/themes/rogue_6.webp");
+  --page: #070b14;
+  --surface-1: rgba(14, 21, 34, 0.84);
+  --ink: #f2f6fc;
+  --ink-2: #bcc8d8;
+  --muted: #8b97ab;
   --grid: #1f2a3b;
   --baseline: #2c3a50;
-  --border: rgba(170, 200, 255, 0.12);
-  --series-1: #4cc3eb;
-  --rarity-normal: #b4c0d0;
+  --border: rgba(170, 200, 255, 0.14);
+  --series-1: #4cc3eb; /* accent: tabs, hover, focus, Buff badge */
+  /* Relic rarity accents (always paired with a text label) */
+  --rarity-normal: #bcc8d8;
   --rarity-rare: #7f9ff5;
   --rarity-superRare: #f0b44c;
   --relic-curse: #f07a6e;
-  --kind-item: #b7a0f2;
-  --icon-well: #18212e;
+  --kind-item: #b7a0f2; /* "Item" badge on Special Items: not a rarity color */
+  --icon-well: rgba(10, 16, 26, 0.9); /* relic art is drawn for a dark in-game backdrop */
 }
 
 /* ------------------------------------------------------------------------------------------
@@ -71,16 +31,8 @@
    blueprint grid, hazard-stripe bands, cut-corner frames and corner brackets.
    ------------------------------------------------------------------------------------------ */
 :root {
-  --grid-line: rgba(30, 100, 190, 0.07);
+  --grid-line: rgba(140, 180, 255, 0.035);
   --cut: 14px;
-}
-:root[data-theme="dark"] {
-  --grid-line: rgba(140, 180, 255, 0.045);
-}
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) {
-    --grid-line: rgba(140, 180, 255, 0.045);
-  }
 }
 
 body {
@@ -92,56 +44,23 @@ body {
   background-attachment: fixed;
   color: var(--ink);
   font-family: var(--font-geist-sans), system-ui, sans-serif;
+  isolation: isolate;
 }
-
-/* ------------------------------------------------------------------------------------------
-   Art mode (<html data-theme="art">): dark tokens with see-through panels over a fixed
-   backdrop of official IS banner art, blurred and dimmed so it stays easy on the eyes.
-   --art is the banner URL: the current theme's on /is/[n] (set by ThemeView), else the
-   newest theme's. Placed after the dark blocks so it wins over them.
-   ------------------------------------------------------------------------------------------ */
-:root {
-  --art: url("/themes/rogue_6.webp");
-}
-:root[data-theme="art"] {
-  color-scheme: dark;
-  --page: #070b14;
-  --surface-1: rgba(14, 21, 34, 0.84);
-  --ink: #f2f6fc;
-  --ink-2: #bcc8d8;
-  --muted: #8b97ab;
-  --grid: #1f2a3b;
-  --baseline: #2c3a50;
-  --border: rgba(170, 200, 255, 0.14);
-  --series-1: #4cc3eb;
-  --rarity-normal: #bcc8d8;
-  --rarity-rare: #7f9ff5;
-  --rarity-superRare: #f0b44c;
-  --relic-curse: #f07a6e;
-  --kind-item: #b7a0f2;
-  --icon-well: rgba(10, 16, 26, 0.9);
-  --grid-line: rgba(140, 180, 255, 0.035);
-}
-:root[data-theme="art"] body::before {
+body::before {
   content: "";
   position: fixed;
   inset: -24px; /* bleed so the blur has no hard edge */
   z-index: -1;
   background: var(--art) center / cover no-repeat;
   filter: blur(6px) saturate(0.85) brightness(0.55);
-  opacity: 0;
   pointer-events: none;
 }
-:root[data-theme="art"] body {
-  background-color: var(--page);
-  isolation: isolate;
-}
 /* top bar and panels pick up a frosted look over the art */
-:root[data-theme="art"] .bg-\[var\(--surface-1\)\] {
+.bg-\[var\(--surface-1\)\] {
   backdrop-filter: blur(6px);
 }
 
-/* Home page backdrop (public/backgrounds/home.webp), every theme. A fade in the page color
+/* Home page backdrop (public/backgrounds/home.webp), drawn over the banner art. A fade in the page color
    sits on top so text stays readable; the image is small, so a light blur hides upscaling. */
 .home-backdrop {
   position: fixed;
@@ -157,6 +76,34 @@ body {
     ),
     url("/backgrounds/home.webp") center 30% / cover no-repeat;
   filter: blur(1.5px);
+}
+
+/* Home page title: cyan → violet → pink gradient text with a soft glow and a slow shimmer */
+.home-title {
+  background: linear-gradient(100deg, var(--series-1) 0%, var(--kind-item) 45%, #f59ac8 70%, var(--series-1) 100%);
+  background-size: 220% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  filter: drop-shadow(0 0 18px color-mix(in srgb, var(--series-1) 45%, transparent));
+  animation: home-title-shimmer 9s ease-in-out infinite alternate;
+}
+@keyframes home-title-shimmer {
+  from { background-position: 0% 50%; }
+  to { background-position: 100% 50%; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .home-title { animation: none; }
+}
+
+/* Short gradient rules either side of a centered label */
+.home-rule {
+  height: 1px;
+  width: 3rem;
+  background: linear-gradient(to right, transparent, var(--series-1));
+}
+.home-rule.flip {
+  background: linear-gradient(to left, transparent, var(--series-1));
 }
 
 /* Diagonal hazard band, e.g. under the top bar */

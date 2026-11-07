@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { Geist, Geist_Mono } from "next/font/google";
 import { LangSelect } from "@/components/lang";
-import { THEME_INIT_SCRIPT, ThemeToggle } from "@/components/theme";
 import { MODES } from "@/lib/modes";
 import { relicData } from "@/lib/relics";
 import "./globals.css";
@@ -18,7 +17,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Rosmontis — Arknights",
+  title: "ROSMEOWTIS — Arknights",
   description: "Reference pages for Arknights game modes, in English, Japanese and Chinese",
 };
 
@@ -28,11 +27,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    // suppressHydrationWarning: THEME_INIT_SCRIPT sets data-theme on <html> before React hydrates
-    <html lang="en" className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`} suppressHydrationWarning>
-      <head>
-        <script dangerouslySetInnerHTML={{ __html: THEME_INIT_SCRIPT }} />
-      </head>
+    <html lang="en" className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}>
       <body className="flex min-h-full flex-col">
         <div className="border-b border-[var(--border)] bg-[var(--surface-1)]">
           <nav className="mx-auto flex w-full max-w-6xl flex-wrap items-center gap-x-5 gap-y-2 px-4 py-3 text-sm sm:px-6">
@@ -40,7 +35,7 @@ export default function RootLayout({
               {/* the site icon (app/icon.png), served by Next at /icon.png */}
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img src="/icon.png" alt="" width={28} height={28} className="rounded-md" />
-              Rosmontis
+              ROSMEOWTIS
             </Link>
             {MODES.map((m) => (
               <Link
@@ -53,7 +48,6 @@ export default function RootLayout({
             ))}
             <div className="ml-auto flex items-center gap-2">
               <LangSelect />
-              <ThemeToggle />
             </div>
           </nav>
           <div className="ak-stripes" aria-hidden />
