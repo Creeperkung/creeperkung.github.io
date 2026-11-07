@@ -62,7 +62,6 @@ node scripts/build-mechanics.mjs --skip-icons --export-untranslated  # list CN m
   - `.ak-kicker`: a mono uppercase label with an accent block.
   - `.ak-heading`: a left accent bar on section titles.
   - `.ak-frame` / `.ak-frame-inner`: a cut-corner card. The outer element draws the 1px border, which turns accent on hover.
-  - `.ak-brackets`: corner brackets on relic and mechanic cards.
   - Nav links, tabs and stats use Geist Mono in uppercase.
 - Colors are CSS custom properties on `:root` in `web/app/globals.css`. There is one look, with no light/dark modes and no theme toggle: dark navy tokens with see-through `--surface-1` panels (frosted with `backdrop-filter`) over `body::before`, which shows `--art` blurred and dimmed. `--art` is the official IS banner from `public/themes/`.
   - `ThemeView` sets `--art` to the current theme's banner; every other page uses the newest one. The home page adds its own `.home-backdrop` on top.

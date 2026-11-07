@@ -27,11 +27,17 @@ export default function IsHome() {
 
   return (
     <>
-      <header className="flex flex-col gap-2">
-        <Crumbs items={[{ label: "Home", href: "/" }, { label: "Integrated Strategies" }]} />
-        <h1 className="text-3xl font-bold uppercase tracking-wide">Integrated Strategies</h1>
+      <Crumbs items={[{ label: "Home", href: "/" }, { label: "Integrated Strategies" }]} />
+      {/* centered gradient title, same style as the home page header */}
+      <header className="-mt-4 flex flex-col items-center gap-3 pb-4 text-center sm:pb-6">
+        <p className="flex items-center gap-3">
+          <span className="home-rule" aria-hidden />
+          <span className="font-mono text-xs uppercase tracking-[0.3em] text-[var(--series-1)]">Arknights · Roguelike</span>
+          <span className="home-rule flip" aria-hidden />
+        </p>
+        <h1 className="home-title text-4xl font-black uppercase tracking-[0.08em] sm:text-6xl">Integrated Strategies</h1>
         <p className="max-w-2xl text-[var(--ink-2)]">
-          {`Every Integrated Strategies theme, including those so far only on the CN server: all ${relicData.relics.length} relics, plus each theme's own buffs, debuffs and special mechanic items, in English, Japanese and Chinese. Pick a theme to start.`}
+          {`Every Integrated Strategies theme, including those so far only on the CN server: all ${relicData.relics.length} relics, plus each theme's own buffs, debuffs and special mechanic items.`}
         </p>
       </header>
       <Suspense fallback={<p className="text-sm text-[var(--muted)]">Loading…</p>}>

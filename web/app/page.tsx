@@ -1,5 +1,7 @@
 import Link from "next/link";
+import { SupportLinks } from "@/components/SupportLinks";
 import { MODES } from "@/lib/modes";
+import { SITE_LINKS } from "@/lib/site";
 
 export default function Home() {
   return (
@@ -14,12 +16,12 @@ export default function Home() {
         </p>
         <h1 className="home-title text-5xl font-black uppercase tracking-[0.08em] sm:text-7xl">ROSMEOWTIS</h1>
         <p className="max-w-2xl text-[var(--ink-2)]">
-          Reference pages for Arknights game modes, in English, Japanese and Chinese. Pick a mode to start.
+          Reference pages for Arknights game modes.
         </p>
         <p className="mt-3 flex flex-wrap items-center justify-center gap-3 font-mono text-sm uppercase tracking-[0.2em] text-[var(--ink-2)]">
           Created by
           <a
-            href="https://youtube.com/@rosmontisuwu"
+            href={SITE_LINKS.youtube}
             target="_blank"
             rel="noopener noreferrer"
             className="group inline-flex items-center gap-2.5 rounded-xl border border-[#ff4e5b]/60 bg-[#141b2a] py-2 pl-2 pr-4 text-lg font-semibold normal-case tracking-normal text-[var(--ink)] shadow-[0_0_18px_rgba(255,0,51,0.18)] transition-[background-color,border-color,box-shadow] hover:border-[#ff4e5b] hover:bg-[#1c2436] hover:shadow-[0_0_26px_rgba(255,0,51,0.4)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#ff4e5b]"
@@ -42,6 +44,7 @@ export default function Home() {
             <span className="sr-only">(YouTube channel, opens in a new tab)</span>
           </a>
         </p>
+        <SupportLinks />
       </header>
       {/* Same art-only rounded tiles as the IS theme list (HomeThemes), two per row so they're bigger */}
       <ul className="grid gap-6 sm:grid-cols-2">

@@ -20,12 +20,21 @@ import {
 type Sort = "no" | "name" | "rarity";
 const RARITIES: Rarity[] = ["normal", "rare", "superRare"];
 const RARITY_RANK: Record<Rarity, number> = { normal: 0, rare: 1, superRare: 2 };
-const chip = (active: boolean) =>
-  `rounded-sm border px-3 py-1 text-sm transition-colors ${
-    active
-      ? "border-[var(--ink)] bg-[var(--ink)] text-[var(--page)]"
-      : "border-[var(--border)] text-[var(--ink-2)] hover:border-[var(--ink-2)]"
+/** One button inside a segmented group (see `Segment`). */
+const seg = (active: boolean) =>
+  `rounded-md px-3 py-1 text-sm font-medium transition-colors ${
+    active ? "bg-[var(--series-1)] text-[#0a0f1a]" : "text-[var(--ink-2)] hover:bg-white/5 hover:text-[var(--ink)]"
   }`;
+
+/** A labelled row of segmented buttons. */
+function Segment({ label, children }: { label: string; children: React.ReactNode }) {
+  return (
+    <div role="group" aria-label={label} className="flex items-center gap-2">
+      <span className="font-mono text-[11px] uppercase tracking-[0.16em] text-[var(--muted)]">{label}</span>
+      <div className="flex flex-wrap gap-0.5 rounded-lg border border-[var(--border)] bg-[var(--page)]/60 p-0.5">{children}</div>
+    </div>
+  );
+}
 
 /**
  * Relic list with search and filters. With a single theme in `data` the theme
@@ -73,6 +82,7 @@ export function RelicBrowser({ data, lang }: { data: RelicData; lang: Lang }) {
     return out;
   }, [inTheme, query, rarities, kind, upgradableOnly, sort, lang]);
 
+  const filtered = query !== "" || rarities.size > 0 || kind !== "any" || upgradableOnly;
   const kindsInTheme = useMemo(() => new Set(inTheme.map((r) => r.kind)), [inTheme]);
   const upgradableInTheme = useMemo(() => inTheme.filter((r) => r.upgrades).length, [inTheme]);
 
@@ -88,92 +98,98 @@ export function RelicBrowser({ data, lang }: { data: RelicData; lang: Lang }) {
   return (
     <div className="flex flex-col gap-6">
       {!single && (
-        <nav aria-label="Integrated Strategies theme" className="flex flex-wrap gap-2">
-          {data.themes.map((t) => (
+        // compact theme picker, newest first: IS number only, full name in the tooltip and the results line
+        <nav aria-label="Integrated Strategies theme" className="flex flex-wrap justify-center gap-2">
+          {[
+            { id: "all", label: "All themes", title: "Every theme", cn: false },
+            ...[...data.themes].reverse().map((t) => ({
+              id: t.id,
+              label: themeShort(t.id),
+              title: themeName(t, lang),
+              cn: !t.servers.includes("en"),
+            })),
+          ].map((t) => (
             <button
               key={t.id}
               onClick={() => setTheme(t.id)}
-              className={`rounded-lg border px-4 py-2 text-left transition-colors ${
-                theme === t.id
-                  ? "border-[var(--series-1)] bg-[var(--surface-1)] shadow-sm"
-                  : "border-[var(--border)] hover:border-[var(--ink-2)]"
-              }`}
+              title={t.cn ? `${t.title} (CN only)` : t.title}
               aria-pressed={theme === t.id}
+              className={`flex items-center gap-1.5 rounded-full border px-4 py-1.5 font-mono text-sm font-semibold tracking-wider transition-colors ${
+                theme === t.id
+                  ? "border-[var(--series-1)] bg-[var(--series-1)] text-[#0a0f1a]"
+                  : "border-[var(--border)] bg-[var(--surface-1)] text-[var(--ink-2)] hover:border-[var(--series-1)] hover:text-[var(--ink)]"
+              }`}
             >
-              <span className="flex items-center gap-1.5 font-mono text-xs text-[var(--muted)]">
-                {themeShort(t.id)}
-                {!t.servers.includes("en") && (
-                  <span
-                    className="rounded border border-[var(--border)] px-1 text-[10px] font-semibold text-[var(--ink-2)]"
-                    title="Only released on the CN server so far"
-                  >
-                    CN only
-                  </span>
-                )}
-              </span>
-              <span className="block text-sm font-medium" lang={htmlLang(t.names[lang] ? lang : "en")}>
-                {themeName(t, lang)}
-              </span>
+              {t.label}
+              {t.cn && <span className="text-[10px] opacity-70">CN</span>}
             </button>
           ))}
-          <button
-            onClick={() => setTheme("all")}
-            className={`rounded-lg border px-4 py-2 text-sm font-medium transition-colors ${
-              theme === "all"
-                ? "border-[var(--series-1)] bg-[var(--surface-1)] shadow-sm"
-                : "border-[var(--border)] hover:border-[var(--ink-2)]"
-            }`}
-            aria-pressed={theme === "all"}
-          >
-            All themes
-          </button>
         </nav>
       )}
 
-      <div className="flex flex-col gap-3 rounded-sm border border-[var(--border)] bg-[var(--surface-1)] p-4">
-        <input
-          type="search"
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-          placeholder="Search names, effects and unlock conditions in English, 日本語 or 中文 (e.g. “ATK”, “Hope”, “希望”)"
-          className="w-full rounded-lg border border-[var(--border)] bg-[var(--page)] px-3 py-2 outline-none focus:border-[var(--series-1)]"
-          aria-label="Search relics"
-        />
-        <div className="flex flex-wrap items-center gap-2">
-          <span className="mr-1 text-xs uppercase tracking-wide text-[var(--muted)]">Rarity</span>
-          {RARITIES.map((r) => (
-            <button key={r} onClick={() => toggleRarity(r)} className={chip(rarities.has(r))} aria-pressed={rarities.has(r)}>
-              {RARITY_LABEL[r]}
-            </button>
-          ))}
+      <div className="flex flex-col gap-3 rounded-xl border border-[var(--border)] bg-[var(--surface-1)] p-3 sm:p-4">
+        <div className="relative">
+          <svg
+            aria-hidden
+            viewBox="0 0 24 24"
+            className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--muted)]"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+          >
+            <circle cx="11" cy="11" r="7" />
+            <path d="m20 20-3.5-3.5" />
+          </svg>
+          <input
+            type="search"
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            placeholder="Search relics… (e.g. “ATK”, “Hope”, “希望”)"
+            title="Searches names, effects and unlock conditions"
+            className="w-full rounded-lg border border-[var(--border)] bg-[var(--page)] py-2.5 pl-9 pr-3 outline-none focus:border-[var(--series-1)]"
+            aria-label="Search relics"
+          />
+        </div>
+        <div className="flex flex-wrap items-center gap-x-5 gap-y-2">
+          <Segment label="Rarity">
+            {RARITIES.map((r) => (
+              <button key={r} onClick={() => toggleRarity(r)} className={seg(rarities.has(r))} aria-pressed={rarities.has(r)}>
+                {RARITY_LABEL[r]}
+              </button>
+            ))}
+          </Segment>
           {(kindsInTheme.has("curse") || kindsInTheme.has("secret")) && (
-            <>
-              <span className="ml-3 mr-1 text-xs uppercase tracking-wide text-[var(--muted)]">Type</span>
+            <Segment label="Type">
               {(["any", "standard", "curse", "secret"] as const)
                 .filter((k) => k === "any" || kindsInTheme.has(k))
                 .map((k) => (
-                  <button key={k} onClick={() => setKind(k)} className={chip(kind === k)} aria-pressed={kind === k}>
+                  <button key={k} onClick={() => setKind(k)} className={seg(kind === k)} aria-pressed={kind === k}>
                     {k === "any" ? "All" : k === "curse" ? "Cursed" : k[0].toUpperCase() + k.slice(1)}
                   </button>
                 ))}
-            </>
+            </Segment>
           )}
           {upgradableInTheme > 0 && (
             <button
               onClick={() => setUpgradableOnly((v) => !v)}
-              className={`ml-3 ${chip(upgradableOnly)}`}
+              className={`rounded-lg border px-3 py-1 text-sm font-medium transition-colors ${
+                upgradableOnly
+                  ? "border-[var(--series-1)] bg-[var(--series-1)] text-[#0a0f1a]"
+                  : "border-[var(--border)] text-[var(--ink-2)] hover:border-[var(--series-1)] hover:text-[var(--ink)]"
+              }`}
               aria-pressed={upgradableOnly}
               title="Relics that get stronger -α/-β/-γ versions at higher difficulty"
             >
-              Difficulty upgrades <span className="opacity-70">{upgradableInTheme}</span>
+              Upgradable <span className="opacity-70">{upgradableInTheme}</span>
             </button>
           )}
-          <label className="ml-auto flex items-center gap-2 text-sm text-[var(--ink-2)]">
-            Sort
+          <label className="ml-auto flex items-center gap-2">
+            <span className="font-mono text-[11px] uppercase tracking-[0.16em] text-[var(--muted)]">Sort</span>
             <select
               value={sort}
               onChange={(e) => setSort(e.target.value as Sort)}
-              className="rounded-md border border-[var(--border)] bg-[var(--page)] px-2 py-1"
+              className="rounded-lg border border-[var(--border)] bg-[var(--page)] px-2 py-1 text-sm"
             >
               <option value="no">Collection #</option>
               <option value="rarity">Rarity</option>
@@ -183,10 +199,27 @@ export function RelicBrowser({ data, lang }: { data: RelicData; lang: Lang }) {
         </div>
       </div>
 
-      <p className="text-sm text-[var(--ink-2)]" aria-live="polite">
-        Showing <strong className="text-[var(--ink)]">{visible.length}</strong> of {inTheme.length} relics
-        {currentTheme && !single && <> in {themeName(currentTheme, lang)}</>}
-      </p>
+      <div className="-mt-2 flex flex-wrap items-center justify-between gap-2 text-sm text-[var(--ink-2)]">
+        <p aria-live="polite">
+          <strong className="text-[var(--ink)]">{visible.length}</strong> of {inTheme.length} relics
+          {currentTheme && !single && (
+            <span lang={htmlLang(currentTheme.names[lang] ? lang : "en")}> · {themeName(currentTheme, lang)}</span>
+          )}
+        </p>
+        {filtered && (
+          <button
+            onClick={() => {
+              setQuery("");
+              setRarities(new Set());
+              setKind("any");
+              setUpgradableOnly(false);
+            }}
+            className="text-[var(--series-1)] hover:underline"
+          >
+            Clear filters
+          </button>
+        )}
+      </div>
 
       {visible.length === 0 ? (
         <p className="rounded-sm border border-dashed border-[var(--border)] p-10 text-center text-[var(--muted)]">
@@ -227,8 +260,8 @@ function RelicCard({ relic: r, lang, showTheme }: { relic: Relic; lang: Lang; sh
   const textLang = htmlLang(shown);
   return (
     <li
-      className="ak-brackets flex flex-col gap-2 rounded-sm border border-[var(--border)] border-l-4 bg-[var(--surface-1)] p-4"
-      style={{ borderLeftColor: accent }}
+      className="flex flex-col gap-2.5 rounded-xl border border-[var(--border)] border-t-2 bg-[var(--surface-1)] p-4"
+      style={{ borderTopColor: accent }}
     >
       <div className="flex items-start gap-3">
         <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-lg bg-[var(--icon-well)]">
@@ -258,9 +291,18 @@ function RelicCard({ relic: r, lang, showTheme }: { relic: Relic; lang: Lang; sh
         {text.effect}
       </p>
       {text.flavor && (
-        <p className="whitespace-pre-line text-sm italic leading-relaxed text-[var(--muted)]" lang={textLang}>
-          {text.flavor}
-        </p>
+        // flavor text collapsed by default so cards stay short
+        <details className="group text-sm">
+          <summary className="flex w-fit cursor-pointer list-none items-center gap-1 text-xs text-[var(--muted)] hover:text-[var(--ink-2)]">
+            <span aria-hidden className="inline-block transition-transform group-open:rotate-90">
+              ›
+            </span>
+            Description
+          </summary>
+          <p className="mt-1.5 whitespace-pre-line italic leading-relaxed text-[var(--muted)]" lang={textLang}>
+            {text.flavor}
+          </p>
+        </details>
       )}
       {r.upgrades && <Upgrades relic={r} lang={lang} />}
       {text.unlock && (

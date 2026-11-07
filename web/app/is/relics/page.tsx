@@ -12,14 +12,20 @@ export const metadata: Metadata = {
 export default function RelicsPage() {
   return (
     <>
-      <header className="flex flex-col gap-2">
-        <Crumbs
-          items={[{ label: "Home", href: "/" }, { label: "Integrated Strategies", href: "/is" }, { label: "All relics" }]}
-        />
-        <h1 className="text-3xl font-bold uppercase tracking-wide">All relics</h1>
+      <Crumbs
+        items={[{ label: "Home", href: "/" }, { label: "Integrated Strategies", href: "/is" }, { label: "All relics" }]}
+      />
+      {/* centered gradient title, same style as the home and IS pages */}
+      <header className="-mt-4 flex flex-col items-center gap-3 pb-2 text-center">
+        <p className="flex items-center gap-3">
+          <span className="home-rule" aria-hidden />
+          <span className="font-mono text-xs uppercase tracking-[0.3em] text-[var(--series-1)]">Integrated Strategies</span>
+          <span className="home-rule flip" aria-hidden />
+        </p>
+        <h1 className="home-title text-4xl font-black uppercase tracking-[0.08em] sm:text-6xl">All relics</h1>
         <p className="max-w-2xl text-[var(--ink-2)]">
-          All {relicData.relics.length} collectible relics from {relicData.themes.length} themes. Search names,
-          effects and unlock conditions in English, Japanese or Chinese, and filter by theme, rarity and type.
+          {relicData.relics.length} relics from {relicData.themes.length} themes. Search in English, Japanese or
+          Chinese.
         </p>
       </header>
       <Suspense fallback={<p className="text-sm text-[var(--muted)]">Loading relics…</p>}>

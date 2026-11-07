@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { Geist, Geist_Mono } from "next/font/google";
 import { LangSelect } from "@/components/lang";
+import { SupportLinks } from "@/components/SupportLinks";
 import { MODES } from "@/lib/modes";
 import { relicData } from "@/lib/relics";
 import "./globals.css";
@@ -18,7 +19,7 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "ROSMEOWTIS — Arknights",
-  description: "Reference pages for Arknights game modes, in English, Japanese and Chinese",
+  description: "Reference pages for Arknights game modes",
 };
 
 export default function RootLayout({
@@ -70,6 +71,9 @@ export default function RootLayout({
             . English text for CN-only content is official wording where it was reused from an earlier theme, and an
             unofficial fan translation otherwise. CN-only theme names and section summaries are unofficial. Fan-made,
             not affiliated with Hypergryph or Yostar.
+            <div className="mt-3 flex justify-start">
+              <SupportLinks size="sm" />
+            </div>
           </footer>
         </main>
       </body>

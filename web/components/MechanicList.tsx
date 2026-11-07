@@ -218,8 +218,8 @@ function Card({ entry: e, kind, lang }: { entry: MechanicEntry; kind: MechanicKi
   const effective: MechanicKind = e.positive === undefined ? kind : e.positive ? "buff" : "debuff";
   return (
     <li
-      className="ak-brackets flex flex-col gap-2 rounded-sm border border-[var(--border)] border-l-4 bg-[var(--surface-1)] p-4"
-      style={{ borderLeftColor: KIND_COLOR[effective] }}
+      className="flex flex-col gap-2.5 rounded-xl border border-[var(--border)] border-t-2 bg-[var(--surface-1)] p-4"
+      style={{ borderTopColor: KIND_COLOR[effective] }}
     >
       <div className="flex items-start gap-3">
         <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-lg bg-[var(--icon-well)]">
