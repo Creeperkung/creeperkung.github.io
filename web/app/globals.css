@@ -1,34 +1,200 @@
 @import "tailwindcss";
 
-/* Chart chrome + series tokens (light/dark selected per palette, not flipped) */
+/* One look: dark blue tokens with see-through panels over a fixed backdrop of official IS
+   banner art, blurred and dimmed so it stays easy on the eyes. The accent (--series-1) is a
+   sky/cyan blue kept apart from the royal blue of the Rare rarity.
+   --art is the banner URL: the current theme's on /is/[n] (set by ThemeView), else the
+   newest theme's. */
 :root {
-  --page: #f9f9f7;
-  --surface-1: #fcfcfb;
-  --ink: #0b0b0b;
-  --ink-2: #52514e;
-  --muted: #898781;
-  --grid: #e1e0d9;
-  --baseline: #c3c2b7;
-  --border: rgba(11, 11, 11, 0.1);
-  --series-1: #2a78d6;
+  color-scheme: dark;
+  --art: url("/themes/rogue_6.webp");
+  --page: #070b14;
+  --surface-1: rgba(14, 21, 34, 0.84);
+  --ink: #f2f6fc;
+  --ink-2: #bcc8d8;
+  --muted: #8b97ab;
+  --grid: #1f2a3b;
+  --baseline: #2c3a50;
+  --border: rgba(170, 200, 255, 0.14);
+  --series-1: #4cc3eb; /* accent: tabs, hover, focus, Buff badge */
+  /* Relic rarity accents (always paired with a text label) */
+  --rarity-normal: #bcc8d8;
+  --rarity-rare: #7f9ff5;
+  --rarity-superRare: #f0b44c;
+  --relic-curse: #f07a6e;
+  --kind-item: #b7a0f2; /* "Item" badge on Special Items: not a rarity color */
+  --icon-well: rgba(10, 16, 26, 0.9); /* relic art is drawn for a dark in-game backdrop */
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --page: #0d0d0d;
-    --surface-1: #1a1a19;
-    --ink: #ffffff;
-    --ink-2: #c3c2b7;
-    --muted: #898781;
-    --grid: #2c2c2a;
-    --baseline: #383835;
-    --border: rgba(255, 255, 255, 0.1);
-    --series-1: #3987e5;
-  }
+/* ------------------------------------------------------------------------------------------
+   Tactical-terminal look (original; in the spirit of sci-fi game UIs): sharp corners, a faint
+   blueprint grid, hazard-stripe bands, cut-corner frames and corner brackets.
+   ------------------------------------------------------------------------------------------ */
+:root {
+  --grid-line: rgba(140, 180, 255, 0.035);
+  --cut: 14px;
 }
 
 body {
-  background: var(--page);
+  background-color: var(--page);
+  background-image:
+    linear-gradient(var(--grid-line) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
+  background-size: 40px 40px;
+  background-attachment: fixed;
   color: var(--ink);
   font-family: var(--font-geist-sans), system-ui, sans-serif;
+  isolation: isolate;
+}
+body::before {
+  content: "";
+  position: fixed;
+  inset: -24px; /* bleed so the blur has no hard edge */
+  z-index: -1;
+  background: var(--art) center / cover no-repeat;
+  filter: blur(6px) saturate(0.85) brightness(0.55);
+  pointer-events: none;
+}
+/* top bar and panels pick up a frosted look over the art */
+.bg-\[var\(--surface-1\)\] {
+  backdrop-filter: blur(6px);
+}
+
+/* Home page backdrop (public/backgrounds/home.webp), drawn over the banner art. A fade in the page color
+   sits on top so text stays readable; the image is small, so a light blur hides upscaling. */
+.home-backdrop {
+  position: fixed;
+  inset: -12px;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    linear-gradient(
+      to bottom,
+      color-mix(in srgb, var(--page) 58%, transparent) 0%,
+      color-mix(in srgb, var(--page) 70%, transparent) 55%,
+      var(--page) 100%
+    ),
+    url("/backgrounds/home.webp") center 30% / cover no-repeat;
+  filter: blur(1.5px);
+}
+
+/* Home page title: cyan → violet → pink gradient text with a soft glow and a slow shimmer */
+.home-title {
+  background: linear-gradient(100deg, var(--series-1) 0%, var(--kind-item) 45%, #f59ac8 70%, var(--series-1) 100%);
+  background-size: 220% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  filter: drop-shadow(0 0 18px color-mix(in srgb, var(--series-1) 45%, transparent));
+  animation: home-title-shimmer 9s ease-in-out infinite alternate;
+}
+@keyframes home-title-shimmer {
+  from { background-position: 0% 50%; }
+  to { background-position: 100% 50%; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .home-title { animation: none; }
+}
+
+/* Short gradient rules either side of a centered label */
+.home-rule {
+  height: 1px;
+  width: 3rem;
+  background: linear-gradient(to right, transparent, var(--series-1));
+}
+.home-rule.flip {
+  background: linear-gradient(to left, transparent, var(--series-1));
+}
+
+/* Diagonal hazard band, e.g. under the top bar */
+.ak-stripes {
+  height: 4px;
+  background: repeating-linear-gradient(-45deg, var(--series-1) 0 8px, transparent 8px 16px);
+  opacity: 0.55;
+}
+
+/* Small mono label with a leading accent block: "■ INTEGRATED STRATEGIES" */
+.ak-kicker {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: var(--font-geist-mono), ui-monospace, monospace;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color: var(--muted);
+}
+.ak-kicker::before {
+  content: "";
+  width: 0.5rem;
+  height: 0.5rem;
+  background: var(--series-1);
+}
+
+/* Heading with an accent bar on the left */
+.ak-heading {
+  border-left: 3px solid var(--series-1);
+  padding-left: 0.75rem;
+}
+
+/* Cut-corner frame: outer element is the 1px border, .ak-frame-inner the fill.
+   Corners cut: top-right and bottom-left. The border turns accent on hover. */
+.ak-frame,
+.ak-frame-inner {
+  clip-path: polygon(
+    0 0,
+    calc(100% - var(--cut)) 0,
+    100% var(--cut),
+    100% 100%,
+    var(--cut) 100%,
+    0 calc(100% - var(--cut))
+  );
+}
+.ak-frame {
+  display: block;
+  height: 100%;
+  padding: 1px;
+  background: var(--border);
+  transition: background-color 150ms;
+}
+.ak-frame:hover,
+.ak-frame:focus-visible {
+  background: var(--series-1);
+}
+.ak-frame-inner {
+  height: 100%;
+  background: var(--surface-1);
+}
+
+/* Corner brackets on cards: top-right and bottom-right, brighter on hover */
+.ak-brackets {
+  position: relative;
+}
+.ak-brackets::before,
+.ak-brackets::after {
+  content: "";
+  position: absolute;
+  right: -1px;
+  width: 12px;
+  height: 12px;
+  border-color: var(--series-1);
+  opacity: 0.45;
+  pointer-events: none;
+  transition: opacity 150ms;
+}
+.ak-brackets::before {
+  top: -1px;
+  border-top: 2px solid;
+  border-right: 2px solid;
+  border-color: var(--series-1);
+}
+.ak-brackets::after {
+  bottom: -1px;
+  border-bottom: 2px solid;
+  border-right: 2px solid;
+  border-color: var(--series-1);
+}
+.ak-brackets:hover::before,
+.ak-brackets:hover::after {
+  opacity: 1;
 }

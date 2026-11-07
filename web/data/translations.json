@@ -1,0 +1,1568 @@
+{
+ "themes": {
+  "rogue_6": {
+   "name": "The Black Flow of the Drowning Seekers",
+   "official": false
+  }
+ },
+ "relics": {
+  "rogue_6_relic_artifact_1": {
+   "src": {
+    "name": "基础物联终端",
+    "effect": "探索2个诡意行商或秘境行商后，获得【高级物联终端】",
+    "flavor": "据说是一个可将万物连接起来的终端设备，从此与万物心意相通不再是问题。你难道不想知道你家的冰箱在想什么吗？",
+    "unlock": "通关结局10次"
+   },
+   "name": "Basic IoT Terminal",
+   "effect": "Gain [Advanced IoT Terminal] after exploring 2 Rogue Trader or Secret Realm Trader nodes",
+   "flavor": "Said to be a terminal device that connects all things, so being of one mind with everything is no longer a problem. Don't you want to know what your fridge is thinking?",
+   "unlock": "Reach an ending 10 times"
+  },
+  "rogue_6_relic_artifact_2": {
+   "src": {
+    "name": "高级物联终端",
+    "effect": "干员部署后与攻击范围内一名干员用高级物联终端连接，敌人触碰高级物联终端时停顿，每0.5秒受到所有相连的干员攻击力之和50%的法术伤害",
+    "flavor": "经过改造的终端，可连接范围指数级扩大，立起接收杆即可立刻体验心意相通！"
+   },
+   "name": "Advanced IoT Terminal",
+   "effect": "After deployment, an Operator links to one Operator within its attack range via the Advanced IoT Terminal; enemies touching the link are halted and take Arts Damage equal to 50% of the combined ATK of all linked Operators every 0.5 seconds",
+   "flavor": "A modified terminal whose connection range has grown exponentially. Just raise the receiver pole to experience instant mind-to-mind connection!"
+  },
+  "rogue_6_relic_artifact_3": {
+   "src": {
+    "name": "植浆",
+    "effect": "完成1场【追猎】作战后，获得【犬植浆】",
+    "flavor": "以黑流树海中的树木汁液为基底制作的简易药水，可以掩盖自身的气味。"
+   },
+   "name": "Plant Sap",
+   "effect": "Gain [Hound Plant Sap] after completing 1 [Pursuit] operation",
+   "flavor": "A simple potion made from the sap of Black Flow trees that can mask your scent."
+  },
+  "rogue_6_relic_artifact_4": {
+   "src": {
+    "name": "犬植浆",
+    "effect": "干员攻击范围内的其他干员获得迷彩，攻击力+10%（可叠加）",
+    "flavor": "混入了猎犬血液的植浆，可以最大程度掩盖自身的气味。"
+   },
+   "name": "Hound Plant Sap",
+   "effect": "Other Operators within an Operator's attack range gain Camouflage and +10% ATK (stackable)",
+   "flavor": "Plant sap mixed with hound blood, which masks your scent as completely as possible."
+  },
+  "rogue_6_relic_artifact_5": {
+   "src": {
+    "name": "追忆",
+    "effect": "进入下一区域时，变为重新进入本区域，之后该收藏品失效",
+    "flavor": "顺着黑流，我将回到尚有余温的襁褓，回到这片大地仍可被唤作“婴孩”的旧日时光。"
+   },
+   "name": "Remembrance",
+   "effect": "When entering the next Area, you instead re-enter the current Area; this collectible then becomes inactive",
+   "flavor": "Following the black stream, I will return to the swaddling cloth still warm, to the days of old when this land could still be called an \"infant\"."
+  },
+  "rogue_6_relic_artifact_6": {
+   "src": {
+    "name": "垂降劫掠装置",
+    "effect": "我方干员的再部署时间-50%，部署时对随机1名敌人及周围8格的敌人造成攻击力1000%的物理伤害",
+    "flavor": "哥伦比亚军方最新研发的机动装备，能让特种兵们从天而降，一瞬间完成对重要战略目标的打击！“我们可以用这种方式解决大地上的一切麻烦，真是太棒了！”",
+    "unlock": "通关结局10次"
+   },
+   "name": "Rappel Raid Device",
+   "effect": "Allied Operators have -50% Redeployment Time, and on deployment deal Physical Damage equal to 1000% ATK to a random enemy and enemies in the 8 tiles around it",
+   "flavor": "The Columbian military's latest mobile gear, letting special forces drop from the sky and strike key strategic targets in an instant! \"We can solve every problem on this land this way. Fantastic!\"",
+   "unlock": "Reach an ending 10 times"
+  },
+  "rogue_6_relic_artifact_7": {
+   "src": {
+    "name": "仇名录",
+    "effect": "我方干员的攻击力+2%，每击倒一名敌人永久额外+0.2%（最高+200%）",
+    "flavor": "它属于一位没有名字的大炎剑客。“永远都差一个。”"
+   },
+   "name": "List of Grudges",
+   "effect": "Allied Operators gain +2% ATK, plus a permanent additional +0.2% for each enemy defeated (up to +200%)",
+   "flavor": "It belongs to a nameless Yan swordsman. \"Always one short.\""
+  },
+  "rogue_6_relic_assign_1": {
+   "src": {
+    "name": "钝爪-新典训",
+    "effect": "立即进阶一个【先锋】干员（不消耗希望），并使其：每次开启技能后攻击力+10%（最多+60%）",
+    "flavor": "一套新的强力装备，一颗更加勇往直前的心。"
+   },
+   "name": "Blunt Claws - New Doctrine",
+   "effect": "Immediately promote one [Vanguard] Operator (without spending Hope), and it gains +10% ATK each time it activates a skill (up to +60%)",
+   "flavor": "A powerful new set of equipment, and a heart even more determined to forge ahead."
+  },
+  "rogue_6_relic_assign_10": {
+   "src": {
+    "name": "指中狼",
+    "effect": "下一个招募或进阶的干员无法开启技能，但攻击力+100%，攻击速度+50",
+    "flavor": "这种野蛮的斗殴方式在叙拉古街头被逐渐取缔，现在想要观赏一场酣畅淋漓的“狼斗”并非易事。"
+   },
+   "name": "Wolf Between Fingers",
+   "effect": "The next Operator recruited or promoted cannot activate skills, but gains +100% ATK and +50 ASPD",
+   "flavor": "This savage style of brawling is gradually being banned on Siracusan streets; catching a thrilling \"wolf fight\" these days isn't easy."
+  },
+  "rogue_6_relic_assign_11": {
+   "src": {
+    "name": "“老妈的鼓励”",
+    "effect": "下一个招募或进阶的干员首次部署时攻击力+50%",
+    "flavor": "约翰老妈旗下最畅销的能量棒，解决了大部分不爱吃早餐的干员低血糖的问题。据说每一根的包装内都有不同的鼓励语，用于开启崭新的一天。"
+   },
+   "name": "\"Mama's Encouragement\"",
+   "effect": "The next Operator recruited or promoted gains +50% ATK on its first deployment",
+   "flavor": "Mama John's best-selling energy bar, which solved the low blood sugar of most Operators who skip breakfast. They say each wrapper carries a different encouraging message to start a brand-new day."
+  },
+  "rogue_6_relic_assign_12": {
+   "src": {
+    "name": "发泡胶",
+    "effect": "下一个招募或进阶的干员攻击速度-50，攻击力+120%",
+    "flavor": "“就是你没收好的发泡胶绊了我一脚？！我鞋被粘在地上了，别跑——”"
+   },
+   "name": "Expanding Foam",
+   "effect": "The next Operator recruited or promoted has -50 ASPD but +120% ATK",
+   "flavor": "\"So it was your foam you didn't put away that tripped me?! My shoe's glued to the floor, don't you run—\""
+  },
+  "rogue_6_relic_assign_13": {
+   "src": {
+    "name": "零食盒",
+    "effect": "下一个招募或进阶的干员的技能会自动开启，技力需求-20%",
+    "flavor": "“我好像一不小心发现了博士的小金库——”"
+   },
+   "name": "Snack Box",
+   "effect": "The next Operator recruited or promoted has its skills activate automatically and -20% SP cost",
+   "flavor": "\"I think I accidentally found the Doctor's secret stash—\""
+  },
+  "rogue_6_relic_assign_14": {
+   "src": {
+    "name": "静谧扩香石",
+    "effect": "下一个招募或进阶的干员攻击范围内的所有干员每3秒获得1点技力",
+    "flavor": "多种助眠香型可选，只需一滴，即享美梦。"
+   },
+   "name": "Serene Diffuser Stone",
+   "effect": "All Operators within the attack range of the next Operator recruited or promoted gain 1 SP every 3 seconds",
+   "flavor": "A choice of sleep-inducing scents. Just one drop, and sweet dreams are yours."
+  },
+  "rogue_6_relic_assign_15": {
+   "src": {
+    "name": "幸运饼干",
+    "effect": "获得此收藏品时，使随机2名干员的技力回复速度+0.8/秒",
+    "flavor": "塞着博士寄语纸条的饼干，吃到纸条的干员可以让博士满足一个小心愿。据不完全统计，博士至少已经收到几十张字迹被洇湿的纸条了——数量和发出去的小饼干不相上下。"
+   },
+   "name": "Fortune Cookie",
+   "effect": "On obtaining this collectible, 2 random Operators gain +0.8/s SP recovery",
+   "flavor": "Cookies with a note from the Doctor tucked inside; any Operator who gets a note can have the Doctor grant a small wish. By incomplete count, the Doctor has received at least dozens of notes with smudged writing, about as many as the cookies handed out."
+  },
+  "rogue_6_relic_assign_2": {
+   "src": {
+    "name": "断杖-新典训",
+    "effect": "立即进阶一个【术师】干员（不消耗希望），并使其：攻击时降低目标5点法术抗性（最多降低25）",
+    "flavor": "“我在垃圾桶里看到一本莱塔尼亚教材，是哪位干员不小心丢失的吗？”"
+   },
+   "name": "Broken Wand - New Doctrine",
+   "effect": "Immediately promote one [Caster] Operator (without spending Hope), and its attacks reduce the target's RES by 5 (up to 25)",
+   "flavor": "\"I found a Leithanien textbook in the trash. Did one of the Operators lose it by accident?\""
+  },
+  "rogue_6_relic_assign_3": {
+   "src": {
+    "name": "折戟-新典训",
+    "effect": "立即进阶一个【近卫】干员（不消耗希望），并使其：首次被击倒时回复100%生命",
+    "flavor": "百步之外，弩箭与法术更快，但三步之内，还是剑更快。"
+   },
+   "name": "Bend Spears - New Doctrine",
+   "effect": "Immediately promote one [Guard] Operator (without spending Hope), and it restores 100% HP the first time it is defeated",
+   "flavor": "At a hundred paces, bolts and Arts are faster. But within three steps, the sword is faster still."
+  },
+  "rogue_6_relic_assign_4": {
+   "src": {
+    "name": "铁卫-新典训",
+    "effect": "立即进阶一个【重装】干员（不消耗希望），并使其：受到攻击时回复2技力",
+    "flavor": "逝去的战士已成为划痕，永远被铭记于坚盾之上。"
+   },
+   "name": "Iron Guard - New Doctrine",
+   "effect": "Immediately promote one [Defender] Operator (without spending Hope), and it recovers 2 SP when attacked",
+   "flavor": "Fallen warriors have become scratches, forever remembered upon the sturdy shield."
+  },
+  "rogue_6_relic_assign_5": {
+   "src": {
+    "name": "残弩-新典训",
+    "effect": "立即进阶一个【狙击】干员（不消耗希望），并使其：攻击时无视目标50%的防御",
+    "flavor": "“没射中不是你准头不行，给我加大火力，再来！”"
+   },
+   "name": "Fatal Bolts - New Doctrine",
+   "effect": "Immediately promote one [Sniper] Operator (without spending Hope), and its attacks ignore 50% of the target's DEF",
+   "flavor": "\"Missing isn't about your aim. Turn up the firepower and go again!\""
+  },
+  "rogue_6_relic_assign_6": {
+   "src": {
+    "name": "医者-新典训",
+    "effect": "立即进阶一个【医疗】干员（不消耗希望），并使其：治疗时使目标获得2技力",
+    "flavor": "“我成为医疗干员的初衷是希望没有人再来找我看病，如果失业我也是心甘情愿的。”"
+   },
+   "name": "Healer's Path - New Doctrine",
+   "effect": "Immediately promote one [Medic] Operator (without spending Hope), and its heals grant the target 2 SP",
+   "flavor": "\"I became a Medic hoping no one would ever need to come to me for treatment again. If that puts me out of a job, I'll gladly take it.\""
+  },
+  "rogue_6_relic_assign_7": {
+   "src": {
+    "name": "锈刃-新典训",
+    "effect": "立即进阶一个【特种】干员（不消耗希望），并使其：再部署时间-50%",
+    "flavor": "即便是经常与特种干员进行实战练习的老手，依然无法精准把握“准备好被打”的时机。"
+   },
+   "name": "Rusted Blade - New Doctrine",
+   "effect": "Immediately promote one [Specialist] Operator (without spending Hope), and it has -50% Redeployment Time",
+   "flavor": "Even veterans who regularly spar with Specialists still can't quite judge the moment to \"get ready to be hit\"."
+  },
+  "rogue_6_relic_assign_8": {
+   "src": {
+    "name": "支柱-新典训",
+    "effect": "立即进阶一个【辅助】干员（不消耗希望），并使其：攻击范围内的敌人防御力和法术抗性-40%",
+    "flavor": "别试图为辅助干员指定行动点位，他们自己的策略往往比制定好的计划更有效。"
+   },
+   "name": "Stalwart Aid - New Doctrine",
+   "effect": "Immediately promote one [Supporter] Operator (without spending Hope), and enemies within its attack range have -40% DEF and RES",
+   "flavor": "Don't try to assign Supporters their positions. Their own tactics usually work better than any plan drawn up in advance."
+  },
+  "rogue_6_relic_assign_9": {
+   "src": {
+    "name": "疗养礼品卡",
+    "effect": "下一个招募或进阶的干员攻击速度+50",
+    "flavor": "疗养庭院永远欢迎想和朋友一起来放松身心的干员。"
+   },
+   "name": "Convalescence Gift Card",
+   "effect": "The next Operator recruited or promoted gains +50 ASPD",
+   "flavor": "The Convalescence Courtyard always welcomes Operators who want to unwind with friends."
+  },
+  "rogue_6_relic_book_1": {
+   "src": {
+    "name": "钝爪-先机",
+    "effect": "先锋干员开启技能时，立刻获得3点部署费用",
+    "flavor": "争分夺秒，志在夺取有利位置。"
+   },
+   "name": "Blunt Claws - Initiative",
+   "effect": "When a Vanguard Operator activates a skill, immediately gain 3 DP",
+   "flavor": "Every second counts; the aim is to seize the advantageous position."
+  },
+  "rogue_6_relic_book_2": {
+   "src": {
+    "name": "折戟-避锋",
+    "effect": "近卫干员受到攻击范围外敌人的攻击时，有75%概率闪避",
+    "flavor": "退避并非怯战，而是为了下一次攻击。"
+   },
+   "name": "Bend Spears - Evasion",
+   "effect": "Guard Operators have a 75% chance to dodge attacks from enemies outside their attack range",
+   "flavor": "Retreating is not cowardice, but preparation for the next attack."
+  },
+  "rogue_6_relic_book_3": {
+   "src": {
+    "name": "铁卫-轻行",
+    "effect": "重装干员首次部署费用-75%",
+    "flavor": "丢掉繁琐的行囊后，守护者坚韧依旧。"
+   },
+   "name": "Iron Guard - Light Travel",
+   "effect": "Defender Operators have -75% DP Cost for their first deployment",
+   "flavor": "Having shed their cumbersome packs, the guardians remain as steadfast as ever."
+  },
+  "rogue_6_relic_book_4": {
+   "src": {
+    "name": "残弩-神准",
+    "effect": "狙击干员攻击面前直线上的敌人时，攻击力提升至140%",
+    "flavor": "锁定直线目标一直是狙击干员的强项，在此基础上，多加火力也照样稳健。"
+   },
+   "name": "Fatal Bolts - Pinpoint",
+   "effect": "Sniper Operators deal 140% ATK when attacking enemies in a straight line in front of them",
+   "flavor": "Locking onto targets in a straight line has always been a Sniper's strength; adding more firepower on top keeps it just as steady."
+  },
+  "rogue_6_relic_book_5": {
+   "src": {
+    "name": "断杖-同调",
+    "effect": "场上每有一名术师干员，术师干员技能结束时获得3点技力",
+    "flavor": "“你的荣耀，你的耻辱，我感同身受。”"
+   },
+   "name": "Broken Wand - Attunement",
+   "effect": "For each Caster Operator on the field, Caster Operators gain 3 SP when their skill ends",
+   "flavor": "\"Your glory, your shame: I feel them as my own.\""
+  },
+  "rogue_6_relic_book_6": {
+   "src": {
+    "name": "医者-地缘策略",
+    "effect": "医疗干员攻击范围内的地面干员阻挡数+1，可叠加",
+    "flavor": "其他干员总是喜欢围绕在医疗干员身边，听医者讲述关于即时疗愈的新方案。"
+   },
+   "name": "Healer's Path - Positional Strategy",
+   "effect": "Ground Operators within a Medic Operator's attack range gain +1 Block (stackable)",
+   "flavor": "Other Operators always like to gather around the Medics to hear the healers explain their new plans for on-the-spot treatment."
+  },
+  "rogue_6_relic_book_7": {
+   "src": {
+    "effect": "所有【特种】干员的攻击速度+50，攻击力+50%"
+   },
+   "effect": "Specialist Operators gain +50 ASPD and +50% ATK"
+  },
+  "rogue_6_relic_cargo_1": {
+   "src": {
+    "name": "薄行囊",
+    "effect": "零件箱容量+4",
+    "flavor": "“如果我们站着不动也能填饱肚子就好了。”"
+   },
+   "name": "Light Pack",
+   "effect": "Parts Crate capacity +4",
+   "flavor": "\"If only we could fill our bellies just standing still.\""
+  },
+  "rogue_6_relic_cargo_10": {
+   "src": {
+    "name": "同行者",
+    "effect": "应急助力节点中招募所需源石锭-50%，应急干员的生命值、攻击力和防御力+40%",
+    "flavor": "“现在你是我们的一员了，让我们熟悉彼此的气味。”"
+   },
+   "name": "Fellow Traveler",
+   "effect": "Recruiting in Emergency Aid nodes costs -50% Originium Ingots, and Emergency Operators gain +40% Max HP, ATK, and DEF",
+   "flavor": "\"You're one of us now. Let's get to know each other's scent.\""
+  },
+  "rogue_6_relic_cargo_11": {
+   "src": {
+    "name": "厄运火杆",
+    "effect": "与“居民”作战时，敌人生命-40%，且作战胜利后所有干员的攻击速度永久+10",
+    "flavor": "“居民”们挥舞着手里的棍棒和石头，还不知道自己对付不了会冒烟的杆子。"
+   },
+   "name": "Ill-Fated Fire Rod",
+   "effect": "In operations against \"Residents\", enemies have -40% Max HP, and after winning, all Operators permanently gain +10 ASPD",
+   "flavor": "The \"Residents\" wave their clubs and stones, not yet knowing they're no match for a stick that smokes."
+  },
+  "rogue_6_relic_cargo_12": {
+   "src": {
+    "name": "猎印",
+    "effect": "猎犬proto的攻击力-50%；每拥有1层【探测先锋】，我方法术抗性+10",
+    "flavor": "这并非兽主的恐惧，只是祂施舍给你的片刻喘息。"
+   },
+   "name": "Hunt Mark",
+   "effect": "Hound Proto has -50% ATK; for each stack of [Pathfinder Vanguard], allied units gain +10 RES",
+   "flavor": "This is not the Beast Lord's fear, merely a moment's respite It grants you."
+  },
+  "rogue_6_relic_cargo_13": {
+   "src": {
+    "name": "源私钥",
+    "effect": "立刻获得99源石锭，在部分事件中能发挥特殊的作用",
+    "flavor": "一张珍贵的权限卡片，记住，它会以你的意志为转移。"
+   },
+   "name": "Originium Private Key",
+   "effect": "Immediately gain 99 Originium Ingots; has special uses in certain events",
+   "flavor": "A precious access card. Remember: it bends to your will."
+  },
+  "rogue_6_relic_cargo_14": {
+   "src": {
+    "name": "黑流树海笔记",
+    "effect": "每探索一种新节点叠加1层，每层使作战后获得收藏品的概率提升",
+    "flavor": "一本被反复增加过内容的笔记本，纸张上不同的字体说明它已几经易手。它似乎永远在等待着下一位记录者。"
+   },
+   "name": "Black Flow Notes",
+   "effect": "Gain 1 stack for each new node type explored; each stack increases the chance of obtaining collectibles after operations",
+   "flavor": "A notebook added to again and again; the different handwriting on its pages shows it has changed hands many times. It seems to be forever waiting for its next recorder."
+  },
+  "rogue_6_relic_cargo_15": {
+   "src": {
+    "name": "装饰性佯谬",
+    "effect": "丢弃零件时，获得等于其价值50%的源石锭",
+    "flavor": "你觉得这个……“生物”有点眼熟，或许是因为在哪见过它身上的废弃零件，又或许是见过类似的造型设计。"
+   },
+   "name": "Decorative Paradox",
+   "effect": "When discarding a Part, gain Originium Ingots equal to 50% of its value",
+   "flavor": "This... \"creature\" looks a little familiar. Maybe you've seen its scrap parts somewhere, or maybe a similar design."
+  },
+  "rogue_6_relic_cargo_16": {
+   "src": {
+    "name": "“鸡尾酒针”",
+    "effect": "每触发一次追猎，我方所有干员攻速+20",
+    "flavor": "这种猎犬专用的采血笔设计时似乎还融合了注射器的功能，请务必遵照说明书进行规范操作。"
+   },
+   "name": "\"Cocktail Needle\"",
+   "effect": "Each time a Pursuit is triggered, all allied Operators gain +20 ASPD",
+   "flavor": "This hound-specific blood-sampling pen seems to have been designed with a syringe function built in. Be sure to follow the instructions exactly."
+  },
+  "rogue_6_relic_cargo_17": {
+   "src": {
+    "name": "羽蛇翁",
+    "effect": "地面干员生命上限+20%，且单次受到的伤害不会超过最大生命值的60%",
+    "flavor": "不管被多大的力气击倒都会重新站起来的奇妙土偶。有专家称这是两千年前的哥伦比亚文物，受到了同行羽蛇神民的耻笑。"
+   },
+   "name": "Old Feathered Serpent",
+   "effect": "Ground Operators gain +20% Max HP, and no single hit can deal more than 60% of their Max HP",
+   "flavor": "A curious clay figure that stands back up however hard it's knocked down. One expert claimed it was a two-thousand-year-old Columbian artifact and was laughed at by his Feathered Serpent colleagues."
+  },
+  "rogue_6_relic_cargo_18": {
+   "src": {
+    "name": "鸭力板",
+    "effect": "源石锭+6，诡意行商和秘境行商节点直接揭露视野",
+    "flavor": "只要站上去，等待几秒，就能得到一份针对你的个人需求量身打造的购物单。无人能抵抗这种贴身定制的商品推荐。"
+   },
+   "name": "Duck Pressure Plate",
+   "effect": "Originium Ingots +6; Rogue Trader and Secret Realm Trader nodes are revealed directly",
+   "flavor": "Just step on it and wait a few seconds, and you'll get a shopping list tailored to your personal needs. No one can resist recommendations this personal."
+  },
+  "rogue_6_relic_cargo_19": {
+   "src": {
+    "name": "树海贵宾套餐",
+    "effect": "零件仓库每有5点估值，干员生命上限+3%（最多+150%）",
+    "flavor": "“您的身价会决定您的生命安全，理当如此。我们也定会尽最大的努力，不让客户离我们而去。”"
+   },
+   "name": "Treesea VIP Package",
+   "effect": "For every 5 points of valuation in the Parts Storage, Operators gain +3% Max HP (up to +150%)",
+   "flavor": "\"Your worth determines your safety, as it should. And we will certainly do our utmost not to let our clients leave us.\""
+  },
+  "rogue_6_relic_cargo_2": {
+   "src": {
+    "name": "悲伤的红",
+    "effect": "零件箱中每有1个零件，所有干员的生命和攻击力+8%",
+    "flavor": "她在枝头望着我们，我们的骨骼、我们的骨灰，都混在了一起。"
+   },
+   "name": "Sorrowful Red",
+   "effect": "For each Part in the Parts Crate, all Operators gain +8% Max HP and ATK",
+   "flavor": "She watches us from the branches; our bones, our ashes, all mingled together."
+  },
+  "rogue_6_relic_cargo_20": {
+   "src": {
+    "name": "《去踏足》",
+    "effect": "若本区域节点的视野全部揭露，立刻获得一定数量的源石锭",
+    "flavor": "热议：黑流树海中发现未知神秘生命？出土文物指向传说中失落的古代文明？探险队欢迎有识之士的加入！"
+   },
+   "name": "\"Go Set Foot\"",
+   "effect": "If every node in the current Area has been revealed, immediately gain some Originium Ingots",
+   "flavor": "Trending: Unknown mysterious life found in the Black Flow? Excavated relics point to a legendary lost ancient civilization? The expedition team welcomes qualified volunteers!"
+  },
+  "rogue_6_relic_cargo_21": {
+   "src": {
+    "name": "可疑的集点卡",
+    "effect": "每去过一种类型的非战斗节点，战斗掉落的源石锭+10%",
+    "flavor": "一些“居民”热心地在这张集点卡上盖下印章，而另一些则想抢走它。但是集满以后到底会发生什么？又该向谁去兑换它？"
+   },
+   "name": "Suspicious Stamp Card",
+   "effect": "For each type of non-combat node visited, Originium Ingots dropped in battle +10%",
+   "flavor": "Some \"Residents\" eagerly stamp this card, while others want to snatch it. But what actually happens once it's full? And who do you redeem it with?"
+  },
+  "rogue_6_relic_cargo_22": {
+   "src": {
+    "name": "似曾相识棋盒",
+    "effect": "可同时部署人数+1，进入下一区域时，获得一定数量的应急干员",
+    "flavor": "这肯定不是错觉，棋盒里的棋子是不是越来越多了？不过……其实它们还挺可爱的？"
+   },
+   "name": "Familiar Go Bowl",
+   "effect": "Deployment Limit +1; gain a number of Emergency Operators when entering the next Area",
+   "flavor": "This is definitely not an illusion: aren't there more and more stones in the bowl? Then again... they're actually kind of cute?"
+  },
+  "rogue_6_relic_cargo_3": {
+   "src": {
+    "name": "空床",
+    "effect": "零件箱中存在4个或更多空栏位时，所有干员部署费用-6",
+    "flavor": "两人投下三枚阴影，灵魂拥挤不堪。"
+   },
+   "name": "Empty Bed",
+   "effect": "While the Parts Crate has 4 or more empty slots, all Operators have -6 DP Cost",
+   "flavor": "Two people cast three shadows; the souls are crowded beyond bearing."
+  },
+  "rogue_6_relic_cargo_4": {
+   "src": {
+    "name": "迷藏",
+    "effect": "每次进入新区域时标记一个节点，探索该节点后获得一个较为稀有的随机自然物",
+    "flavor": "藏起一颗橡实，以便让万物都认得我们。"
+   },
+   "name": "Hide-and-Seek",
+   "effect": "Each time you enter a new Area, mark one node; exploring it grants a fairly rare random Natural Object",
+   "flavor": "Hide an acorn, so that all things will know us."
+  },
+  "rogue_6_relic_cargo_5": {
+   "src": {
+    "name": "复得之轮",
+    "effect": "加工品使用次数耗尽时，获得一个随机加工品",
+    "flavor": "我们将要去截获，一段飞奔而逃的树桩。"
+   },
+   "name": "Wheel Regained",
+   "effect": "When a Crafted Item runs out of uses, gain a random Crafted Item",
+   "flavor": "We are going to intercept a tree stump that is running away."
+  },
+  "rogue_6_relic_cargo_6": {
+   "src": {
+    "name": "果腹",
+    "effect": "加工品的最后一次移动不再消耗行动力",
+    "flavor": "果实如锤砸在我身，每一块淤青都是你贪婪的形状。"
+   },
+   "name": "Sated",
+   "effect": "A Crafted Item's last move no longer costs Action Points",
+   "flavor": "The fruit strikes me like hammers; every bruise is the shape of your greed."
+  },
+  "rogue_6_relic_cargo_7": {
+   "src": {
+    "name": "囊中骨",
+    "effect": "立刻获得3个随机的普通加工品",
+    "flavor": "它的生命如此短暂，到死都没有离开孕育它的温床。"
+   },
+   "name": "Bones in a Pouch",
+   "effect": "Immediately gain 3 random common Crafted Items",
+   "flavor": "Its life was so short that it never left the bed that nurtured it, even in death."
+  },
+  "rogue_6_relic_cargo_8": {
+   "src": {
+    "name": "林中小手",
+    "effect": "立刻获得3个随机的普通自然物",
+    "flavor": "象征吉兆的植物，迷信的玻利瓦尔人相信，遇到林中小手后会立刻获得财富。"
+   },
+   "name": "Little Hands in the Forest",
+   "effect": "Immediately gain 3 random common Natural Objects",
+   "flavor": "A plant that symbolizes good fortune. Superstitious Bolivarians believe that whoever comes across little hands in the forest will immediately come into wealth."
+  },
+  "rogue_6_relic_cargo_9": {
+   "src": {
+    "name": "血孩子",
+    "effect": "获得自然物<枯苔藓球>，直到零件箱被填满",
+    "flavor": "“我有很多很多的孩子，但孙辈却越来越少。”"
+   },
+   "name": "Blood Children",
+   "effect": "Gain the Natural Object <Withered Moss Ball> until the Parts Crate is full",
+   "flavor": "\"I have many, many children, but fewer and fewer grandchildren.\""
+  },
+  "rogue_6_relic_fight_1": {
+   "src": {
+    "name": "红日冠冕",
+    "effect": "高台干员对每个敌人首次造成的伤害提升至300%",
+    "flavor": "祂将自己所喜爱的冠冕赠与祂的黎博利孩子。黎博利接受了冠冕，也接受了白昼。于是黎博利翱翔于山巅之上，从此大地没有了黑夜。"
+   },
+   "name": "Crown of the Red Sun",
+   "effect": "Ranged-tile Operators' first hit on each enemy deals 300% damage",
+   "flavor": "It gave the crown It loved to Its Liberi child. The Liberi accepted the crown, and accepted the daylight too. And so the Liberi soared above the mountaintops, and from then on the land knew no night."
+  },
+  "rogue_6_relic_fight_10": {
+   "src": {
+    "name": "赐福新生",
+    "effect": "首个干员部署时获得最大生命300%的屏障，且拥有屏障时攻击额外造成攻击力50%的法术伤害",
+    "flavor": "赠予新生儿的特色礼物，最初由莱塔尼亚军官从玻利瓦尔归乡时带回，后经历了本土化，没有人会拒绝对新生命的祝福。"
+   },
+   "name": "Blessing of the Newborn",
+   "effect": "The first Operator deployed gains a Barrier equal to 300% of their Max HP, and while it holds a Barrier, its attacks deal additional Arts Damage equal to 50% of its ATK",
+   "flavor": "A traditional gift for newborns, first brought home from Bolivar by Leithanien officers and later localized. No one refuses a blessing for a new life."
+  },
+  "rogue_6_relic_fight_11": {
+   "src": {
+    "name": "他缚",
+    "effect": "所有干员部署费用-50%，部署后损失70%的当前生命（退场前仅生效一次）",
+    "flavor": "你从泥土中挖出了它，它却在为这片土地复仇。"
+   },
+   "name": "Bound by Another",
+   "effect": "All Operators have -50% DP Cost, but lose 70% of their current HP after deployment (applies only once until they leave the field)",
+   "flavor": "You dug it out of the soil, yet it is taking revenge for this land."
+  },
+  "rogue_6_relic_fight_12": {
+   "src": {
+    "name": "染血辞典",
+    "effect": "所有干员生命值低于10%时，仅一次立刻获得最大生命100%的屏障",
+    "flavor": "它曾为一名正在学习书写的真正玻利瓦尔游击队员挡下致命一击，遗憾的是它的拥有者没能撑太久，也没能认识更多词。",
+    "unlock": "通关结局2次"
+   },
+   "name": "Bloodstained Dictionary",
+   "effect": "When an Operator's HP falls below 10%, they immediately gain a Barrier equal to 100% of their Max HP (once only)",
+   "flavor": "It once blocked a fatal blow for a true Bolivarian guerrilla who was learning to write. Sadly, its owner didn't hold out much longer, nor learn many more words.",
+   "unlock": "Reach an ending 2 times"
+  },
+  "rogue_6_relic_fight_13": {
+   "src": {
+    "name": "液体化肥",
+    "effect": "我方干员攻击时流失50点生命（至少保留1点），获得100屏障（此效果获得的屏障最大为100%生命上限）",
+    "flavor": "它所到之处皆是丰收，但代价呢？总之不是收获者来付出。"
+   },
+   "name": "Liquid Fertilizer",
+   "effect": "When allied Operators attack, they lose 50 HP (always keeping at least 1) and gain a 100-point Barrier (Barrier from this effect is capped at 100% of Max HP)",
+   "flavor": "Wherever it goes, there is a bumper harvest. But the cost? At any rate, it isn't the harvesters who pay it."
+  },
+  "rogue_6_relic_fight_14": {
+   "src": {
+    "name": "热辣可可",
+    "effect": "干员生命值越低，攻击力越高，30%生命值时达到最大可提升攻击力（+150%）",
+    "flavor": "辣椒和可可结合的饮品，单听原料想象不出结合出来的口感，但在多索雷斯的游客当中很受欢迎。"
+   },
+   "name": "Hot Spicy Cocoa",
+   "effect": "The lower an Operator's HP, the higher their ATK, reaching the maximum bonus (+150% ATK) at 30% HP",
+   "flavor": "A drink combining chili and cocoa. From the ingredients alone you can't imagine how it tastes, but it's very popular with tourists in Dossoles."
+  },
+  "rogue_6_relic_fight_15": {
+   "src": {
+    "name": "止痛片",
+    "effect": "干员生命值越低，技力恢复速度越快，30%生命值时达到最大恢复速度（+2/s）",
+    "flavor": "这种止痛片广受哥伦比亚人好评，获取其原材料却极其凶险，而负责采摘的玻利瓦尔人通常没有机会使用它。"
+   },
+   "name": "Painkillers",
+   "effect": "The lower an Operator's HP, the faster their SP recovery, reaching the maximum rate (+2/s) at 30% HP",
+   "flavor": "These painkillers are well loved in Columbia, but gathering their raw materials is extremely dangerous, and the Bolivarians who pick them rarely get the chance to use them."
+  },
+  "rogue_6_relic_fight_16": {
+   "src": {
+    "name": "窜天源石虫",
+    "effect": "干员起飞时，对攻击范围内所有敌人造成相当于自身攻击力400%的物理伤害",
+    "flavor": "要问什么东西是大炎小孩在除夕夜最喜欢的——非点燃后火速升空的源石虫爆竹莫属。"
+   },
+   "name": "Skyrocket Originium Slug",
+   "effect": "When an Operator takes off, deal Physical Damage equal to 400% of their ATK to all enemies within attack range",
+   "flavor": "Ask what Yan children love most on New Year's Eve, and the answer has to be Originium Slug firecrackers that shoot into the sky the moment they're lit."
+  },
+  "rogue_6_relic_fight_17": {
+   "src": {
+    "name": "贴地炸",
+    "effect": "干员降落时，对攻击范围内所有敌人造成相当于自身攻击力200%的物理伤害和2秒晕眩",
+    "flavor": "虽然经常会出现哑炮的情况，但被摔在地上的一瞬间，路过的大炎人还是会快步闪开。",
+    "unlock": "通关结局4次"
+   },
+   "name": "Ground Popper",
+   "effect": "When an Operator lands, deal Physical Damage equal to 200% of their ATK and a 2-second Stun to all enemies within attack range",
+   "flavor": "They often turn out to be duds, but the instant one is smashed on the ground, passing Yan folk still step briskly aside.",
+   "unlock": "Reach an ending 4 times"
+  },
+  "rogue_6_relic_fight_18": {
+   "src": {
+    "name": "翱翼",
+    "effect": "我方每有1个起飞的单位，所有起飞的单位攻击力+25%",
+    "flavor": "从这对完整的羽翼中，仍能窥见它们的所有者曾翱翔于空中称霸的模样，但胜负已定，落败者需付出代价。"
+   },
+   "name": "Soaring Wings",
+   "effect": "For each allied unit that has taken off, all units that have taken off gain +25% ATK",
+   "flavor": "From this intact pair of wings you can still glimpse how their owner once ruled the skies. But the contest is decided, and the loser must pay the price."
+  },
+  "rogue_6_relic_fight_19": {
+   "src": {
+    "name": "虬蜕",
+    "effect": "我方每有1个未起飞的单位，所有单位的防御力+10%",
+    "flavor": "从这张完整的蛇蜕中，仍能窥见它的所有者曾盘踞于地面称霸的模样，但胜负已定，落败者需付出代价。"
+   },
+   "name": "Serpent's Molt",
+   "effect": "For each allied unit that has not taken off, all units gain +10% DEF",
+   "flavor": "From this intact snakeskin you can still glimpse how its owner once coiled over the ground as its ruler. But the contest is decided, and the loser must pay the price."
+  },
+  "rogue_6_relic_fight_2": {
+   "src": {
+    "name": "黑夜披肩",
+    "effect": "地面干员对每个敌人首次造成的伤害提升至300%",
+    "flavor": "祂将自己所喜爱的披肩赠与祂的斐迪亚孩子。斐迪亚接受了披肩，没有得到白昼。于是斐迪亚偷走了黎博利的冠冕，从此大地又有了黑夜。"
+   },
+   "name": "Shawl of the Dark Night",
+   "effect": "Ground Operators' first hit on each enemy deals 300% damage",
+   "flavor": "It gave the shawl It loved to Its Phidia child. The Phidia accepted the shawl, but received no daylight. And so the Phidia stole the Liberi's crown, and from then on the land had night once more."
+  },
+  "rogue_6_relic_fight_20": {
+   "src": {
+    "name": "天师锦囊",
+    "effect": "首次部署炎国干员时，在其位置召唤一只【炎佑】",
+    "flavor": "遇事不决，可掏出天师赠与的锦囊。锦囊不一定会提供建议，但至少可提供武力支援。",
+    "unlock": "通关结局5次"
+   },
+   "name": "Tianshi's Silk Pouch",
+   "effect": "When a Yan Operator is deployed for the first time, summon a [Yan Guardian] at their position",
+   "flavor": "When in doubt, pull out the silk pouch the Tianshi gave you. It may not offer advice, but at least it can offer armed support.",
+   "unlock": "Reach an ending 5 times"
+  },
+  "rogue_6_relic_fight_21": {
+   "src": {
+    "name": "冰中火",
+    "effect": "敌人受到的元素损伤和元素伤害+75%",
+    "flavor": "火一直在燃烧，冰却一直未融。看起来很热，摸起来却是冷的，正如你在黑流树海中所见的一切。"
+   },
+   "name": "Fire in Ice",
+   "effect": "Enemies take +75% Elemental Injury and Elemental Damage",
+   "flavor": "The fire keeps burning, yet the ice never melts. It looks hot but feels cold to the touch, just like everything you see in the Black Flow."
+  },
+  "rogue_6_relic_fight_22": {
+   "src": {
+    "name": "河谷祭祈",
+    "effect": "我方凋亡、灼燃、神经和侵蚀损伤的爆发效果增强",
+    "flavor": "尘土阖上她的眼睛，溪流为她拭去泪水。"
+   },
+   "name": "River Valley Rite",
+   "effect": "Enhances the Burst effects of allied Necrosis, Burning, Nervous Impairment, and Corrosion",
+   "flavor": "The dust closed her eyes, and the stream wiped away her tears."
+  },
+  "rogue_6_relic_fight_23": {
+   "src": {
+    "name": "猎犬病特效药",
+    "effect": "我方狂躁元素爆发后不再受到持续伤害，且期间攻击速度额外+50",
+    "flavor": "可以短暂抑制猎犬病症状的特效药，但仅仅是短暂抑制，医疗及研究人员至今无法根除此病。"
+   },
+   "name": "Hound Disease Remedy",
+   "effect": "After an allied Frenzy elemental Burst, no longer take continuous damage, and gain an additional +50 ASPD for its duration",
+   "flavor": "A remedy that briefly suppresses the symptoms of hound disease. Only briefly: medical staff and researchers still cannot cure it."
+  },
+  "rogue_6_relic_fight_24": {
+   "src": {
+    "name": "特种作战防暴盾",
+    "effect": "被阻挡的敌人造成的伤害-30%",
+    "flavor": "黑钢国际的装备与应用技术部门不遗余力地追求轻量化，希望佣兵作战时手上的负担能小一点，心理上的负担也能小一点......也许吧。"
+   },
+   "name": "Special Ops Riot Shield",
+   "effect": "Blocked enemies deal -30% damage",
+   "flavor": "Blacksteel Worldwide's equipment and applied technology department spares no effort in cutting weight, hoping to lighten the burden in mercenaries' hands in combat, and maybe the burden on their minds too... perhaps."
+  },
+  "rogue_6_relic_fight_25": {
+   "src": {
+    "name": "猎犬咖啡",
+    "effect": "我方单位的生命和攻击力+30%，敌人出现时有3%概率生命+100%",
+    "flavor": "猎犬出没之地的野生咖啡豆总是更加美味，虽然不知道原因，但并不妨碍这些咖啡豆在哥伦比亚被炒出一波又一波高价，至于是否真的是从猎犬的领地摘取的，也并不重要了。"
+   },
+   "name": "Hound Coffee",
+   "effect": "Allied units gain +30% Max HP and ATK; enemies have a 3% chance to spawn with +100% Max HP",
+   "flavor": "Wild coffee beans from where the hounds roam always taste better. Nobody knows why, but that hasn't stopped them fetching ever-higher prices in Columbia. Whether they were really picked in hound territory hardly matters anymore."
+  },
+  "rogue_6_relic_fight_26": {
+   "src": {
+    "name": "竞技场贵宾券",
+    "effect": "精英敌人的生命+10%，战斗获得的源石锭和指挥经验+40%",
+    "flavor": "只要再加十万马克，您就可以从超超级贵宾升级为超超超级贵宾！"
+   },
+   "name": "Arena VIP Ticket",
+   "effect": "Elite enemies gain +10% Max HP; Originium Ingots and Command EXP gained from battles +40%",
+   "flavor": "For just another hundred thousand marks, you can upgrade from Super-Super VIP to Super-Super-Super VIP!"
+  },
+  "rogue_6_relic_fight_27": {
+   "src": {
+    "name": "黄金平原",
+    "effect": "我方干员技能结束时获得2点技力",
+    "flavor": "一望无际的金色麦田、微风、人们的欢声笑语，你的下一瓶精酿何必等待太久？"
+   },
+   "name": "Golden Plains",
+   "effect": "Allied Operators gain 2 SP when their skill ends",
+   "flavor": "Endless golden wheat fields, a gentle breeze, people's laughter. Why wait long for your next craft brew?"
+  },
+  "rogue_6_relic_fight_28": {
+   "src": {
+    "name": "第一法则",
+    "effect": "我方干员技能结束时获得4点技力",
+    "flavor": "叙拉古出品的红酒只有一种名字——赢家通吃，永远是这里的第一法则。"
+   },
+   "name": "The First Rule",
+   "effect": "Allied Operators gain 4 SP when their skill ends",
+   "flavor": "Red wine from Siracusa has only one name: winner takes all, forever the first rule here."
+  },
+  "rogue_6_relic_fight_29": {
+   "src": {
+    "name": "特勤任务影像",
+    "effect": "我方单位的生命、攻击力、防御力+40%，指挥经验+20%",
+    "flavor": "录制影像的人活下来了，下一位观看影像的特勤调查员，祝你好运。"
+   },
+   "name": "Special Mission Footage",
+   "effect": "Allied units gain +40% Max HP, ATK, and DEF; Command EXP +20%",
+   "flavor": "Whoever recorded this footage survived. To the next special investigator who watches it: good luck."
+  },
+  "rogue_6_relic_fight_3": {
+   "src": {
+    "name": "伪翅",
+    "effect": "我方干员击倒敌人时，获得3秒迷彩",
+    "flavor": "“那棵树还剩最后一片叶子，我们能挺过这个冬天......”",
+    "unlock": "通关结局1次"
+   },
+   "name": "False Wings",
+   "effect": "When an allied Operator defeats an enemy, they gain Camouflage for 3 seconds",
+   "flavor": "\"That tree has one last leaf left. We can make it through this winter...\"",
+   "unlock": "Reach an ending 1 time"
+  },
+  "rogue_6_relic_fight_30": {
+   "src": {
+    "name": "探测先锋",
+    "effect": "完成“追猎”作战后叠加1层并使下个区域初始行动力-1，每层使“猎犬proto”的生命和攻击力+20%",
+    "flavor": "你幸运地在“追猎”中死里逃生，现颁发“探测先锋”奖章，以兹鼓励，期待下一次更精彩的表现。"
+   },
+   "name": "Pathfinder Vanguard",
+   "effect": "Gain 1 stack after completing a \"Pursuit\" operation, reducing the next Area's starting Action Points by 1; each stack gives \"Hound Proto\" +20% Max HP and ATK",
+   "flavor": "You were lucky to escape death in the \"Pursuit\". You are hereby awarded the \"Pathfinder Vanguard\" medal in recognition, and we look forward to an even more spectacular performance next time."
+  },
+  "rogue_6_relic_fight_4": {
+   "src": {
+    "name": "“撕咬的渴望”",
+    "effect": "我方干员击倒敌人时，攻击速度+100，持续2秒",
+    "flavor": "鲜血只会让它们更加亢奋。它们在哪里？无处不在。",
+    "unlock": "通关结局1次"
+   },
+   "name": "\"Thirst to Bite\"",
+   "effect": "When an allied Operator defeats an enemy, they gain +100 ASPD for 2 seconds",
+   "flavor": "Blood only drives them into a greater frenzy. Where are they? Everywhere.",
+   "unlock": "Reach an ending 1 time"
+  },
+  "rogue_6_relic_fight_5": {
+   "src": {
+    "name": "异香角",
+    "effect": "我方干员击倒敌人时，获得2点技力",
+    "flavor": "一截断角，散发着令人兴奋的味道，似乎是树海中两头雄性生物打架时掉下的，争斗永远使人成瘾。",
+    "unlock": "通关结局1次"
+   },
+   "name": "Musk Horn",
+   "effect": "When an allied Operator defeats an enemy, they gain 2 SP",
+   "flavor": "A broken-off horn giving off an exciting scent, seemingly shed when two males fought in the Treesea. Fighting is forever addictive.",
+   "unlock": "Reach an ending 1 time"
+  },
+  "rogue_6_relic_fight_6": {
+   "src": {
+    "name": "渴血钳兽",
+    "effect": "我方干员击倒敌人时，回复10%最大生命",
+    "flavor": "观赏钳兽争斗很有趣，前提是它们钳住的不是你的手指。",
+    "unlock": "通关结局1次"
+   },
+   "name": "Bloodthirsty Pincer Beast",
+   "effect": "When an allied Operator defeats an enemy, they restore 10% of their Max HP",
+   "flavor": "Watching pincer beasts fight is fun, as long as it isn't your fingers they're pinching.",
+   "unlock": "Reach an ending 1 time"
+  },
+  "rogue_6_relic_fight_7": {
+   "src": {
+    "name": "“庇护”",
+    "effect": "高台干员部署时立刻获得最大生命100%的屏障",
+    "flavor": "他们的汗水如树海的雨水般落下，但好在他们有遮挡雨水的叶子来遮挡烈日。"
+   },
+   "name": "\"Shelter\"",
+   "effect": "Ranged-tile Operators immediately gain a Barrier equal to 100% of their Max HP when deployed",
+   "flavor": "Their sweat fell like the Treesea's rain, but luckily they had the leaves that kept off the rain to keep off the blazing sun as well."
+  },
+  "rogue_6_relic_fight_8": {
+   "src": {
+    "name": "种植者保单",
+    "effect": "若我方干员在5秒内未受到伤害，则获得最大生命20%的屏障",
+    "flavor": "一份印得密密麻麻的保单，但条款只在被保人没出意外时有效——好在他们也看不懂上面的内容。"
+   },
+   "name": "Planter's Insurance Policy",
+   "effect": "If an allied Operator takes no damage for 5 seconds, they gain a Barrier equal to 20% of their Max HP",
+   "flavor": "A densely printed insurance policy whose terms only apply if the insured has no accidents. Luckily, they can't read it anyway."
+  },
+  "rogue_6_relic_fight_9": {
+   "src": {
+    "name": "战术背心",
+    "effect": "我方干员拥有屏障时，造成的伤害提升至140%",
+    "flavor": "“我觉得口袋最好再多一些，得找个地方把我老妈的照片塞进去。”",
+    "unlock": "在多局游戏中累计击败领袖【汉科】2次"
+   },
+   "name": "Tactical Vest",
+   "effect": "While an allied Operator has a Barrier, they deal 140% damage",
+   "flavor": "\"I think it could use a few more pockets. I need somewhere to tuck my mom's photo.\"",
+   "unlock": "Across multiple adventures, defeat the Leader [Hanko] a total of 2 times"
+  },
+  "rogue_6_relic_final_1": {
+   "src": {
+    "name": "沙盘α",
+    "effect": "我方单位部署费用+2，让探索开启不同的方向，同时持有【沙盘β】可以揭示源阶方的所在位置",
+    "flavor": "来自梅兰德基金会的特殊信息，保密等级相当高。沙盘上显示的区域似乎极难深入，或许只能根据另一方的线索二次定位后找到她。"
+   },
+   "name": "Sand Table α",
+   "effect": "Allied units have +2 DP Cost; leads the expedition in a different direction; while also holding [Sand Table β], reveals Yuan Jiefang's location",
+   "flavor": "Special intelligence from the Meland Foundation, highly classified. The area shown on the sand table seems extremely hard to penetrate; perhaps she can only be found by cross-referencing the other party's clues."
+  },
+  "rogue_6_relic_final_10": {
+   "src": {
+    "name": "生命蓝图",
+    "effect": "敌方单位攻击、移速+30%，最大生命值+50%，精英和领袖敌人登场30秒内受到的物理和法术伤害-50%，盲目者所见中的险路恶敌出现额外敌人",
+    "flavor": "丛林里怎么会有这种奇怪的设计图，附注的文字是哪种语言？它描绘的奇异生物又是怎么回事，天外生命降临黑流树海的传闻难道是真的？",
+    "unlock": "【内容拓展 · 一】后，完成一次游戏结局"
+   },
+   "name": "Blueprint of Life",
+   "effect": "Enemy units gain +30% ATK and Movement Speed and +50% Max HP; Elite and Leader enemies take -50% Physical and Arts Damage for 30 seconds after appearing; Dreadful Foes in What the Blind See gain additional enemies",
+   "flavor": "Why would there be such a strange blueprint in the jungle, and what language are the annotations in? What about the bizarre creature it depicts? Could the rumors of life from beyond the sky descending on the Black Flow be true?",
+   "unlock": "After [Expansion I], complete an adventure"
+  },
+  "rogue_6_relic_final_2": {
+   "src": {
+    "name": "沙盘β",
+    "effect": "我方单位部署费用+3，让探索开启不同的方向，同时持有【沙盘α】可以揭示源阶方的所在位置",
+    "flavor": "来自联合政府的特殊信息，保密等级相当高。沙盘上显示的区域似乎极难深入，或许只能根据另一方的线索二次定位后找到她。"
+   },
+   "name": "Sand Table β",
+   "effect": "Allied units have +3 DP Cost; leads the expedition in a different direction; while also holding [Sand Table α], reveals Yuan Jiefang's location",
+   "flavor": "Special intelligence from the Union Government, highly classified. The area shown on the sand table seems extremely hard to penetrate; perhaps she can only be found by cross-referencing the other party's clues."
+  },
+  "rogue_6_relic_final_3": {
+   "src": {
+    "name": "怦然信标",
+    "effect": "所有敌人的生命+20%，我方单位的生命-40%，让探索开启不同的方向",
+    "flavor": "一颗被时刻监测着的心脏，似乎正在夺走你的力量。调整至某个方向后，它微弱地跳动了起来。"
+   },
+   "name": "Heartbeat Beacon",
+   "effect": "All enemies gain +20% Max HP, allied units have -40% Max HP; leads the expedition in a different direction",
+   "flavor": "A heart under constant monitoring that seems to be draining your strength. Turned toward a certain direction, it begins to beat faintly."
+  },
+  "rogue_6_relic_final_4": {
+   "src": {
+    "name": "击坠“神明”",
+    "effect": "可以在特殊节点中，使“玻利瓦尔，症结之核”首次释放“灾厄之口”时不摧毁“危朽”",
+    "flavor": "日志：未确认的异常个体入侵，非预期的错误。监测到对居民与建筑的破坏行为，严重不利于后续发展，优先确保乌托邦依照原计划正常运行，阻击目标。"
+   },
+   "name": "Shoot Down the \"Gods\"",
+   "effect": "In a special node, prevents \"Bolivar, Crux of the Malady\" from destroying \"Decay\" the first time it uses \"Maw of Calamity\"",
+   "flavor": "Log: Unconfirmed anomalous entity intrusion. Unexpected error. Destruction of residents and buildings detected, severely detrimental to future development. Priority: ensure the utopia runs according to the original plan. Intercept the target."
+  },
+  "rogue_6_relic_final_5": {
+   "src": {
+    "name": "湮没“光明”",
+    "effect": "可以在特殊节点中，使“玻利瓦尔，症结之核”的“灾厄之口”伤害降低",
+    "flavor": "日志：未确认的异常个体入侵，非预期的错误。监测到非自然的灾害肆虐，严重不利于后续发展，优先确保乌托邦依照原计划正常运行，阻击目标。"
+   },
+   "name": "Extinguish the \"Light\"",
+   "effect": "In a special node, reduces the damage of \"Bolivar, Crux of the Malady\"'s \"Maw of Calamity\"",
+   "flavor": "Log: Unconfirmed anomalous entity intrusion. Unexpected error. Unnatural disasters running rampant detected, severely detrimental to future development. Priority: ensure the utopia runs according to the original plan. Intercept the target."
+  },
+  "rogue_6_relic_final_6": {
+   "src": {
+    "name": "焚毁“文明”",
+    "effect": "可以在特殊节点中，使“玻利瓦尔，症结之核”的“灾厄之口”无法封锁待部署区",
+    "flavor": "日志：未确认的异常个体入侵，非预期的错误。监测到对认知根基的干涉，严重不利于后续发展，优先确保乌托邦依照原计划正常运行，阻击目标。"
+   },
+   "name": "Burn Down \"Civilization\"",
+   "effect": "In a special node, prevents \"Bolivar, Crux of the Malady\"'s \"Maw of Calamity\" from sealing the deployment area",
+   "flavor": "Log: Unconfirmed anomalous entity intrusion. Unexpected error. Interference with the foundations of cognition detected, severely detrimental to future development. Priority: ensure the utopia runs according to the original plan. Intercept the target."
+  },
+  "rogue_6_relic_final_7": {
+   "src": {
+    "name": "谒日之祈",
+    "effect": "区域III血色空脉及后续区域中出现熄日余径，探险者会出现在熄日余径的战斗中，血色空脉中的险路恶敌变得更加艰难",
+    "flavor": "起始已是终结。太阳恒久不灭，它超然于天地之外。永火将指引方向，我们的渴求本身即为乌托邦。",
+    "unlock": "【内容拓展 · 一】后，完成一次游戏结局"
+   },
+   "name": "Prayer to the Sun",
+   "effect": "The Path of the Extinguished Sun appears in Area III, the Crimson Hollow Vein, and later Areas; Explorers appear in battles on the Path of the Extinguished Sun; Dreadful Foes in the Crimson Hollow Vein become more difficult",
+   "flavor": "The beginning is already the end. The sun is eternal and undying; it stands apart from heaven and earth. The everlasting fire will show the way; our longing itself is the utopia.",
+   "unlock": "After [Expansion I], complete an adventure"
+  },
+  "rogue_6_relic_final_8": {
+   "src": {
+    "name": "祭日之契",
+    "effect": "不再出现熄日余径，所有干员再部署时间+50%，使用加工品移动后使其损毁；让探索开启不同的方向",
+    "flavor": "终结亦是起始。太阳已然熄灭，它蛰伏于生灵体内。新火在等待浇灌，乌托邦的渴求本身即为我们。",
+    "unlock": "【内容拓展 · 一】后，完成一次游戏结局"
+   },
+   "name": "Pact of the Sun's Sacrifice",
+   "effect": "The Path of the Extinguished Sun no longer appears; all Operators have +50% Redeployment Time, and Crafted Items are destroyed after being used to move; leads the expedition in a different direction",
+   "flavor": "The end is also the beginning. The sun has gone out; it lies dormant within living things. The new fire waits to be fed; the utopia's longing itself is us.",
+   "unlock": "After [Expansion I], complete an adventure"
+  },
+  "rogue_6_relic_final_9": {
+   "src": {
+    "name": "破碎噩兆",
+    "effect": "探险者重新出现在熄日余径的战斗中",
+    "flavor": "日志：非预期的强制唤醒……乌托邦废案被异常重启。优先确保——遭受重创，记录核心已损坏……",
+    "unlock": "【内容拓展 · 一】后，完成一次游戏结局"
+   },
+   "name": "Shattered Omen",
+   "effect": "Explorers reappear in battles on the Path of the Extinguished Sun",
+   "flavor": "Log: Unexpected forced awakening... discarded utopia proposal abnormally restarted. Priority: ensure— severe damage sustained, record core corrupted...",
+   "unlock": "After [Expansion I], complete an adventure"
+  },
+  "rogue_6_relic_hand_1": {
+   "src": {
+    "name": "开拓之手",
+    "effect": "尖兵、冲锋手、策士的部署费用-6，技力需求-50%；拥有钝爪-先机时，开启技能会给其他场上干员回复2点技力",
+    "flavor": "先发制人，抢占先机。"
+   },
+   "name": "Hand of Pioneering",
+   "effect": "Pioneer, Charger, and Strategist Operators have -6 DP Cost and -50% SP cost; with Blunt Claws - Initiative, activating a skill restores 2 SP to other Operators on the field",
+   "flavor": "Strike first, and seize the initiative."
+  },
+  "rogue_6_relic_hand_2": {
+   "src": {
+    "name": "诛戮之手",
+    "effect": "武者、无畏者、术战者对周围四格敌人造成的伤害提升至200%；拥有折戟-避锋时，击倒敌人后下次再部署时间和部署费用-50%",
+    "flavor": "摧枯拉朽，力拔山兮。"
+   },
+   "name": "Hand of Slaughter",
+   "effect": "Musha, Dreadnought, and Arts Fighter Operators deal 200% damage to enemies in the four adjacent tiles; with Bend Spears - Evasion, defeating an enemy reduces their next Redeployment Time and DP Cost by 50%",
+   "flavor": "Crushing all before them, strength enough to uproot mountains."
+  },
+  "rogue_6_relic_hand_3": {
+   "src": {
+    "name": "坚御之手",
+    "effect": "铁卫、哨戒铁卫、不屈者部署时和技能结束后攻击力和最大生命+100%，加成在60秒内递减；拥有铁卫-轻行时，生命高于50%时阻挡数+3",
+    "flavor": "坚守不移，抵抗到底。"
+   },
+   "name": "Hand of Steadfast Defense",
+   "effect": "Protector, Sentry Protector, and Juggernaut Operators gain +100% ATK and Max HP on deployment and after their skill ends, decaying over 60 seconds; with Iron Guard - Light Travel, they gain +3 Block while above 50% HP",
+   "flavor": "Hold fast, and resist to the very end."
+  },
+  "rogue_6_relic_hand_4": {
+   "src": {
+    "name": "慑空之手",
+    "effect": "炮手、散射手、裂空炮手开启技能时攻击力+150%，持续5秒；拥有残弩-神准时，每3秒获得3点技力",
+    "flavor": "我自向天，藐视晴苍。"
+   },
+   "name": "Hand of Sky Dominion",
+   "effect": "Artilleryman, Spreadshooter, and Skybreaker Operators gain +150% ATK for 5 seconds when activating a skill; with Fatal Bolts - Pinpoint, gain 3 SP every 3 seconds",
+   "flavor": "I face the heavens, and scorn the clear blue sky."
+  },
+  "rogue_6_relic_hand_5": {
+   "src": {
+    "effect": "轰击术师、链术师、驭械术师每对一个单位造成伤害就回复2点技力值，拥有断杖-同调时，造成伤害后3秒内攻击力+20%（最高+100%）"
+   },
+   "effect": "Blast Caster, Chain Caster, and Mech-Accord Caster Operators recover 2 SP each time they deal damage to a unit; with Broken Wand - Attunement, they gain +20% ATK for 3 seconds after dealing damage (up to +100%)"
+  },
+  "rogue_6_relic_hand_6": {
+   "src": {
+    "name": "护愈之手",
+    "effect": "疗养师、行医、护佑者攻击范围内的我方干员免疫异常状态，拥有医者-地缘策略时，溢出的治疗量可以转化成等量的屏障（最大为100%生命上限）",
+    "flavor": "将心比心，时刻呵护。"
+   },
+   "name": "Hand of Healing Care",
+   "effect": "Allied Operators within the attack range of Therapist, Wandering Medic, and Abjurer Operators are immune to status effects; with Healer's Path - Positional Strategy, overhealing converts into an equal Barrier (up to 100% of Max HP)",
+   "flavor": "Treat others as you would yourself, and care for them always."
+  },
+  "rogue_6_relic_hand_7": {
+   "src": {
+    "name": "剿袭之手",
+    "effect": "敌人进入秘术师、神射手、猎手的攻击范围内时，受到一次攻击力300%的法术或物理伤害和50%的法术或物理脆弱（持续3秒）",
+    "flavor": "视域之内，寸草不生。"
+   },
+   "name": "Hand of Ambush",
+   "effect": "When an enemy enters the attack range of a Mystic Caster, Deadeye, or Hunter Operator, it takes one hit of Arts or Physical Damage equal to 300% ATK and gains 50% Arts or Physical Fragility (3 seconds)",
+   "flavor": "Within their sight, not a blade of grass survives."
+  },
+  "rogue_6_relic_legacy_1": {
+   "src": {
+    "effect": "目标生命上限+2，希望+2"
+   },
+   "effect": "+2 Max Life Points, Hope +2"
+  },
+  "rogue_6_relic_legacy_102": {
+   "src": {
+    "effect": "干员生命值越低，攻击速度越快，30%生命值时达到最大可提升攻击速度（+100）"
+   },
+   "effect": "The lower an Operator's HP, the faster their attack speed, reaching the maximum bonus (+100 ASPD) at 30% HP"
+  },
+  "rogue_6_relic_legacy_104": {
+   "src": {
+    "unlock": "通关结局5次"
+   },
+   "unlock": "Reach an ending 5 times"
+  },
+  "rogue_6_relic_legacy_110": {
+   "src": {
+    "unlock": "通过第一层【玻利瓦尔肤层】"
+   },
+   "unlock": "Clear the first floor [Bolivarian Skin Layer]"
+  },
+  "rogue_6_relic_legacy_111": {
+   "src": {
+    "effect": "在商店中购买道具所需源石锭-50%"
+   },
+   "effect": "Items in shops cost -50% Originium Ingots"
+  },
+  "rogue_6_relic_legacy_115": {
+   "src": {
+    "effect": "敌人被晕眩、冻结、束缚时，每秒受到2000点法术伤害"
+   },
+   "effect": "Enemies receive 2000 Arts Damage per second while Stunned, Frozen, or Bound"
+  },
+  "rogue_6_relic_legacy_119": {
+   "src": {
+    "unlock": "通关结局7次"
+   },
+   "unlock": "Reach an ending 7 times"
+  },
+  "rogue_6_relic_legacy_120": {
+   "src": {
+    "unlock": "通关结局7次"
+   },
+   "unlock": "Reach an ending 7 times"
+  },
+  "rogue_6_relic_legacy_121": {
+   "src": {
+    "unlock": "通关结局7次"
+   },
+   "unlock": "Reach an ending 7 times"
+  },
+  "rogue_6_relic_legacy_123": {
+   "src": {
+    "unlock": "携带不小于3名近卫干员完成一场战斗"
+   },
+   "unlock": "Complete a battle while having at least 3 Guard Operators"
+  },
+  "rogue_6_relic_legacy_127": {
+   "src": {
+    "unlock": "在多局游戏中累计胜利60场战斗"
+   },
+   "unlock": "Across multiple adventures, win a total of 60 battles"
+  },
+  "rogue_6_relic_legacy_134": {
+   "src": {
+    "effect": "【召唤物】的部署费用-5、生命值+30%、攻击力+30%，并且不再消耗部署位"
+   },
+   "effect": "[Summons] have -5 DP Cost, +30% Max HP, and +30% ATK, and no longer use Deployment slots"
+  },
+  "rogue_6_relic_legacy_135": {
+   "src": {
+    "flavor": "它通常被萨米人放在彩虹落下的地方并精心保存，用以对抗踪迹不定的天灾与人祸。"
+   },
+   "flavor": "The Sami usually place it where a rainbow touches down and keep it with great care, to ward off catastrophes and calamities that come and go without a trace."
+  },
+  "rogue_6_relic_legacy_137": {
+   "src": {
+    "unlock": "通关结局9次"
+   },
+   "unlock": "Reach an ending 9 times"
+  },
+  "rogue_6_relic_legacy_138": {
+   "src": {
+    "unlock": "通关结局9次"
+   },
+   "unlock": "Reach an ending 9 times"
+  },
+  "rogue_6_relic_legacy_139": {
+   "src": {
+    "unlock": "通关结局9次"
+   },
+   "unlock": "Reach an ending 9 times"
+  },
+  "rogue_6_relic_legacy_14": {
+   "src": {
+    "effect": "所有我方单位的防御力+50%"
+   },
+   "effect": "All allied units gain +50% DEF"
+  },
+  "rogue_6_relic_legacy_140": {
+   "src": {
+    "unlock": "通关结局9次"
+   },
+   "unlock": "Reach an ending 9 times"
+  },
+  "rogue_6_relic_legacy_141": {
+   "src": {
+    "effect": "所有干员的部署费用-1，战斗开始时，打乱所有干员的部署费用"
+   },
+   "effect": "All Operators have -1 DP Cost; at the start of battle, all Operators' DP Costs are shuffled"
+  },
+  "rogue_6_relic_legacy_142": {
+   "src": {
+    "effect": "所有干员的部署费用+3，但攻击力、防御力和生命+50%"
+   },
+   "effect": "All Operators have +3 DP Cost, but gain +50% ATK, DEF, and Max HP"
+  },
+  "rogue_6_relic_legacy_36": {
+   "src": {
+    "unlock": "通过第三层【血色空脉】时已招募大于等于6名远程位干员或大于等于6名近战位干员，累计3次"
+   },
+   "unlock": "Clear the third floor [Crimson Hollow Vein] having recruited 6 or more ranged Operators or 6 or more melee Operators, 3 times in total"
+  },
+  "rogue_6_relic_legacy_37": {
+   "src": {
+    "unlock": "通过第三层【血色空脉】时已招募大于等于6名远程位干员或大于等于6名近战位干员，累计3次"
+   },
+   "unlock": "Clear the third floor [Crimson Hollow Vein] having recruited 6 or more ranged Operators or 6 or more melee Operators, 3 times in total"
+  },
+  "rogue_6_relic_legacy_4": {
+   "src": {
+    "unlock": "在多局游戏中累计击败领袖【埃尔伯特】2次"
+   },
+   "unlock": "Across multiple adventures, defeat the Leader [Elbert] a total of 2 times"
+  },
+  "rogue_6_relic_legacy_50": {
+   "src": {
+    "unlock": "选择【地质调查分队】完成游戏结局"
+   },
+   "unlock": "Complete an adventure with the [Geological Survey Squad]"
+  },
+  "rogue_6_relic_legacy_52": {
+   "src": {
+    "unlock": "通关结局8次"
+   },
+   "unlock": "Reach an ending 8 times"
+  },
+  "rogue_6_relic_legacy_54": {
+   "src": {
+    "effect": "敌人受到的一次性晕眩、寒冷、冻结等异常效果影响时间提高75%"
+   },
+   "effect": "Duration of single-instance status effects on enemies, such as Stun, Cold, or Freeze, is increased by 75%"
+  },
+  "rogue_6_relic_legacy_59": {
+   "src": {
+    "unlock": "剩余不小于30源石锭时完成游戏结局"
+   },
+   "unlock": "Complete an adventure with at least 30 Originium Ingots remaining"
+  },
+  "rogue_6_relic_legacy_60": {
+   "src": {
+    "unlock": "在“前瞻性投资系统”中的投资储备余额最高达到过250"
+   },
+   "unlock": "Have your reserve balance in the Prospective Investment System reach 250 at its peak"
+  },
+  "rogue_6_relic_legacy_62": {
+   "src": {
+    "unlock": "在损失不超过3点目标生命的情况下胜利战斗【陌生旅伴】"
+   },
+   "unlock": "Win the battle [Stranger Companions] while losing no more than 3 Life Points"
+  },
+  "rogue_6_relic_legacy_64": {
+   "src": {
+    "name": "钝爪-屡战",
+    "flavor": "一鼓作气，克敌机先。"
+   },
+   "name": "Blunt Claws - Undaunted",
+   "flavor": "Strike while morale is high, and seize the initiative over the foe."
+  },
+  "rogue_6_relic_legacy_73": {
+   "src": {
+    "effect": "场上每有一名【术师】干员，所有敌人受到的法术伤害+12%（最多叠加8层）"
+   },
+   "effect": "For each [Caster] Operator on the field, all enemies take +12% Arts Damage (stacks up to 8 times)"
+  },
+  "rogue_6_relic_legacy_75": {
+   "src": {
+    "effect": "所有【医疗】干员的攻击速度+70"
+   },
+   "effect": "Medic Operators gain +70 ASPD"
+  },
+  "rogue_6_relic_legacy_76": {
+   "src": {
+    "effect": "所有【特种】干员的部署费用-3，生命+60%"
+   },
+   "effect": "Specialist Operators have -3 DP Cost and +60% Max HP"
+  },
+  "rogue_6_relic_legacy_82": {
+   "src": {
+    "unlock": "通关结局6次"
+   },
+   "unlock": "Reach an ending 6 times"
+  },
+  "rogue_6_relic_legacy_83": {
+   "src": {
+    "effect": "所有我方单位受到的治疗和生命回复效果+40%，且受到的元素损伤-30%"
+   },
+   "effect": "All allied units have +40% healing effectiveness and take -30% Elemental Injury"
+  },
+  "rogue_6_relic_legacy_84": {
+   "src": {
+    "effect": "所有敌方单位的生命-5%，防御力-10%"
+   },
+   "effect": "All enemy units have -5% Max HP and -10% DEF"
+  },
+  "rogue_6_relic_legacy_86": {
+   "src": {
+    "effect": "所有敌方单位的生命-15%，防御力-30%"
+   },
+   "effect": "All enemy units have -15% Max HP and -30% DEF"
+  },
+  "rogue_6_relic_legacy_88": {
+   "src": {
+    "effect": "所有敌方单位的生命-30%"
+   },
+   "effect": "All enemy units have -30% Max HP"
+  },
+  "rogue_6_relic_legacy_90": {
+   "src": {
+    "unlock": "通关结局6次"
+   },
+   "unlock": "Reach an ending 6 times"
+  },
+  "rogue_6_relic_legacy_93": {
+   "src": {
+    "effect": "战斗获得的指挥经验+30%，指挥等级到达10级时，立刻获得50源石锭",
+    "unlock": "通关结局3次"
+   },
+   "effect": "Command EXP gained from battles +30%; immediately gain 50 Originium Ingots upon reaching Command Level 10",
+   "unlock": "Reach an ending 3 times"
+  },
+  "rogue_6_relic_legacy_95": {
+   "src": {
+    "effect": "初始技力+2，所有攻击和受击回复的技能每3秒回复1点技力"
+   },
+   "effect": "Starting SP +2; all Offensive and Defensive Recovery skills recover 1 SP every 3 seconds"
+  },
+  "rogue_6_relic_legacy_96": {
+   "src": {
+    "effect": "初始技力+3，所有攻击和受击回复的技能每2.5秒回复1点技力"
+   },
+   "effect": "Starting SP +3; all Offensive and Defensive Recovery skills recover 1 SP every 2.5 seconds"
+  },
+  "rogue_6_relic_legacy_97": {
+   "src": {
+    "effect": "初始技力+5，所有攻击和受击回复的技能每1.5秒回复1点技力",
+    "unlock": "在多局游戏中累计击败领袖【德莱昂】2次"
+   },
+   "effect": "Starting SP +5; all Offensive and Defensive Recovery skills recover 1 SP every 1.5 seconds",
+   "unlock": "Across multiple adventures, defeat the Leader [De León] a total of 2 times"
+  },
+  "rogue_6_relic_legacy_99": {
+   "src": {
+    "unlock": "在损失不超过3点目标生命的情况下胜利战斗【合伙人会议】"
+   },
+   "unlock": "Win the battle [Partners' Meeting] while losing no more than 3 Life Points"
+  },
+  "rogue_6_start_1": {
+   "src": {
+    "name": "襁褓天马",
+    "effect": "每次进入新区域时，初始行动力+1",
+    "flavor": "愿新生的它不再折翼。"
+   },
+   "name": "Swaddled Pegasus",
+   "effect": "Starting Action Points +1 each time you enter a new Area",
+   "flavor": "May it, newly born, never again have its wings broken."
+  },
+  "rogue_6_start_2": {
+   "src": {
+    "name": "襁褓骏鹰",
+    "effect": "初始希望+1，初始揭示前两个探索区域中所有节点的信息",
+    "flavor": "愿新生的它不再狂傲。"
+   },
+   "name": "Swaddled Hippogriff",
+   "effect": "Starting Hope +1, and all node information in the first two exploration Areas is revealed from the start",
+   "flavor": "May it, newly born, never again be arrogant."
+  },
+  "rogue_6_start_3": {
+   "src": {
+    "name": "襁褓巨龙",
+    "effect": "前两个探索区域的战斗中，所有敌人的最大生命-50%",
+    "flavor": "愿新生的它不再饥饿。"
+   },
+   "name": "Swaddled Dragon",
+   "effect": "In battles in the first two exploration Areas, all enemies have -50% Max HP",
+   "flavor": "May it, newly born, never again go hungry."
+  },
+  "rogue_6_start_4": {
+   "src": {
+    "name": "襁褓九头蛇",
+    "effect": "所有敌人的攻击和生命+30%，每进入新区域时我方攻击力和生命+10%",
+    "flavor": "愿新生的它不再痛苦。"
+   },
+   "name": "Swaddled Hydra",
+   "effect": "All enemies gain +30% ATK and Max HP; each time you enter a new Area, allied units gain +10% ATK and Max HP",
+   "flavor": "May it, newly born, never again know pain."
+  },
+  "rogue_6_start_5": {
+   "src": {
+    "name": "襁褓白泽",
+    "effect": "干员招募时，出现临时招募的概率提升",
+    "flavor": "愿新生的它不再孤独。"
+   },
+   "name": "Swaddled Baize",
+   "effect": "Increases the chance of Temporary Recruitment when recruiting Operators",
+   "flavor": "May it, newly born, never again be lonely."
+  },
+  "rogue_6_start_6": {
+   "src": {
+    "name": "襁褓金乌",
+    "effect": "进入区域Ⅲ血色空脉时，获得3个随机收藏品",
+    "flavor": "愿新生的它不再陨落。"
+   },
+   "name": "Swaddled Golden Crow",
+   "effect": "Gain 3 random collectibles upon entering Area III, the Crimson Hollow Vein",
+   "flavor": "May it, newly born, never again fall."
+  }
+ },
+ "strings": {
+  "“黑流地脉”": "\"Blackflow Leyline\"",
+  "黑流的视线无处不在。": "The Black Flow's gaze is everywhere.",
+  "早期": "Early",
+  "关卡中出现额外的猎犬proto，敌方攻击+10%，生命+10%": "Additional Hound Protos appear in operations; enemies gain +10% ATK and +10% HP",
+  "中期": "Middle",
+  "关卡中出现额外的猎犬proto，敌方攻击+20%，生命+20%": "Additional Hound Protos appear in operations; enemies gain +20% ATK and +20% HP",
+  "晚期": "Late",
+  "关卡中出现更多额外的猎犬proto，敌方攻击+30%，生命+30%": "Even more additional Hound Protos appear in operations; enemies gain +30% ATK and +30% HP",
+  "“倾斜沙丘”": "\"Sloping Dunes\"",
+  "斜坡上的沙砾只有一个去处。": "The sand on a slope has only one place to go.",
+  "场上出现随机方向的沙尘暴，部署方向与沙尘暴方向不同的干员攻击力降低20%，干员可以为其他干员挡住沙尘暴，敌方移速-15%": "A sandstorm blows from a random direction; Operators deployed facing a different direction from the sandstorm have -20% ATK. Operators can shield other Operators from the sandstorm. Enemies have -15% Movement Speed",
+  "场上出现随机方向的沙尘暴，部署方向与沙尘暴方向不同的干员攻击力降低35%，干员可以为其他干员挡住沙尘暴，敌方移速-15%": "A sandstorm blows from a random direction; Operators deployed facing a different direction from the sandstorm have -35% ATK. Operators can shield other Operators from the sandstorm. Enemies have -15% Movement Speed",
+  "场上出现随机方向的沙尘暴，部署方向与沙尘暴方向不同的干员攻击力降低50%，干员可以为其他干员挡住沙尘暴，敌方移速-15%": "A sandstorm blows from a random direction; Operators deployed facing a different direction from the sandstorm have -50% ATK. Operators can shield other Operators from the sandstorm. Enemies have -15% Movement Speed",
+  "“去温栏”": "\"Heat Barrier\"",
+  "诸位要谨记，温度是罪孽的侍者，它让我们融化，它让我们满是缺陷。": "Remember, all of you: warmth is the servant of sin. It melts us, and it fills us with flaws.",
+  "我方单位部署时冻结5秒，每60秒为全体单位施加15秒寒冷": "Allied units are Frozen for 5 seconds when deployed; every 60 seconds, all units are inflicted with Cold for 15 seconds",
+  "我方单位部署时冻结10秒，每45秒为全体单位施加15秒寒冷": "Allied units are Frozen for 10 seconds when deployed; every 45 seconds, all units are inflicted with Cold for 15 seconds",
+  "我方单位部署时冻结15秒，每30秒为全体单位施加15秒寒冷": "Allied units are Frozen for 15 seconds when deployed; every 30 seconds, all units are inflicted with Cold for 15 seconds",
+  "“微型胶囊”": "\"Microcapsule\"",
+  "如果变得再微不足道些，源石是不是就会宽恕我们？": "If we became even more insignificant, would Originium forgive us?",
+  "我方单位受到的物理伤害提高25%": "Allied units take +25% Physical damage",
+  "我方单位受到的物理伤害提高40%": "Allied units take +40% Physical damage",
+  "我方单位受到的物理伤害提高70%": "Allied units take +70% Physical damage",
+  "“储藏室”": "\"Storeroom\"",
+  "根据计划，现在需要将此处堆满。": "According to plan, this place now needs to be filled to the brim.",
+  "零件售出价值-10%，诡意行商和秘境行商内商品栏位-1": "Parts sell for -10%; Rogue Trader and Secret Realm Trader have 1 fewer item slot",
+  "零件售出价值-30%，诡意行商和秘境行商内商品栏位-2": "Parts sell for -30%; Rogue Trader and Secret Realm Trader have 2 fewer item slots",
+  "零件售出价值-50%，诡意行商和秘境行商内商品栏位-3": "Parts sell for -50%; Rogue Trader and Secret Realm Trader have 3 fewer item slots",
+  "“易碎同盟”": "\"Fragile Alliance\"",
+  "撕下最后一层提防，对死亡的恐惧便能让我们依偎在一起。": "Tear away the last layer of caution, and the fear of death will huddle us together.",
+  "我方单位部署后损失30%生命值（每个单位退场前只会生效一次）": "Allied units lose 30% of their HP after being deployed (once per unit until it leaves the field)",
+  "我方单位部署后损失50%生命值（每个单位退场前只会生效一次）": "Allied units lose 50% of their HP after being deployed (once per unit until it leaves the field)",
+  "我方单位部署后损失70%生命值（每个单位退场前只会生效一次）": "Allied units lose 70% of their HP after being deployed (once per unit until it leaves the field)",
+  "“停止点”": "\"Stop Point\"",
+  "*数据归零*": "*Data reset to zero*",
+  "费用自然回复效率-20%": "DP natural regeneration -20%",
+  "费用自然回复效率-25%": "DP natural regeneration -25%",
+  "费用自然回复效率-40%": "DP natural regeneration -40%",
+  "“希望的沃土”": "\"Fertile Soil of Hope\"",
+  "没有混乱与流血，一切都茁壮成长，欣欣向荣，它本该如此。": "No chaos, no bloodshed. Everything grows and thrives, as it always should have.",
+  "我方单位攻击+10%，生命+10%，战斗胜利后获得随机零件": "Allied units gain +10% ATK and +10% HP; gain a random Part after winning an operation",
+  "我方单位攻击+15%，生命+20%，战斗胜利后获得随机零件": "Allied units gain +15% ATK and +20% HP; gain a random Part after winning an operation",
+  "我方单位攻击+20%，生命+30%，战斗胜利后获得随机零件": "Allied units gain +20% ATK and +30% HP; gain a random Part after winning an operation",
+  "“弥散虚雾”": "\"Diffuse Phantom Mist\"",
+  "一千种词汇在描述，一万种方法在修饰，唯独确定被抛在了脑后。": "A thousand words describe it and ten thousand ways embellish it; only certainty is left behind.",
+  "无法揭示已连通的节点信息": "Information about connected nodes cannot be revealed",
+  "“美丽新大地”": "\"Brave New Earth\"",
+  "还没有一把钥匙能打开这扇窗。": "No key has yet been made that can open this window.",
+  "战场上我方形象不再可见": "Allied units are no longer visible on the battlefield",
+  "改良": "Refinement",
+  "途经受实托邦影响的节点时源石锭-2": "Originium Ingots -2 when passing through a node affected by Realtopia",
+  "还有许多步骤。": "There are many steps yet to go.",
+  "修正": "Correction",
+  "途经受实托邦影响的节点时护盾-1": "Objective Shield -1 when passing through a node affected by Realtopia",
+  "否定即是肯定。": "To deny is to affirm.",
+  "激进": "Radical",
+  "途经受实托邦影响的节点时生命-1": "Life Points -1 when passing through a node affected by Realtopia",
+  "不惜一切代价。": "At any cost.",
+  "增益": "Boon",
+  "途经受实托邦影响的节点时，携带的自然物估价+2": "When passing through a node affected by Realtopia, carried Natural Objects gain +2 Value",
+  "风险带来财富。": "Risk brings riches.",
+  "“巨人摇篮”": "\"Cradle of Giants\"",
+  "我方攻击力提升，但对较远的敌人造成的伤害降低": "Allied ATK is increased, but damage dealt to distant enemies is reduced",
+  "外面怎么会有大地？": "How can there be land out there?",
+  "“迪斯科狂热”": "\"Disco Fever\"",
+  "我方干员技力需求降低，技能结束后向周围随机移动": "Allied Operators' SP cost is reduced; after a skill ends, they move to a random nearby tile",
+  "肢体将死去的语言紧紧搂在怀中。": "Limbs hold dying languages tight in their embrace.",
+  "“已知浩劫”": "\"Known Catastrophe\"",
+  "敌人和我方每秒损失生命": "Enemies and allied units lose HP every second",
+  "滴答，滴答，滴答——": "Tick, tock, tick, tock—",
+  "“孤立石林”": "\"Isolated Stone Forest\"",
+  "我方攻击范围内存在我方干员时攻速+30，否则攻速-50": "Allied units gain +30 ASPD while an allied Operator is within their attack range, otherwise -50 ASPD",
+  "同类即地狱。": "Hell is others of one's own kind.",
+  "“全知者盲区”": "\"The Omniscient's Blind Spot\"",
+  "每次移动后，刷新其余未经过节点": "After each move, all other unvisited nodes are refreshed",
+  "当惰性知识遇见活性大地。": "When inert knowledge meets living earth.",
+  "“未亡者遗怨”": "\"Grudges of the Undying\"",
+  "生成更多“居民”的恶意": "More \"Resident\" malice is generated",
+  "那些被践踏的文明至今都没有忘记仇恨。": "The trampled civilizations have not forgotten their hatred to this day.",
+  "“源石之城”": "\"City of Originium\"",
+  "完成节点后获得源石锭，敌方属性随源石锭数量提升": "Gain Originium Ingots after completing a node; enemy stats increase with the number of Originium Ingots held",
+  "拥抱历史与既定的未来。": "Embrace history and the predetermined future.",
+  "“消耗螺旋”": "\"Spiral of Consumption\"",
+  "每名干员仅可在一场狭路相逢中出战": "Each Operator can only be deployed in one Face-Off",
+  "败者亡命，胜者剥离，究竟谁在获益？": "The loser flees for their life, the winner is stripped bare. Who really profits?",
+  "“换心联结”": "\"Heart-Swap Bond\"",
+  "每完成一个失与得节点，获得5源石锭": "Gain 5 Originium Ingots each time you complete a Gains and Losses node",
+  "平凡的珍贵令我们不再孤独。": "The preciousness of the ordinary means we are no longer alone.",
+  "报废轮子": "Scrapped Wheel",
+  "装载后能够移动至直线2格内任意节点（可移动1次）": "Once loaded, move to any node within 2 tiles in a straight line (1 move)",
+  "继续损坏下去，它就无法定义了。": "Damage it any further and it won't be definable anymore.",
+  "报废假肢": "Scrapped Prosthetic",
+  "装载后能够移动至相邻8格内任意节点（可移动1次）": "Once loaded, move to any node within the 8 adjacent tiles (1 move)",
+  "战争将它赐予幸存者，它将载着幸存者重返战场。": "War gave it to the survivors, and it will carry the survivors back to the battlefield.",
+  "标准引擎": "Standard Engine",
+  "装载后能够移动至相邻8格内任意节点（可移动3次）": "Once loaded, move to any node within the 8 adjacent tiles (3 moves)",
+  "可否听清轰鸣声后少了些什么？": "Can you tell what's missing from the roar?",
+  "重弹簧": "Heavy Spring",
+  "装载后能够移动至周围12格内任意节点，无需行动力，无法被携带至下一区域（可移动1次）": "Once loaded, move to any node within the surrounding 12 tiles without spending Action Points; can't be carried into the next Area (1 move)",
+  "延展的第一步，生命的最后一步。": "The first step of extension, the last step of life.",
+  "气垫底座": "Air Cushion Base",
+  "装载后能够移动至周围12格内任意节点（可移动2次）": "Once loaded, move to any node within the surrounding 12 tiles (2 moves)",
+  "厚实却脆弱的气垫能隔绝一切不快。": "A thick yet fragile air cushion that insulates against all unpleasantness.",
+  "试作外骨骼": "Prototype Exoskeleton",
+  "装载后能够移动至直线3格内任意节点（可移动2次）": "Once loaded, move to any node within 3 tiles in a straight line (2 moves)",
+  "最醇厚的毒药叫做力所不能及。": "The most potent poison is called 'beyond one's power'.",
+  "小八界": "Little Eight Realms",
+  "装载并使用后会被随机传送至任意非作战节点，无需行动力，无法被携带至下一区域（可移动1次）": "Once loaded and used, teleports you to a random non-combat node without spending Action Points; can't be carried into the next Area (1 move)",
+  "不要问它为何在此，也不要问它将去何方，它只是来玩的。": "Don't ask why it's here, and don't ask where it's going. It's just here to play.",
+  "一次性喷气背包": "Disposable Jetpack",
+  "装载后能够移动至任意节点，无需行动力（可移动1次）": "Once loaded, move to any node without spending Action Points (1 move)",
+  "抬头抓取天空的人不会回头看那被灼烧殆尽的大地。": "Those who reach up to grab the sky never look back at the scorched earth below.",
+  "老妈妈的融雪": "Old Mother's Snowmelt",
+  "装载后能够移动至任意非作战节点，且移动后希望+2（可移动1次）": "Once loaded, move to any non-combat node and gain +2 Hope after moving (1 move)",
+  "一位兽主消逝前最后的愿望。": "A Beastlord's final wish before passing away.",
+  "坎诺特的触须": "Kanot's Tentacle",
+  "装载后能够移动至任意行商节点，且每次移动后源石锭+4（可移动2次）": "Once loaded, move to any Trader node and gain +4 Originium Ingots after each move (2 moves)",
+  "不规则的蠕动恰如急速波动的价格。": "Its irregular writhing is just like rapidly fluctuating prices.",
+  "结构性原理": "Structural Principle",
+  "装载后能够移动至任意节点（可移动3次）": "Once loaded, move to any node (3 moves)",
+  "能源耗尽前，将万物载离蛮荒。": "Before the energy runs out, carry everything away from the wilderness.",
+  "“简易遥控器”": "\"Simple Remote Control\"",
+  "装载后能够移动至相邻8格内任意节点，无需行动力，且移动后行动力+3（可移动1次）": "Once loaded, move to any node within the 8 adjacent tiles without spending Action Points, and gain +3 Action Points after moving (1 move)",
+  "讽刺的是，控制兽群的机械即将遥控探索者的命运。": "Ironically, the machine that controls the herd is about to remote-control the Expeditioners' fate.",
+  "紧急逃生座椅": "Emergency Ejection Seat",
+  "装载后能够移动至任意险路尽头，险路小径或险路恶敌节点（可移动1次）": "Once loaded, move to any Perilous Path's End, Perilous Path or Dreadful Foe node (1 move)",
+  "这只是个座椅，我们带着它干啥？等等，什么叫里面有燃料？": "It's just a seat. Why are we carrying it around? Wait, what do you mean there's fuel inside?",
+  "力反馈方向盘": "Force-Feedback Steering Wheel",
+  "装载后能够移动至同行或同列的任意节点（可移动2次）": "Once loaded, move to any node in the same row or column (2 moves)",
+  "质量很不错，适合所有喜欢横冲直撞的人使用。": "Excellent quality. Perfect for anyone who loves to charge straight ahead.",
+  "鸣笛": "Horn",
+  "装载后能够移动至周围12格内的任意作战节点（可移动1次）": "Once loaded, move to any combat node within the surrounding 12 tiles (1 move)",
+  "按下它，丛林就会为你让出一条路。不会吗？那为什么一直按？": "Press it and the jungle will make way for you. It won't? Then why do you keep pressing it?",
+  "坎诺特特快": "Kanot Express",
+  "装载后能够移动至任意不期而遇节点，并将其转换为诡意行商（可移动1次）": "Once loaded, move to any Encounter node and turn it into a Rogue Trader (1 move)",
+  "快得不能再快了，你甚至不明白自己到底是如何来到他面前的。": "As fast as fast can be. You won't even understand how you ended up in front of him.",
+  "种子": "Seed",
+  "可在秘境行商中培育并获得奖励": "Can be cultivated at a Secret Realm Trader for rewards",
+  "它在孕育什么？": "What is it nurturing?",
+  "血蕈": "Blood Mushroom",
+  "每次作战后估价+2": "Value +2 after each operation",
+  "请在此大快朵颐，直至你被装入餐盘。": "Please feast to your heart's content here, until you are served up on a plate.",
+  "雾滚草": "Fog Tumbleweed",
+  "每次揭示节点信息时估价+1": "Value +1 each time node information is revealed",
+  "在迷雾裹挟下，离大地与根系越来越远。": "Carried along by the mist, ever farther from the earth and its roots.",
+  "回声玉米": "Echo Corn",
+  "每次招募干员时估价+3": "Value +3 each time you recruit an Operator",
+  "每一粒甜言蜜语都清晰而饱满。": "Every kernel of sweet talk is clear and plump.",
+  "浪花": "Spray",
+  "每次移动后，估价会随机变化": "Value changes randomly after each move",
+  "自然造就改变，思维将之渲染，好让生灵傲然宣称自我的自由。": "Nature creates change and the mind colors it in, so that living things may proudly proclaim their freedom.",
+  "霜晶树": "Frostcrystal Tree",
+  "每次完美作战后估价+4，非完美作战后自身损坏": "Value +4 after each Perfect Operation; breaks after a non-Perfect Operation",
+  "在阳光穿透脏腑前，展现未融的精致。": "Showing its unmelted delicacy before the sunlight pierces its innards.",
+  "多生苔藓": "Prolific Moss",
+  "获得时立刻获得3个<枯苔藓球>，获得零件时估价+1": "Immediately gain 3 <Withered Moss Balls> when obtained; Value +1 each time you gain a Part",
+  "爬满泥土、树木、梦想、成长。": "Crawling across soil, trees, dreams, growth.",
+  "枯苔藓球": "Withered Moss Ball",
+  "估价较低的自然物": "A low-Value Natural Object",
+  "而后腐败、枯萎、绝望、死亡。": "And then rot, wither, despair, death.",
+  "板藤": "Plank Vine",
+  "每次获得零件时估价+4": "Value +4 each time you gain a Part",
+  "抓住同类，不愿再放手。": "It grabs hold of its own kind and never wants to let go.",
+  "恋家果": "Homesick Fruit",
+  "每次移动后估价-2": "Value -2 after each move",
+  "受称颂蒙蔽，亲手启动生命的倒计时。": "Blinded by praise, it starts its own life's countdown with its own hands.",
+  "光彩松露": "Radiant Truffle",
+  "估价较高的自然物": "A high-Value Natural Object",
+  "如果不被挖掘与品尝，它本配不上如此殊荣。": "Had it not been dug up and tasted, it would never have deserved such an honor.",
+  "笼控器": "Cage Controller",
+  "在不期而遇中存在特殊作用": "Has a special use in Encounters",
+  "短暂的安静，并不意味着真正的控制。": "A brief silence does not mean true control.",
+  "薄葬草": "Thin-Burial Grass",
+  "估价较低，在失与得中能交换更加稀有的自然物": "Low Value; can be exchanged for rarer Natural Objects at Gains and Losses",
+  "它们绽放在最贫瘠的土地上，然后死去，变成后来者的养料。": "They bloom on the most barren land, then die and become nourishment for those who come after.",
+  "生逝": "Life's Passing",
+  "初始估价较低，每次移动后，消耗1源石锭，获得3估价": "Low starting Value; after each move, spend 1 Originium Ingot to gain 3 Value",
+  "我们排着队，每响起一次钟声，就会有一颗落下。": "We stand in line, and each time the bell rings, one of us falls.",
+  "血橙": "Blood Orange",
+  "进入非战斗节点时估价+2": "Value +2 when entering a non-combat node",
+  "切开我，享用我，死亡会把我们变成花朵。": "Cut me open, savor me. Death will turn us into flowers.",
+  "旅行绒": "Travel Fluff",
+  "每次移动时，根据移动距离提升估价": "Each move raises its Value based on the distance moved",
+  "去到很远很远的地方，然后变成漫长旅途的一张书签。": "Go somewhere far, far away, and become a bookmark in a long journey.",
+  "恋心草": "Lovesick Grass",
+  "每次战斗结束后估价+6，敌人进入目标点后扣除的目标生命+1": "Value +6 after each battle; Life Points lost when an enemy reaches the objective +1",
+  "他能活着回来，他没能活着回来……": "He'll make it back alive. He didn't make it back alive...",
+  "无缘果": "Ill-Fated Fruit",
+  "进入诡意行商或秘境行商时估价+10，在诡意行商中卖出时刷新商品（消耗刷新次数，耗尽时无法刷新）": "Value +10 when entering a Rogue Trader or Secret Realm Trader; selling it at a Rogue Trader refreshes the goods (uses a refresh; can't refresh once none are left)",
+  "本不是为了被卖个好价钱才长成这样的。": "It didn't grow like this just to fetch a good price.",
+  "种荚": "Seed Pod",
+  "进入下一区域时，获得1个种子": "Gain 1 Seed when entering the next Area",
+  "愿所有孩子都有机会在和平中成长。": "May every child have the chance to grow up in peace.",
+  "白模鸟": "White Model Bird",
+  "装载加工品移动至作战节点时，本次战斗我方单位攻击速度+50，战斗后获得1个随机收藏品（可激活1次）": "When a loaded Crafted Item moves to a combat node, allied units gain +50 ASPD in that battle, and you gain 1 random Collectible after the battle (activates once)",
+  "源石侵染前的羽翼遮蔽天空。": "Wings that blotted out the sky before Originium's infection.",
+  "白模狗": "White Model Dog",
+  "装载加工品移动至非作战节点时，获得1个随机收藏品（可激活1次）": "When a loaded Crafted Item moves to a non-combat node, gain 1 random Collectible (activates once)",
+  "源石侵染前的吼声响彻大地。": "A howl that shook the earth before Originium's infection.",
+  "白模鱼": "White Model Fish",
+  "装载加工品移动至任意节点时，获得3点护盾（可激活1次）": "When a loaded Crafted Item moves to any node, gain 3 Objective Shield (activates once)",
+  "源石侵染前的尾鳍搅动海洋。": "Fins that churned the ocean before Originium's infection.",
+  "涂装黎博利": "Painted Liberi",
+  "装载加工品移动至作战节点时，本次战斗我方单位攻击速度+35": "When a loaded Crafted Item moves to a combat node, allied units gain +35 ASPD in that battle",
+  "源石赐予了他们畅想与灵性。": "Originium granted them imagination and spirituality.",
+  "涂装佩洛": "Painted Perro",
+  "装载加工品移动至得偿所愿节点时，获得1个随机收藏品": "When a loaded Crafted Item moves to a Wish Fulfilled node, gain 1 random Collectible",
+  "源石赐予了他们忍耐与等待。": "Originium granted them endurance and patience.",
+  "涂装阿戈尔": "Painted Aegir",
+  "装载加工品移动至失与得节点时，获得2个随机收藏品": "When a loaded Crafted Item moves to a Gains and Losses node, gain 2 random Collectibles",
+  "源石赐予了他们沉默与发展。": "Originium granted them silence and progress.",
+  "洛伦茨之眼": "Lorentz's Eye",
+  "装载加工品移动至羽瞰点时，揭露全图视野（可激活1次）": "When a loaded Crafted Item moves to a Bird's-Eye Point, reveal the whole map (activates once)",
+  "在注视的瞬间，可能性被化为确定。": "In the instant of observation, possibility becomes certainty.",
+  "白模坎诺特": "White Model Kanot",
+  "卖出任意一件价值不低于50源石锭的自然物时，获得2个珍贵的随机收藏品（可激活1次）": "When you sell a Natural Object worth at least 50 Originium Ingots, gain 2 precious random Collectibles (activates once)",
+  "等价物的概念普及后，合作与分工成为可能。这也是文明的基石之一。": "Once the concept of equivalents spread, cooperation and the division of labor became possible. This too is one of the cornerstones of civilization.",
+  "涂装坎诺特": "Painted Kanot",
+  "装载加工品移动至安全的角落时，获得1个随机加工品": "When a loaded Crafted Item moves to a Safe House, gain 1 random Crafted Item",
+  "被剥去威胁之后，源石也不过是种一般等价物。人们又何尝不能是呢？": "Stripped of its threat, Originium is just another general equivalent. Why couldn't people be the same?",
+  "自然物": "Natural Objects",
+  "加工品": "Crafted Items",
+  "概念体": "Concepts",
+  "在行商节点售卖时通常能获得更多源石锭": "Usually sell for more Originium Ingots at Trader nodes",
+  "可用于地图移动": "Used to move around the map",
+  "移动到特定节点时生效": "Take effect when you move onto certain nodes"
+ }
+}

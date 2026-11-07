@@ -4,49 +4,66 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## What this is
 
-ArkPulls: an Arknights gacha pull tracker with community luck analytics. Two apps in one repo:
+**ROSMEOWTIS** (the site's name; formerly "Rosmontis", before that "Relic Index"): reference pages for Arknights game modes, in EN / JP / CN. The first mode is Integrated Strategies (roguelike): every theme with its relics and its own mechanics (buffs, debuffs, special items), CN-only themes included (with English fan translations). Stronghold Protocol is a placeholder. It's a static Next.js 16 site in `web/`. There's no backend or database. The site icon (`web/app/icon.png`, `apple-icon.png`) is Rosmontis's default in-game avatar (`char_391_rosmon`) from the ArknightsAssets mirror.
 
-- **Root** — Express 5 + TypeScript REST API (port 3000), Prisma ORM
-- **`web/`** — Next.js 16 dashboard (port 3001), proxies `/api/*` to the backend via rewrites in `web/next.config.ts`, so there is no CORS handling anywhere. `web/` has its own CLAUDE.md: Next 16 has breaking changes; consult `web/node_modules/next/dist/docs/` before writing Next-specific code.
+(This repo used to be ArkPulls, a gacha pull tracker with an Express/Prisma API. It was removed in favour of the relic index. The last version with it is commit `1f54551`.)
 
-## Commands
+`web/` has its own CLAUDE.md: Next 16 has breaking changes. Read `web/node_modules/next/dist/docs/` before writing Next-specific code.
+
+## Commands (run in `web/`)
 
 ```bash
-# API (repo root)
-npm run dev              # tsx watch, http://localhost:3000
-npm run db:migrate       # prisma migrate dev (also regenerates client + runs seed)
-npm run db:seed          # seed 50 simulated players (idempotent)
-npm run build            # tsc → dist/
-
-# Dashboard
-cd web && npm run dev    # defaults to port 3000 — collides with the API
+npm run dev                      # http://localhost:3000
+npm run build                    # fully static output; also typechecks
+npm run lint
+node scripts/build-relics.mjs    # regenerate data/relics.json + icons from upstream game data
+node scripts/build-relics.mjs --skip-icons --export-untranslated   # list CN text still needing translation
+node scripts/apply-translations.mjs batch.json                       # merge a batch into data/translations.json
+node scripts/build-mechanics.mjs # regenerate data/mechanics.json + mechanic icons + theme banners
+node scripts/build-mechanics.mjs --skip-icons --export-untranslated  # list CN mechanic strings needing translation
 ```
 
-Run the dashboard on port 3001. On Windows/PowerShell, `npm run dev -- --port 3001` mangles the flag (npm passes `3001` as a directory); use `$env:PORT=3001; npm run dev` instead.
+## Data
 
-Database is SQLite (`dev.db`, gitignored) for dev. For deployment, change `provider` in `prisma/schema.prisma` to `postgresql` and point `DATABASE_URL` (in `.env`) at Postgres.
+- `web/data/relics.json` and `web/public/relics/*.webp` are **generated, committed data**. Don't hand-edit them. Regenerate them with `scripts/build-relics.mjs`, which downloads `roguelike_topic_table.json` for the EN, JP and CN servers from ArknightsAssets/ArknightsGamedata (`en/`, `jp/`, `cn/`; updated automatically from the game clients). You can pass local copies with `--en=`, `--ja=` and `--cn=`. (Kengxxiao/ArknightsGameData_YoStar stopped updating in Nov 2025, before IS#6 reached EN; don't switch back to it.)
+- Every relic has `text.{en,ja?,zh}`. CN is a superset of the other servers, so themes and relics come from CN topics; `servers` lists where a theme is released. `ja` exists only for themes on the JP server (the UI falls back to EN with a "No JP text yet" tag). `en` is official for themes on the EN server. For themes not on EN (currently rogue_6) each field resolves in this order: (1) official EN text from any EN relic with the **identical** CN string (reprints); (2) a fan translation in `web/data/translations.json`; (3) the raw Chinese. `text.en.tl` is then `"fan"` or `"partial"`.
+- `web/data/translations.json` is **hand-maintained** (fan translations, plus CN-only theme names under `themes`). Each entry stores the exact Chinese it translates in `src`. If the game changes that text, the translation stops applying and the field shows up again in `--export-untranslated`. A translation also applies to every other relic with the same Chinese text. Edit it with `apply-translations.mjs`, not by hand. Match official EN terms: Squad Size Limit, Hope, Originium Ingot, Life Point, Objective Shield, Offensive/Defensive Recovery, and so on.
+ When a theme reaches EN, its fan translations go unused; the build reports them and `--prune-translations` removes them.
+- The canonical relic list and numbering is each theme's **Collection archive** (`details[theme].archiveComp.relic.relic`, `orderId`), joined to `details[theme].items`. Items that aren't in the archive are internal/event-only and are deliberately skipped.
+- Search (in `RelicBrowser.tsx`) covers name, effect, unlock and upgrade text in all three languages, but deliberately not the flavor text. `MechanicList.tsx` searches the same way (name, effect, stage text) and gives every grouped section filter chips, plus a Collection order / Name sort.
+- **Difficulty upgrades** (IS#4 on): `details[theme].difficultyUpgradeRelicGroups` lists a base relic plus `_a/_b/_c` items (-α/-β/-γ) that replace it from difficulty grade 3/6/9 (`equivalentGrade`). They go on the base relic as `upgrades: [{id, grade, text}]`, with only name and effect (flavor/unlock are the base's). EN text uses the same resolution as relics. For CN-only themes, upgrade names are derived as `<EN base name> - α`, so only effects can ever need a fan translation (keyed by the upgrade's id).
+- Rarity `NORMAL/RARE/SUPER_RARE` maps to `normal/rare/superRare`. `subType` `CURSE`/`SECRET` maps to `kind`.
+- Icons are resized to 128px WebP with `sharp`. Sources, in priority order: (1) hand-placed `web/scripts/icon-overrides/<relicId>.(png|webp|jpg)`, always applied; (2) the ArknightsAssets mirror (`cn` branch, `.../ui/rogueliketopic/itempic/<relicId>.png`), which stopped before the CN-only themes; (3) PRTS, `torappu.prts.wiki/assets/roguelike_topic_itempic/<relicId>.png`, which has every CN-only relic but is hosted in China and flaky from abroad, so the script uses concurrency 3 and retries; (4) Arknights Terra Wiki (arknights.wiki.gg) `File:<EN Relic Name>.png` (colons stripped) for whatever is still missing. Phantom's 6 "Reforged" relics and 4 Playwright's Manuscripts come from the wiki. Only missing icons are fetched. `--refresh-icons` re-fetches them all, and you need it after deleting an override. `--skip-icons` fetches nothing.
+- IS numbering: `themeShort()` labels `rogue_N` as IS#(N+1), since IS#1 (Ceobe's Fungimist, CN-only) isn't in the data. So rogue_5 is IS#6 and rogue_6 is IS#7.
+- **Mechanics.** `scripts/build-mechanics.mjs` generates `data/mechanics.json`, icons in `public/mechanics/` and banners in `public/themes/<themeId>.webp`.
+  - `data/mechanics-config.json` is **hand-maintained**. It lists each theme's sections as `{id, extract, kind, title, summary, groups?}`. The user tunes the titles and summaries there.
+  - `extract` names an extractor in the script. Each one reads one Collection-archive tab or module: capsules, sanCheck, chaos, totems, fragments, disasters, wraths, coppers, weather, variations or scrap.
+  - `kind` is `debuff`, `buff` or `mixed` (shown on the "Buffs & Debuffs" tab), or `item` (shown on the "Special Items" tab).
+  - EN text for themes not on the EN server comes from the plain `strings` dictionary (CN string → EN) in `translations.json`. `--export-untranslated` writes untranslated strings to `data/untranslated-strings.json`.
+  - Icon sources, in order: overrides in `scripts/icon-overrides/mechanics/<entryId>.png`, then item pictures (mirror, then PRTS), then Terra Wiki file-name patterns per section (`WIKI_FILES`), then PRTS wiki file names (`PRTS_FILES`: Mizuki's 启示/排异/回响 numbered in archive order, IS#7 `沉沦者的黑流树海 乌托邦幸福论 <CN name>.png`). prts.wiki often times out from abroad; just rerun.
+  - Groups can carry an icon: an extractor sets `prtsIcon` (a PRTS file name) and it's saved as `public/mechanics/group-<sectionId>-<groupId>.webp`. IS#6 Tongbao are grouped by luck (`copperData[].luckyLevel`), in the order Dayan Tongbao (the base coin), Risk, Flower, Balance. They're not grouped by coin type.
+  - Mizuki's 4 Light levels have no icon in the game, so they keep the letter placeholder.
+  - Banners come from the wiki's `CN <EN theme name> banner.png`.
+- Types live in `web/lib/relics.ts` and `web/lib/mechanics.ts`. If you change a JSON shape, update the script and the types together.
 
-There are no tests yet (roadmap item: Vitest, targeting pity extraction and import merging first).
+## Frontend
 
-## Architecture
-
-Data flow: ingestion → Prisma (User/Banner/Pull) → stats service → REST API → dashboard.
-
-Two import paths, both idempotent, both identify accounts by **SHA-256 hash only** (raw tokens/account names are never stored):
-
-- `src/services/ingest.ts` (`POST /api/import`) — token-based. Calls `fetchGachaHistory()` in `src/services/yostarClient.ts`, which is currently a **mock** that generates deterministic-per-token histories using real Arknights pity mechanics (2% base 6★, +2%/pull after 50). The planned real Yostar email-code integration replaces only that function's body; keep its interface stable. Appends new pulls by `seq`.
-- `src/services/jsonImport.ts` (`POST /api/import/json`) — paste-based import of Yostar Account Center Headhunting History responses. The real shape is **confirmed against an actual export**: `{ code, data: { rows: [{ charName, star: "4星", poolId, poolName, type, at: <ms> }], count } }`, paginated 10 rows per page. The parser also accepts arrays of page responses, flat pull arrays, and a grouped legacy shape (`data.list` + `chars`); star strings are 1-indexed by definition, numeric `rarity` fields get 0- vs 1-indexed auto-detection.
-
-### Invariants that break stats if violated
-
-- `Pull.seq` must be **chronological within (userId, bannerId)** — pity extraction (`src/services/stats.ts`) walks pulls in `seq` order to compute pity costs. `jsonImport` preserves this by deleting and re-creating a banner's pulls in timestamp order on every merge (an import can contain pulls older than what's stored).
-- JSON-import dedup is a **multiset** keyed by `(timestamp, operator, rarity)` — in the grouped legacy shape a ten-pull can legally contain the same operator twice at one shared timestamp, so per-key counts are compared, not key existence. But within a single paste, identical keys from **flat rows** (which carry per-pull ms timestamps) are duplicated/overlapping pages and are dropped — see `allowDuplicates` in `jsonImport.ts`.
-- Rarity is stored **1-indexed (3–6)**; Arknights game data is 0-indexed (6★ = 5). Conversion happens only at the jsonImport boundary.
-
-### Known debt
-
-Community stats (`getCommunityStats`, `luckPercentile`) rescan every pull in memory per request. Fine at seed scale; the roadmap moves this to SQL aggregation / cached materialized stats before real traffic.
-
-## Frontend conventions
-
-Chart and theme colors are CSS custom properties defined once in `web/app/globals.css` (light + dark via `prefers-color-scheme`), consumed as `var(--series-1)`, `var(--ink)`, etc. The histogram (`web/components/PityHistogram.tsx`) is hand-rolled SVG — no chart library. Palette values follow a validated accessibility method (contrast + colorblind-safety per mode); don't introduce new chart colors ad hoc.
+- **Routes.** Server pages pass each client component only the data it needs.
+  - `/`: hub with one card per game mode. Modes are listed in `lib/modes.ts` (`MODES`, which also drives the top nav). Each mode lives under its own route prefix; add a new mode there plus its `app/<prefix>/` pages.
+  - `/is`: Integrated Strategies home. `HomeThemes` shows theme cards as rounded tiles of the banner only; the name and counts are the link label and tooltip.
+  - `/is/[n]`: one theme, by community IS number (2–7), statically generated. `ThemeView` shows Relics, Buffs & Debuffs and Special Items tabs, selected with `?tab=`.
+  - `/is/relics`: all relics (`AllRelics`). The static segment wins over `[n]`.
+  - `/stronghold`: Stronghold Protocol, a placeholder (`comingSoon` in `MODES`) until the mode is out on CN and has data.
+  - Section pages start with `Crumbs` (breadcrumbs).
+- **Language** lives in `components/lang.tsx`. It's one site-wide store (`useSyncExternalStore`), shared by the top-bar `LangSelect` dropdown and every page through `useLang()`. On first load it reads `?lang=`, then localStorage `relic-index:lang` (the key keeps the old name so saved choices survive), and the static HTML renders English. Pages don't render their own language switch. `setUrlParams()` only touches the params a component owns.
+- Everything that uses `useSearchParams` must stay inside the page's `<Suspense>` boundary.
+- **Look.** An original tactical-terminal style. Corners are sharp (`rounded-sm`), and there's a blueprint grid behind the body. The utility classes live in `globals.css`:
+  - `.ak-stripes`: the hazard band under the top bar.
+  - `.ak-kicker`: a mono uppercase label with an accent block.
+  - `.ak-heading`: a left accent bar on section titles.
+  - `.ak-frame` / `.ak-frame-inner`: a cut-corner card. The outer element draws the 1px border, which turns accent on hover.
+  - `.ak-brackets`: corner brackets on relic and mechanic cards.
+  - Nav links, tabs and stats use Geist Mono in uppercase.
+- Colors are CSS custom properties on `:root` in `web/app/globals.css`. There is one look, with no light/dark modes and no theme toggle: dark navy tokens with see-through `--surface-1` panels (frosted with `backdrop-filter`) over `body::before`, which shows `--art` blurred and dimmed. `--art` is the official IS banner from `public/themes/`.
+  - `ThemeView` sets `--art` to the current theme's banner; every other page uses the newest one. The home page adds its own `.home-backdrop` on top.
+  - The accent `--series-1` is a sky/cyan blue, kept visibly different from `--rarity-rare` (royal blue). The Special Items "Item" badge uses `--kind-item` (violet), not a rarity color. Rarity accents are `--rarity-{normal,rare,superRare}` and `--relic-curse`. Always pair them with a text label, never color alone.
