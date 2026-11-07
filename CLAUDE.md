@@ -21,6 +21,7 @@ node scripts/build-relics.mjs --skip-icons --export-untranslated   # list CN tex
 node scripts/apply-translations.mjs batch.json                       # merge a batch into data/translations.json
 node scripts/build-mechanics.mjs # regenerate data/mechanics.json + mechanic icons + theme banners
 node scripts/build-mechanics.mjs --skip-icons --export-untranslated  # list CN mechanic strings needing translation
+node scripts/build-og-image.mjs  # regenerate app/opengraph-image.png, the 1200x630 link-preview picture
 ```
 
 ## Data

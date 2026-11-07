@@ -18,8 +18,12 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
+  // makes the link-preview image (app/opengraph-image.png) an absolute URL in the meta tags
+  metadataBase: new URL("https://creeperkung.github.io"),
   title: "ROSMEOWTIS — Arknights",
   description: "Reference pages for Arknights game modes",
+  openGraph: { siteName: "ROSMEOWTIS", type: "website" },
+  twitter: { card: "summary_large_image" },
 };
 
 export default function RootLayout({
