@@ -1,0 +1,12 @@
+// Cloudflare Workers deploy config: serves the static export (out/) as assets, no server code.
+// "name" must match the Worker's name in the Cloudflare dashboard.
+{
+  "name": "rosmeowtis",
+  "compatibility_date": "2025-09-01",
+  "assets": {
+    "directory": "./out",
+    // /is serves out/is.html; unknown paths get out/404.html with a 404 status
+    "html_handling": "auto-trailing-slash",
+    "not_found_handling": "404-page"
+  }
+}
