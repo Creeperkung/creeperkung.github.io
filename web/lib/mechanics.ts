@@ -19,10 +19,22 @@ export interface MechanicEntry {
   positive?: boolean;
   /** special/rare variant */
   sp?: boolean;
+  /** numbers shown as badges (Stronghold: shop price, starting Life Points, operators needed) */
+  stats?: { key: MechanicStat; value: number }[];
   text: { en: MechanicText & { tl?: "fan" | "partial" }; ja?: MechanicText; zh: MechanicText };
   /** true when public/mechanics/<id>.webp exists */
   icon: boolean;
+  /** Stronghold: true when public/stronghold/portrait-<id>.webp (a leader's E2 art) exists */
+  portrait?: boolean;
 }
+
+export type MechanicStat = "price" | "hp" | "need";
+
+export const STAT_LABEL: Record<MechanicStat, Partial<Record<Lang, string>> & { en: string }> = {
+  price: { en: "Price", zh: "售价" },
+  hp: { en: "Life Points", zh: "目标生命值" },
+  need: { en: "Activates at", zh: "激活人数" },
+};
 
 export interface MechanicSection {
   id: string;
@@ -30,6 +42,13 @@ export interface MechanicSection {
   title: string;
   kind: MechanicKind;
   summary: string | null;
+  /** flavor text starts hidden behind a "show" button (boss lore) */
+  hideFlavor?: boolean;
+  /**
+   * effect lines are skills ("[Name] text" becomes a heading + paragraph) and each level is a
+   * collapsible block with its label above the text (boss abilities / Hidden Core)
+   */
+  skillLayout?: boolean;
   groups?: {
     id: string;
     name: Partial<Record<Lang, string>>;

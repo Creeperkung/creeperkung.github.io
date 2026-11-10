@@ -1,27 +1,38 @@
 import type { Metadata } from "next";
 import { Crumbs } from "@/components/Crumbs";
+import { HomeSeasons, SeasonSummary } from "@/components/HomeSeasons";
+import { ArtBackdrop } from "@/components/ArtBackdrop";
+import { seasonBanner, seasonMeta, strongholdData, tabCount } from "@/lib/stronghold";
 
 export const metadata: Metadata = {
   title: "Stronghold Protocol — ROSMEOWTIS",
-  description: "Arknights Stronghold Protocol: coming soon",
+  description: "Arknights Stronghold Protocol: every season's operators, alliances, strategies and bosses",
 };
 
-/** /stronghold: placeholder until the mode is out on the CN server and its data can be extracted. */
+/** /stronghold: Stronghold Protocol home, one card per season. Mirrors /is. */
 export default function StrongholdHome() {
+  const newest = strongholdData.seasons.at(-1);
+  const summaries: SeasonSummary[] = [...strongholdData.seasons].reverse().map((s) => ({
+    season: seasonMeta(s),
+    stats: (["operators", "alliances", "strategies", "equipment", "enemies"] as const).map((t) => `${tabCount(s, t)} ${t}`),
+  }));
+
   return (
     <>
-      <header className="flex flex-col gap-2">
-        <Crumbs items={[{ label: "Home", href: "/" }, { label: "Stronghold Protocol" }]} />
-        <div className="flex flex-wrap items-center gap-3">
-          <h1 className="text-3xl font-bold uppercase tracking-wide">Stronghold Protocol</h1>
-          <span className="rounded border border-[var(--border)] px-1.5 py-0.5 text-xs font-medium text-[var(--ink-2)]">
-            Coming soon
-          </span>
-        </div>
+      <ArtBackdrop src={newest?.banner ? seasonBanner(newest.id) : undefined} />
+      <Crumbs items={[{ label: "Home", href: "/" }, { label: "Stronghold Protocol" }]} />
+      <header className="-mt-4 flex flex-col items-center gap-3 pb-4 text-center sm:pb-6">
+        <p className="flex items-center gap-3">
+          <span className="home-rule" aria-hidden />
+          <span className="font-mono text-xs uppercase tracking-[0.3em] text-[var(--series-1)]">Arknights · Auto-battler</span>
+          <span className="home-rule flip" aria-hidden />
+        </p>
+        <h1 className="home-title text-4xl font-black uppercase tracking-[0.08em] sm:text-6xl">Stronghold Protocol</h1>
+        <p className="max-w-2xl text-[var(--ink-2)]">
+          Every Stronghold Protocol season: its operator pool, alliances, opening strategies, bosses and special enemy types, in English, 日本語 and 中文.
+        </p>
       </header>
-      <p className="rounded-sm border border-dashed border-[var(--border)] p-10 text-center text-[var(--muted)]">
-        This mode isn&apos;t out on the CN server yet. Its data will be added here once it is.
-      </p>
+      <HomeSeasons summaries={summaries} />
     </>
   );
 }

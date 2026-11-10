@@ -23,6 +23,13 @@
   --rarity-superRare: #f0b44c;
   --relic-curse: #f07a6e;
   --kind-item: #b7a0f2; /* "Item" badge on Special Items: not a rarity color */
+  /* Stronghold Protocol operator tiers Ⅰ–Ⅵ (in-game tier colors); always shown with the tier label */
+  --tier-1: #a9b3c2;
+  --tier-2: #e8eef7;
+  --tier-3: #46efbc;
+  --tier-4: #33c9da;
+  --tier-5: #f6c60f;
+  --tier-6: #e88c1a;
   --icon-well: rgba(10, 16, 26, 0.9); /* relic art is drawn for a dark in-game backdrop */
 }
 

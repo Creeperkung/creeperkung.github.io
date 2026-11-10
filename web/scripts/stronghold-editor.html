@@ -1,0 +1,555 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Stronghold Operator Editor</title>
+<!--
+  Local tool, not part of the site. Open this file in Chrome or Edge, click "Open data folder"
+  and pick web/data. It reads stronghold.json (alliances, existing operators) and reads/writes
+  stronghold-operators.json (your hand-filled entries). Then run:
+    node scripts/build-stronghold.mjs --skip-prts
+  Other browsers: use "Load files" and "Download", then put the file in web/data yourself.
+-->
+<style>
+  :root {
+    --page: #070b14; --surface: #0e1522; --surface-2: #121b2b; --ink: #f2f6fc; --ink-2: #bcc8d8;
+    --muted: #8b97ab; --border: rgba(170, 200, 255, 0.16); --accent: #4cc3eb; --danger: #f07a6e; --ok: #46efbc;
+    --tier-1: #a9b3c2; --tier-2: #e8eef7; --tier-3: #46efbc; --tier-4: #33c9da; --tier-5: #f6c60f; --tier-6: #e88c1a;
+    --mono: ui-monospace, "Cascadia Mono", Consolas, monospace;
+    color-scheme: dark;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--page); color: var(--ink); font: 14px/1.5 system-ui, "Segoe UI", "Microsoft YaHei", sans-serif; }
+  button, input, select, textarea { font: inherit; color: inherit; }
+  header.top { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; padding: 12px 16px; border-bottom: 1px solid var(--border); background: var(--surface); position: sticky; top: 0; z-index: 2; }
+  header.top h1 { margin: 0 12px 0 0; font: 700 13px var(--mono); letter-spacing: .18em; text-transform: uppercase; }
+  header.top .status { margin-left: auto; font: 12px var(--mono); color: var(--muted); }
+  header.top .status.dirty { color: #f6c60f; }
+  .btn { border: 1px solid var(--border); background: transparent; border-radius: 3px; padding: 5px 12px; cursor: pointer; color: var(--ink-2); }
+  .btn:hover { border-color: var(--accent); color: var(--accent); }
+  .btn.primary { background: var(--accent); border-color: var(--accent); color: #0a0f1a; font-weight: 600; }
+  .btn.primary:hover { filter: brightness(1.1); color: #0a0f1a; }
+  .btn.danger:hover { border-color: var(--danger); color: var(--danger); }
+  .btn:disabled { opacity: .4; cursor: default; }
+  main { display: grid; grid-template-columns: 280px minmax(0, 1fr) 340px; min-height: calc(100vh - 54px); }
+  @media (max-width: 1100px) { main { grid-template-columns: 240px minmax(0, 1fr); } aside.preview { grid-column: 1 / -1; } }
+  @media (max-width: 720px) { main { grid-template-columns: 1fr; } }
+  aside.list { border-right: 1px solid var(--border); padding: 12px; display: flex; flex-direction: column; gap: 8px; }
+  aside.list input { width: 100%; }
+  .entries { display: flex; flex-direction: column; gap: 4px; overflow: auto; }
+  .entry { text-align: left; border: 1px solid transparent; border-radius: 3px; padding: 6px 8px; background: transparent; cursor: pointer; display: flex; gap: 8px; align-items: center; }
+  .entry:hover { border-color: var(--border); }
+  .entry.active { border-color: var(--accent); background: var(--surface-2); }
+  .entry .t { font: 11px var(--mono); padding: 0 4px; border: 1px solid currentColor; border-radius: 2px; }
+  .entry .sub { color: var(--muted); font-size: 12px; margin-left: auto; }
+  .hint { color: var(--muted); font-size: 12px; }
+  section.form { padding: 16px 20px 60px; display: flex; flex-direction: column; gap: 18px; }
+  fieldset { border: 1px solid var(--border); border-radius: 4px; padding: 12px 14px 14px; margin: 0; display: flex; flex-direction: column; gap: 10px; background: var(--surface); }
+  legend { padding: 0 6px; font: 600 11px var(--mono); letter-spacing: .16em; text-transform: uppercase; color: var(--accent); }
+  .row { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 10px; }
+  label.f { display: flex; flex-direction: column; gap: 4px; font-size: 12px; color: var(--ink-2); }
+  input[type=text], input[type=search], select, textarea { background: var(--page); border: 1px solid var(--border); border-radius: 3px; padding: 6px 8px; outline: none; }
+  input:focus, select:focus, textarea:focus { border-color: var(--accent); }
+  textarea { min-height: 64px; resize: vertical; }
+  .chips { display: flex; flex-wrap: wrap; gap: 6px; }
+  .chips .lab { width: 96px; flex-shrink: 0; font: 600 11px var(--mono); text-transform: uppercase; letter-spacing: .12em; color: var(--muted); padding-top: 5px; }
+  .chip { border: 1px solid var(--border); border-radius: 3px; padding: 3px 10px; background: transparent; cursor: pointer; color: var(--ink-2); display: inline-flex; align-items: center; gap: 6px; }
+  .chip:hover { border-color: var(--ink-2); }
+  .chip[aria-pressed=true] { background: var(--ink); border-color: var(--ink); color: var(--page); }
+  .dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
+  .msgs { display: flex; flex-direction: column; gap: 4px; }
+  .msg { font-size: 12px; padding: 6px 10px; border-left: 3px solid #f6c60f; background: rgba(246, 198, 15, .08); }
+  .msg.err { border-color: var(--danger); background: rgba(240, 122, 110, .08); }
+  aside.preview { border-left: 1px solid var(--border); padding: 16px; display: flex; flex-direction: column; gap: 12px; }
+  .card { border: 1px solid var(--border); border-top-width: 2px; border-radius: 12px; background: var(--surface); padding: 16px; display: flex; flex-direction: column; gap: 10px; }
+  .card .head { display: flex; gap: 12px; align-items: flex-start; }
+  .card .av { width: 56px; height: 56px; border-radius: 8px; background: rgba(10, 16, 26, .9); display: flex; align-items: center; justify-content: center; color: var(--muted); font-weight: 600; font-size: 18px; flex-shrink: 0; overflow: hidden; }
+  .card .av img { width: 56px; height: 56px; }
+  .card h3 { margin: 0 0 6px; font-size: 15px; }
+  .tags { display: flex; flex-wrap: wrap; gap: 6px; font-size: 12px; }
+  .tag { border: 1px solid var(--border); border-radius: 3px; padding: 1px 6px; color: var(--ink-2); }
+  .ally { border: 1px solid rgba(76, 195, 235, .4); background: rgba(76, 195, 235, .1); color: var(--accent); border-radius: 2px; padding: 1px 8px; font-size: 12px; }
+  .card dl { margin: 0; display: grid; grid-template-columns: auto 1fr; gap: 6px 10px; font-size: 13px; }
+  .card dt { color: var(--ink-2); font-weight: 600; }
+  .card dd { margin: 0; white-space: pre-line; }
+  .empty { padding: 40px; text-align: center; color: var(--muted); border: 1px dashed var(--border); border-radius: 4px; }
+  pre.json { font: 11px/1.45 var(--mono); background: var(--page); border: 1px solid var(--border); border-radius: 4px; padding: 10px; overflow: auto; max-height: 320px; margin: 0; color: var(--ink-2); }
+  .hidden { display: none !important; }
+</style>
+</head>
+<body>
+<header class="top">
+  <h1>Stronghold · Operator editor</h1>
+  <button class="btn primary" id="openDir">Open data folder</button>
+  <label class="btn" title="For browsers without folder access: pick stronghold.json and stronghold-operators.json">
+    Load files<input type="file" id="files" accept=".json" multiple class="hidden" />
+  </label>
+  <button class="btn" id="save" disabled title="Ctrl+S">Save</button>
+  <button class="btn" id="download" disabled>Download</button>
+  <button class="btn" id="copy" disabled>Copy JSON</button>
+  <span class="status" id="status">No folder open: pick web/data</span>
+</header>
+<main>
+  <aside class="list">
+    <label class="f">Season
+      <select id="season" disabled></select>
+    </label>
+    <div style="display:flex;gap:6px">
+      <button class="btn" id="new" disabled>+ New operator</button>
+    </div>
+    <label class="f">Edit an existing operator
+      <input type="search" id="existing" list="existingList" placeholder="Type a name, then Enter" disabled />
+      <datalist id="existingList"></datalist>
+    </label>
+    <span class="hint">Copies its current data into a hand-filled entry. Your entry then wins over PRTS for every field it sets.</span>
+    <input type="search" id="filter" placeholder="Filter your entries" />
+    <div class="entries" id="entries"></div>
+  </aside>
+  <section class="form" id="form">
+    <div class="empty" id="emptyForm">Open the <b>web/data</b> folder, then add a new operator or pick an existing one.</div>
+  </section>
+  <aside class="preview">
+    <div class="hint">Preview (as on the site, EN)</div>
+    <div id="preview"></div>
+    <div class="hint">This entry as saved</div>
+    <pre class="json" id="json"></pre>
+  </aside>
+</main>
+
+<script>
+"use strict";
+const TIERS = ["", "Ⅰ", "Ⅱ", "Ⅲ", "Ⅳ", "Ⅴ", "Ⅵ"];
+const CLASSES = { PIONEER: "Vanguard", WARRIOR: "Guard", TANK: "Defender", SNIPER: "Sniper", CASTER: "Caster", MEDIC: "Medic", SUPPORT: "Supporter", SPECIAL: "Specialist" };
+const TRAIT_TYPES = { combat: "Combat · 作战能力", stackOnce: "One-time Stack · 单次叠加", stackOngoing: "Ongoing Stack · 持续叠加", prep: "Preparation · 整备能力", special: "Specialization · 特异化" };
+
+const state = {
+  dir: null,           // FileSystemDirectoryHandle (web/data)
+  site: null,          // stronghold.json
+  doc: { _readme: "", operators: [] }, // stronghold-operators.json
+  sel: -1,
+  season: null,        // season id being edited; each entry belongs to one season
+  dirty: false,
+};
+const $ = (id) => document.getElementById(id);
+
+/** tiny DOM builder: h("div", {class: "x", onclick}, child, "text") — text is never parsed as HTML */
+function h(tag, attrs, ...kids) {
+  const el = document.createElement(tag);
+  for (const [k, v] of Object.entries(attrs || {})) {
+    if (v == null || v === false) continue;
+    if (k.startsWith("on")) el.addEventListener(k.slice(2), v);
+    else if (k === "style" && typeof v === "object") Object.assign(el.style, v);
+    else el.setAttribute(k, v === true ? "" : v);
+  }
+  for (const c of kids.flat()) if (c != null && c !== false) el.append(c instanceof Node ? c : String(c));
+  return el;
+}
+
+// ---------------------------------------------------------------- data helpers
+const seasonData = () => state.site?.seasons?.find((s) => s.id === state.season);
+const newestSeason = () => state.site?.seasons?.at(-1)?.id ?? "";
+const seasonLabel = (s) => `${s.names.en ?? s.names.zh} · ${s.names.zh}`;
+const alliancesSection = () => seasonData()?.sections?.find((s) => s.id === "alliances" || s.id === "bonds");
+const allianceEntries = () => alliancesSection()?.entries ?? [];
+const allianceName = (id) => {
+  const a = allianceEntries().find((e) => e.id === id);
+  return a ? `${a.text.en?.name ?? a.text.zh.name}` : id;
+};
+const siteOps = () => seasonData()?.operators ?? [];
+const findSiteOp = (e) => siteOps().find((o) => (e.id && o.id === e.id) || (e.names?.zh && o.names.zh === e.names.zh));
+const cur = () => state.doc.operators[state.sel];
+
+function blankEntry() {
+  return { season: state.season, names: { en: "", ja: "", zh: "" }, tier: 0, profession: "", alliances: [], traitType: "", trait: { zh: { base: "", elite: "" }, en: { base: "", elite: "" } }, prototype: { zh: "", en: "" } };
+}
+/** fill missing keys so the form can bind to them */
+function normalize(e) {
+  const b = blankEntry();
+  return {
+    season: e.season || newestSeason(),
+    ...(e.id ? { id: e.id } : {}),
+    names: { ...b.names, ...(e.names || {}) },
+    tier: e.tier || 0,
+    profession: e.profession || "",
+    alliances: [...(e.alliances || [])],
+    traitType: e.traitType || "",
+    trait: { zh: { ...b.trait.zh, ...(e.trait?.zh || {}) }, en: { ...b.trait.en, ...(e.trait?.en || {}) } },
+    prototype: { ...b.prototype, ...(e.prototype || {}) },
+    ...(e.removed ? { removed: true } : {}),
+  };
+}
+/** strip empty fields before saving: only what you filled in ends up in the file */
+function compact(e) {
+  const out = {};
+  const s = (v) => (typeof v === "string" ? v.trim() : v);
+  if (e.season) out.season = e.season;
+  if (s(e.id)) out.id = s(e.id);
+  // a removed entry only needs what identifies it
+  if (e.removed) return { ...out, ...(s(e.names.zh) ? { names: { zh: s(e.names.zh) } } : {}), removed: true };
+  const names = Object.fromEntries(Object.entries(e.names).map(([k, v]) => [k, s(v)]).filter(([, v]) => v));
+  if (Object.keys(names).length) out.names = names;
+  if (e.tier) out.tier = e.tier;
+  if (e.profession) out.profession = e.profession;
+  if (e.alliances.length) out.alliances = [...e.alliances];
+  if (e.traitType) out.traitType = e.traitType;
+  const trait = {};
+  for (const l of ["zh", "en"]) {
+    const t = { base: s(e.trait[l].base) || null, elite: s(e.trait[l].elite) || null };
+    if (t.base || t.elite) trait[l] = t;
+  }
+  if (Object.keys(trait).length) out.trait = trait;
+  const proto = Object.fromEntries(Object.entries(e.prototype).map(([k, v]) => [k, s(v)]).filter(([, v]) => v));
+  if (Object.keys(proto).length) out.prototype = proto;
+  return out;
+}
+const serialize = () =>
+  JSON.stringify({ _readme: state.doc._readme, operators: state.doc.operators.map(compact) }, null, 1) + "\n";
+
+function issues(e) {
+  const out = [];
+  if (!e.id?.trim() && !e.names.zh.trim()) out.push(["err", "Needs a CN name (or a character id) so the build can match it."]);
+  const site = findSiteOp(e);
+  if (e.removed) {
+    if (!site && state.site?.operators?.length) out.push(["warn", "Not in the current stronghold.json (already removed by a build, or the name is wrong)."]);
+  } else if (!site) {
+    if (!e.tier) out.push(["warn", "New operator: pick a tier."]);
+    if (!e.alliances.length) out.push(["warn", "New operator: pick at least one alliance."]);
+    if (!e.trait.zh.base.trim() && !e.trait.en.base.trim()) out.push(["warn", "New operator: no trait text yet."]);
+  }
+  if (e.alliances.length > 3) out.push(["warn", "Operators have at most 3 alliances in the game data so far."]);
+  const dup = state.doc.operators.filter((x, i) => i !== state.sel && x.season === e.season && ((e.id && x.id === e.id) || (e.names.zh.trim() && x.names.zh.trim() === e.names.zh.trim())));
+  if (dup.length) out.push(["err", "Another entry has the same id or CN name; only the last one would win."]);
+  return out;
+}
+
+// ---------------------------------------------------------------- file access
+async function readJson(handle) {
+  const text = await (await handle.getFile()).text();
+  return text.trim() ? JSON.parse(text) : null;
+}
+async function openDir() {
+  if (!window.showDirectoryPicker) return alert("This browser can't open folders. Use Chrome or Edge, or \"Load files\".");
+  try {
+    const dir = await window.showDirectoryPicker({ id: "stronghold-data", mode: "readwrite" });
+    let siteHandle;
+    try { siteHandle = await dir.getFileHandle("stronghold.json"); }
+    catch { return alert("No stronghold.json in that folder. Pick web/data."); }
+    const site = await readJson(siteHandle);
+    const docHandle = await dir.getFileHandle("stronghold-operators.json", { create: true });
+    const doc = (await readJson(docHandle)) ?? { _readme: "", operators: [] };
+    state.dir = dir;
+    load(site, doc, `Folder: ${dir.name}`);
+  } catch (e) {
+    if (e.name !== "AbortError") alert(`Couldn't open the folder: ${e.message}`);
+  }
+}
+async function loadFiles(files) {
+  let site = state.site, doc = null;
+  for (const f of files) {
+    const j = JSON.parse(await f.text());
+    if (f.name.startsWith("stronghold-operators")) doc = j;
+    else if (j.seasons) site = j;
+  }
+  if (!site) return alert("Pick stronghold.json too (it lists the alliances and existing operators).");
+  state.dir = null;
+  load(site, doc ?? { _readme: "", operators: [] }, "Loaded from files: use Download to save");
+}
+function load(site, doc, label) {
+  if (!site.seasons?.length) return alert("That stronghold.json has no seasons: rebuild it with node scripts/build-stronghold.mjs.");
+  state.site = site;
+  if (!site.seasons.some((s) => s.id === state.season)) state.season = newestSeason();
+  state.doc = { _readme: doc._readme ?? "", operators: (doc.operators ?? []).map(normalize) };
+  state.dirty = false;
+  for (const id of ["new", "existing", "download", "copy", "season"]) $(id).disabled = false;
+  $("save").disabled = !state.dir;
+  $("season").replaceChildren(...[...site.seasons].reverse().map((s) => h("option", { value: s.id }, seasonLabel(s))));
+  $("season").value = state.season;
+  setStatus(label);
+  switchSeason(state.season);
+}
+/** show one season: its entries, its operators to copy from, its alliances */
+function switchSeason(id) {
+  state.season = id;
+  state.sel = state.doc.operators.findIndex((e) => e.season === id);
+  $("existingList").replaceChildren(
+    ...siteOps().map((o) => h("option", { value: `${o.names.en ?? o.names.zh} · ${o.names.zh}` })),
+  );
+  render();
+}
+async function save() {
+  if (!state.dir) return download();
+  const bad = state.doc.operators.map(issues).flat().filter(([k]) => k === "err");
+  if (bad.length && !confirm(`${bad.length} entr${bad.length === 1 ? "y has" : "ies have"} errors. Save anyway?`)) return;
+  try {
+    const handle = await state.dir.getFileHandle("stronghold-operators.json", { create: true });
+    const w = await handle.createWritable();
+    await w.write(serialize());
+    await w.close();
+    state.dirty = false;
+    setStatus(`Saved ${state.doc.operators.length} entries · now run: node scripts/build-stronghold.mjs --skip-prts`);
+  } catch (e) {
+    alert(`Save failed: ${e.message}`);
+  }
+}
+function download() {
+  const a = h("a", { href: URL.createObjectURL(new Blob([serialize()], { type: "application/json" })), download: "stronghold-operators.json" });
+  a.click();
+  URL.revokeObjectURL(a.href);
+}
+function setStatus(text) {
+  $("status").textContent = (state.dirty ? "● Unsaved changes · " : "") + text;
+  $("status").classList.toggle("dirty", state.dirty);
+}
+function touch() {
+  state.dirty = true;
+  setStatus(state.dir ? `Folder: ${state.dir.name}` : "Use Download to save");
+  renderList();
+  renderSide();
+  if (cur() && $("msgs")) $("msgs").replaceChildren(...issueNodes(cur()));
+}
+
+// ---------------------------------------------------------------- actions
+function addNew() {
+  state.doc.operators.push(blankEntry());
+  state.sel = state.doc.operators.length - 1;
+  touch();
+  render();
+  document.querySelector("[data-focus]")?.focus();
+}
+function editExisting(value) {
+  const zh = value.split(" · ").pop().trim();
+  const o = siteOps().find((x) => x.names.zh === zh || x.names.en === value.trim());
+  if (!o) return;
+  const i = state.doc.operators.findIndex((e) => e.season === state.season && ((e.id && e.id === o.id) || e.names.zh === o.names.zh));
+  if (i >= 0) { state.sel = i; render(); return; }
+  state.doc.operators.push(
+    normalize({
+      season: state.season,
+      id: o.id.startsWith("op_") ? undefined : o.id,
+      names: { ...o.names },
+      tier: o.tier,
+      profession: o.profession,
+      alliances: o.alliances ?? o.bonds ?? [],
+      traitType: o.traitType,
+      trait: { zh: o.trait.zh, en: o.trait.en ?? { base: "", elite: "" } },
+      prototype: o.prototype ? { zh: o.prototype.names.zh, en: o.prototype.names.en ?? "" } : {},
+    }),
+  );
+  state.sel = state.doc.operators.length - 1;
+  touch();
+  render();
+}
+function remove() {
+  const e = cur();
+  if (!e || !confirm(`Delete the entry for ${e.names.en || e.names.zh || "this operator"}? (PRTS data stays.)`)) return;
+  state.doc.operators.splice(state.sel, 1);
+  state.sel = state.doc.operators.findIndex((x) => x.season === state.season);
+  touch();
+  render();
+}
+function duplicate() {
+  const e = cur();
+  if (!e) return;
+  const copy = normalize(JSON.parse(JSON.stringify(e)));
+  delete copy.id;
+  copy.names.zh += " (copy)";
+  state.doc.operators.splice(state.sel + 1, 0, copy);
+  state.sel++;
+  touch();
+  render();
+}
+
+// ---------------------------------------------------------------- rendering
+function render() {
+  renderList();
+  renderForm();
+  renderSide();
+}
+function renderList() {
+  const q = $("filter").value.trim().toLowerCase();
+  $("entries").replaceChildren(
+    ...state.doc.operators.map((e, i) => {
+      if (e.season !== state.season) return null;
+      const name = e.names.en || e.names.zh || e.id || "(unnamed)";
+      if (q && !`${name} ${e.names.zh} ${e.names.ja}`.toLowerCase().includes(q)) return null;
+      const site = findSiteOp(e);
+      return h("button", { class: `entry${i === state.sel ? " active" : ""}`, onclick: () => { state.sel = i; render(); } },
+        e.tier ? h("span", { class: "t", style: { color: `var(--tier-${e.tier})` } }, TIERS[e.tier]) : h("span", { class: "t", style: { color: "var(--muted)" } }, "–"),
+        h("span", {}, name),
+        h("span", { class: "sub" }, e.removed ? "removed" : site ? "edit" : "new"),
+      );
+    }).filter(Boolean),
+  );
+  if (!state.doc.operators.some((e) => e.season === state.season) && state.site) $("entries").append(h("p", { class: "hint" }, "No hand-filled entries yet."));
+}
+
+function text(label, get, set, opts = {}) {
+  const input = h(opts.area ? "textarea" : "input", { type: "text", placeholder: opts.placeholder ?? "", "data-focus": opts.focus, lang: opts.lang });
+  input.value = get() ?? "";
+  input.addEventListener("input", () => { set(input.value); touch(); });
+  return h("label", { class: "f" }, label, input, opts.hint ? h("span", { class: "hint" }, opts.hint) : null);
+}
+function selectBox(label, options, get, set) {
+  const sel = h("select", {}, h("option", { value: "" }, "— keep / not set —"), ...Object.entries(options).map(([v, l]) => h("option", { value: v }, l)));
+  sel.value = get() ?? "";
+  sel.addEventListener("change", () => { set(sel.value); touch(); });
+  return h("label", { class: "f" }, label, sel);
+}
+
+const issueNodes = (e) => issues(e).map(([k, m]) => h("div", { class: `msg${k === "err" ? " err" : ""}` }, m));
+
+function renderForm() {
+  const form = $("form");
+  const e = cur();
+  if (!e) {
+    form.replaceChildren(h("div", { class: "empty" }, state.site ? "Add a new operator, or pick an existing one on the left." : "Open the web/data folder to start."));
+    return;
+  }
+  const site = findSiteOp(e);
+  const toggleRemoved = () => { if (e.removed) delete e.removed; else e.removed = true; touch(); render(); };
+  if (e.removed) {
+    form.replaceChildren(
+      h("div", { style: { display: "flex", gap: "8px", alignItems: "center", flexWrap: "wrap" } },
+        h("strong", { style: { fontSize: "16px" } }, e.names.en || e.names.zh || e.id),
+        h("span", { class: "hint" }, "Removed: the build drops this operator from the site."),
+        h("span", { style: { marginLeft: "auto", display: "flex", gap: "6px" } },
+          h("button", { class: "btn", onclick: toggleRemoved }, "Restore"),
+          h("button", { class: "btn danger", onclick: remove }, "Delete entry")),
+      ),
+      h("div", { class: "msgs", id: "msgs" }, ...issueNodes(e)),
+      h("p", { class: "hint" }, "Click Restore to bring it back with its edits, or Delete entry to drop this entry so the operator comes back exactly as PRTS has it."),
+    );
+    return;
+  }
+  const tierChips = h("div", { class: "chips", role: "group", "aria-label": "Tier" },
+    ...[1, 2, 3, 4, 5, 6].map((t) =>
+      h("button", { class: "chip", "aria-pressed": String(e.tier === t), onclick: () => { e.tier = e.tier === t ? 0 : t; touch(); renderForm(); } },
+        h("span", { class: "dot", style: { background: `var(--tier-${t})` } }), `Tier ${TIERS[t]}`)),
+  );
+  const sec = alliancesSection();
+  const allianceRows = (sec?.groups ?? [{ id: undefined, name: { en: "Alliances" } }]).map((g) =>
+    h("div", { class: "chips" },
+      h("span", { class: "lab" }, g.name.en ?? g.id),
+      ...allianceEntries().filter((a) => !g.id || a.group === g.id).map((a) =>
+        h("button", {
+          class: "chip", "aria-pressed": String(e.alliances.includes(a.id)), title: a.text.zh.name,
+          onclick: () => {
+            e.alliances = e.alliances.includes(a.id) ? e.alliances.filter((x) => x !== a.id) : [...e.alliances, a.id];
+            touch(); renderForm();
+          },
+        }, a.text.en?.name ?? a.text.zh.name)),
+    ));
+
+  form.replaceChildren(
+    h("div", { style: { display: "flex", gap: "8px", alignItems: "center", flexWrap: "wrap" } },
+      h("strong", { style: { fontSize: "16px" } }, e.names.en || e.names.zh || "New operator"),
+      h("span", { class: "hint" }, site ? `Overrides the PRTS entry (${site.id}) for every field filled here.` : "Not in the PRTS pool: added as a new operator."),
+      h("span", { style: { marginLeft: "auto", display: "flex", gap: "6px" } },
+        h("button", { class: "btn", onclick: duplicate }, "Duplicate"),
+        site ? h("button", { class: "btn danger", onclick: toggleRemoved, title: "Hide this operator from the site" }, "Remove from site") : null,
+        h("button", { class: "btn danger", onclick: remove, title: "Drop this entry from the file; PRTS data stays" }, "Delete entry")),
+    ),
+    h("div", { class: "msgs", id: "msgs" }, ...issueNodes(e)),
+    h("fieldset", {}, h("legend", {}, "Operator"),
+      h("div", { class: "row" },
+        text("Name · CN (used to match)", () => e.names.zh, (v) => (e.names.zh = v), { focus: true, lang: "zh-CN", placeholder: "能天使" }),
+        text("Name · EN", () => e.names.en, (v) => (e.names.en = v), { placeholder: "Exusiai" }),
+        text("Name · JP", () => e.names.ja, (v) => (e.names.ja = v), { lang: "ja", placeholder: "エクシア" }),
+      ),
+      h("div", { class: "row" },
+        text("Character id (optional)", () => e.id, (v) => (e.id = v), { placeholder: "char_103_angel", hint: "Leave empty: the build looks it up from the CN name and fetches the avatar." }),
+        selectBox("Class", CLASSES, () => e.profession, (v) => (e.profession = v)),
+        selectBox("Trait type", TRAIT_TYPES, () => e.traitType, (v) => (e.traitType = v)),
+      ),
+    ),
+    h("fieldset", {}, h("legend", {}, "Tier"), tierChips),
+    h("fieldset", {}, h("legend", {}, "Alliances"), ...allianceRows,
+      h("span", { class: "hint" }, `${e.alliances.length} picked${e.alliances.length ? ": " + e.alliances.map(allianceName).join(", ") : ""}`)),
+    h("fieldset", {}, h("legend", {}, "Trait"),
+      h("div", { class: "row" },
+        text("Base · CN", () => e.trait.zh.base, (v) => (e.trait.zh.base = v), { area: true, lang: "zh-CN" }),
+        text("Elite · CN", () => e.trait.zh.elite, (v) => (e.trait.zh.elite = v), { area: true, lang: "zh-CN" }),
+      ),
+      h("div", { class: "row" },
+        text("Base · EN", () => e.trait.en.base, (v) => (e.trait.en.base = v), { area: true, placeholder: "On acquire: +2 stacks of this operator's alliances (no activation needed)" }),
+        text("Elite · EN", () => e.trait.en.elite, (v) => (e.trait.en.elite = v), { area: true }),
+      ),
+      h("span", { class: "hint" }, "EN is shown on the EN and JP site; leave it empty to show the CN text with an “Untranslated” tag. Line breaks are kept."),
+    ),
+    h("fieldset", {}, h("legend", {}, "Prototype (optional)"),
+      h("div", { class: "row" },
+        text("Prototype · CN", () => e.prototype.zh, (v) => (e.prototype.zh = v), { lang: "zh-CN", placeholder: "预备干员-狙击" }),
+        text("Prototype · EN", () => e.prototype.en, (v) => (e.prototype.en = v), { placeholder: "Reserve Operator - Sniper" }),
+      ),
+    ),
+  );
+}
+
+function renderSide() {
+  const e = cur();
+  if (!e) { $("preview").replaceChildren(); $("json").textContent = ""; return; }
+  if (e.removed) {
+    $("preview").replaceChildren(h("span", { class: "hint" }, "Removed from the site."));
+    $("json").textContent = JSON.stringify(compact(e), null, 1);
+    return;
+  }
+  // preview = PRTS data with this entry's fields on top, like the build does
+  const site = findSiteOp(e) ?? {};
+  const pick = (a, b) => (typeof a === "string" ? a.trim() : a) || b;
+  const name = pick(e.names.en, site.names?.en) || pick(e.names.zh, site.names?.zh) || "(unnamed)";
+  const tier = e.tier || site.tier || 0;
+  const prof = e.profession || site.profession;
+  const type = e.traitType || site.traitType || "combat";
+  const alliances = e.alliances.length ? e.alliances : site.alliances ?? site.bonds ?? [];
+  const en = { base: pick(e.trait.en.base, site.trait?.en?.base), elite: pick(e.trait.en.elite, site.trait?.en?.elite) };
+  const zh = { base: pick(e.trait.zh.base, site.trait?.zh?.base), elite: pick(e.trait.zh.elite, site.trait?.zh?.elite) };
+  const trait = en.base || en.elite ? en : zh;
+  const proto = pick(e.prototype.en, site.prototype?.names?.en) || pick(e.prototype.zh, site.prototype?.names?.zh);
+  const avatarId = (e.id || site.id || "").startsWith("char_") ? e.id || site.id : null;
+  $("preview").replaceChildren(
+    h("div", { class: "card", style: { borderTopColor: tier ? `var(--tier-${tier})` : "var(--border)" } },
+      h("div", { class: "head" },
+        h("div", { class: "av" }, avatarId && site.icon ? h("img", { src: `../public/stronghold/${avatarId}.webp`, alt: "" }) : [...name][0]),
+        h("div", {},
+          h("h3", {}, name),
+          h("div", { class: "tags" },
+            tier ? h("span", { class: "tag", style: { color: `var(--tier-${tier})`, borderColor: "currentColor", fontFamily: "var(--mono)" } }, `Tier ${TIERS[tier]}`) : null,
+            prof ? h("span", { class: "tag" }, CLASSES[prof] ?? prof) : null,
+            h("span", { class: "tag" }, (TRAIT_TYPES[type] ?? type).split(" · ")[0]),
+          ),
+        ),
+      ),
+      alliances.length ? h("div", { class: "tags" }, ...alliances.map((a) => h("span", { class: "ally" }, allianceName(a)))) : null,
+      trait.base || trait.elite
+        ? h("dl", {}, trait.base ? [h("dt", {}, "Base"), h("dd", {}, trait.base)] : null, trait.elite ? [h("dt", {}, "Elite"), h("dd", {}, trait.elite)] : null)
+        : h("span", { class: "hint" }, "No trait text yet."),
+      h("div", { class: "tags" },
+        proto ? h("span", { class: "hint" }, `Prototype: ${proto}`) : null,
+        trait === zh && (zh.base || zh.elite) ? h("span", { class: "tag", style: { borderStyle: "dashed", color: "var(--muted)" } }, "Untranslated") : null,
+        h("span", { class: "tag", style: { borderStyle: "dashed", color: "var(--muted)" } }, "Hand-filled"),
+      ),
+    ),
+  );
+  $("json").textContent = JSON.stringify(compact(e), null, 1);
+}
+
+// ---------------------------------------------------------------- wiring
+$("openDir").addEventListener("click", openDir);
+$("season").addEventListener("change", (ev) => switchSeason(ev.target.value));
+$("files").addEventListener("change", (ev) => ev.target.files.length && loadFiles([...ev.target.files]));
+$("save").addEventListener("click", save);
+$("download").addEventListener("click", download);
+$("copy").addEventListener("click", async () => { await navigator.clipboard.writeText(serialize()); setStatus("Copied the whole file to the clipboard"); });
+$("new").addEventListener("click", addNew);
+$("filter").addEventListener("input", renderList);
+$("existing").addEventListener("change", (ev) => { editExisting(ev.target.value); ev.target.value = ""; });
+$("existing").addEventListener("keydown", (ev) => { if (ev.key === "Enter") { editExisting(ev.target.value); ev.target.value = ""; } });
+document.addEventListener("keydown", (ev) => {
+  if ((ev.ctrlKey || ev.metaKey) && ev.key.toLowerCase() === "s") { ev.preventDefault(); if (state.site) save(); }
+});
+window.addEventListener("beforeunload", (ev) => { if (state.dirty) { ev.preventDefault(); ev.returnValue = ""; } });
+render();
+</script>
+</body>
+</html>
