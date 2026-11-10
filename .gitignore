@@ -5,3 +5,4 @@ dist/
 .env
 web/data/untranslated.json
 web/data/untranslated-strings.json
+web/data/untranslated-stronghold.json

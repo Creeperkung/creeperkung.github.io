@@ -1,0 +1,4 @@
+{
+ "_readme": "Hand-maintained. Stronghold Protocol operators filled in by hand: edit with web/scripts/stronghold-editor.html (open it in Chrome or Edge), then run node scripts/build-stronghold.mjs (add --skip-prts to rebuild offline). Each entry belongs to one season (season: alliance, regulation, …; default the newest) and is matched to that season's PRTS operator by id, else by names.zh, and its non-empty fields replace the PRTS ones; unmatched entries are added as new operators. An entry with removed: true drops that operator from the site. Fields: id (character id, optional), names {en, ja, zh}, tier 1-6, profession (PIONEER WARRIOR TANK SNIPER CASTER MEDIC SUPPORT SPECIAL), alliances [alliance ids], traitType (combat stackOnce stackOngoing prep special), trait {zh {base, elite}, en {base, elite}}, prototype {zh, en}, removed (true hides the operator).",
+ "operators": []
+}

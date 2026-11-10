@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## What this is
 
-**ROSMEOWTIS** (the site's name; formerly "Rosmontis", before that "Relic Index"): reference pages for Arknights game modes, in EN / JP / CN. The first mode is Integrated Strategies (roguelike): every theme with its relics and its own mechanics (buffs, debuffs, special items), CN-only themes included (with English fan translations). Stronghold Protocol is a placeholder. It's a static Next.js 16 site in `web/` (`output: "export"`, so `npm run build` writes plain files to `web/out/`). There's no backend or database. It's live at https://creeperkung.github.io/ (repo `Creeperkung/creeperkung.github.io`, public): `.github/workflows/pages.yml` builds and publishes `web/out/` on every push to `master`. It can also deploy on Cloudflare Workers as static assets: `web/wrangler.jsonc` (Worker name `rosmeowtis`) serves `out/`, with build command `npm run build` and deploy command `npx wrangler deploy`, root `web`. Don't add server-only features (route handlers, cookies, rewrites/redirects/headers, `next/image` optimization, server actions); static export doesn't support them. The site icon (`web/app/icon.png`, `apple-icon.png`) is Rosmontis's default in-game avatar (`char_391_rosmon`) from the ArknightsAssets mirror.
+**ROSMEOWTIS** (the site's name; formerly "Rosmontis", before that "Relic Index"): reference pages for Arknights game modes, in EN / JP / CN. The first mode is Integrated Strategies (roguelike): every theme with its relics and its own mechanics (buffs, debuffs, special items), CN-only themes included (with English fan translations). The second is Stronghold Protocol (auto-battler): each season's operator pool, alliances, strategies, equipment and enemies. It's a static Next.js 16 site in `web/` (`output: "export"`, so `npm run build` writes plain files to `web/out/`). There's no backend or database. It's live at https://creeperkung.github.io/ (repo `Creeperkung/creeperkung.github.io`, public): `.github/workflows/pages.yml` builds and publishes `web/out/` on every push to `master`. It can also deploy on Cloudflare Workers as static assets: `web/wrangler.jsonc` (Worker name `rosmeowtis`) serves `out/`, with build command `npm run build` and deploy command `npx wrangler deploy`, root `web`. Don't add server-only features (route handlers, cookies, rewrites/redirects/headers, `next/image` optimization, server actions); static export doesn't support them. The site icon (`web/app/icon.png`, `apple-icon.png`) is Rosmontis's default in-game avatar (`char_391_rosmon`) from the ArknightsAssets mirror.
 
 (This repo used to be ArkPulls, a gacha pull tracker with an Express/Prisma API. It was removed in favour of the relic index. The last version with it is commit `1f54551`.)
 
@@ -22,6 +22,8 @@ node scripts/apply-translations.mjs batch.json                       # merge a b
 node scripts/build-mechanics.mjs # regenerate data/mechanics.json + mechanic icons + theme banners
 node scripts/build-mechanics.mjs --skip-icons --export-untranslated  # list CN mechanic strings needing translation
 node scripts/build-og-image.mjs  # regenerate app/opengraph-image.png, the 1200x630 link-preview picture
+node scripts/build-stronghold.mjs               # regenerate data/stronghold.json + public/stronghold/ (PRTS + Terra Wiki + game data)
+node scripts/build-stronghold.mjs --skip-prts --export-untranslated   # offline rebuild from the page cache; list CN strings needing translation
 ```
 
 ## Data
@@ -45,7 +47,14 @@ node scripts/build-og-image.mjs  # regenerate app/opengraph-image.png, the 1200x
   - Groups can carry an icon: an extractor sets `prtsIcon` (a PRTS file name) and it's saved as `public/mechanics/group-<sectionId>-<groupId>.webp`. IS#6 Tongbao are grouped by luck (`copperData[].luckyLevel`), in the order Dayan Tongbao (the base coin), Risk, Flower, Balance. They're not grouped by coin type.
   - Mizuki's 4 Light levels have no icon in the game, so they keep the letter placeholder.
   - Banners come from the wiki's `CN <EN theme name> banner.png`.
-- Types live in `web/lib/relics.ts` and `web/lib/mechanics.ts`. If you change a JSON shape, update the script and the types together.
+- **Stronghold Protocol.** `scripts/build-stronghold.mjs` generates `data/stronghold.json` and `public/stronghold/*.webp`.
+  - `SEASONS` at the top of the script lists each season: mirror commits (`pins`) from while it was in `activity_table`, its PRTS `PRTS盟约记录` pages (operator pool, alliances, strategies, equipment) and, for seasons that ran on EN, the matching Terra Wiki pages. `publish: false` keeps a season off the site while still reading it (Alliance/盟约 is hidden but supplies the official EN wording that Regulation reuses). `banner` names the PRTS file of the season's banner.
+  - Parsed PRTS/wiki pages are cached in `data/stronghold-prts.json`; `--skip-prts` rebuilds from it (prts.wiki often times out from abroad).
+  - EN text resolves: client EN, then official pairs (client ids and wiki↔PRTS rows), then `translations.json` `strings` (fan), else CN. Fan wording follows the official EN glossary (<When obtained>, Funds, Dispatch Center, Life Points, "OpFor: …" bosses).
+  - Stack formulas become "base value (affected by no. of stacks)" (`wordStacks`). Bosses use the handbook ability list (TITLE lines like Hidden Core become labelled blocks); lore is the flavor text.
+  - Pictures: operator avatars + E2 portraits (`portrait-<id>`), alliance emblems, class icons (`class-<PROFESSION>`, turned into white glyphs), equipment, NPC leaders and enemy types from PRTS file names, `banner-<season>`. `FORMS` maps an operator to another form's art/class (Medic Amiya). Overrides go in `scripts/icon-overrides/stronghold/`.
+  - `data/stronghold-operators.json` is hand-maintained operator fixes (edit with `scripts/stronghold-editor.html`, opened in a browser); entries can carry `season` and `removed: true`.
+- Types live in `web/lib/relics.ts`, `web/lib/mechanics.ts` and `web/lib/stronghold.ts`. If you change a JSON shape, update the script and the types together.
 
 ## Frontend
 
@@ -54,7 +63,7 @@ node scripts/build-og-image.mjs  # regenerate app/opengraph-image.png, the 1200x
   - `/is`: Integrated Strategies home. `HomeThemes` shows theme cards as rounded tiles of the banner only; the name and counts are the link label and tooltip.
   - `/is/[n]`: one theme, by community IS number (2–7), statically generated. `ThemeView` shows Relics, Buffs & Debuffs and Special Items tabs, selected with `?tab=`.
   - `/is/relics`: all relics (`AllRelics`). The static segment wins over `[n]`.
-  - `/stronghold`: Stronghold Protocol, a placeholder (`comingSoon` in `MODES`) until the mode is out on CN and has data.
+  - `/stronghold`: Stronghold Protocol home, one banner tile per published season (`HomeSeasons`). `/stronghold/[season]`: `SeasonView` with Operators (`OperatorList`), Alliances, Strategies, Equipment and Enemies (`EntryList`) tabs, `?tab=`. Pages set `--art` to the season banner (`ArtBackdrop`).
   - Section pages start with `Crumbs` (breadcrumbs).
 - **Language** lives in `components/lang.tsx`. It's one site-wide store (`useSyncExternalStore`), shared by the top-bar `LangSelect` dropdown and every page through `useLang()`. On first load it reads `?lang=`, then localStorage `relic-index:lang` (the key keeps the old name so saved choices survive), and the static HTML renders English. Pages don't render their own language switch. `setUrlParams()` only touches the params a component owns.
 - Everything that uses `useSearchParams` must stay inside the page's `<Suspense>` boundary.

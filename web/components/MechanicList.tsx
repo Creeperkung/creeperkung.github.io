@@ -1,9 +1,9 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { SourceTags, htmlLang, setUrlParams } from "@/components/lang";
-import { KIND_LABEL, MechanicEntry, MechanicKind, MechanicSection, MechanicText } from "@/lib/mechanics";
+import { KIND_LABEL, MechanicEntry, MechanicKind, MechanicSection, MechanicText, STAT_LABEL } from "@/lib/mechanics";
 import { Lang, pickText } from "@/lib/relics";
 
 const KIND_COLOR: Record<MechanicKind, string> = {
@@ -42,7 +42,16 @@ function searchText(e: MechanicEntry) {
  * Every section of one theme of the given kinds, each with its entries, plus a search box
  * (?q=, needs <Suspense>) and a sort. Sections with groups get group filter chips.
  */
-export function MechanicList({ sections, lang }: { sections: MechanicSection[]; lang: Lang }) {
+export function MechanicList({
+  sections,
+  lang,
+  iconDir = "/mechanics",
+}: {
+  sections: MechanicSection[];
+  lang: Lang;
+  /** where entry icons live: <iconDir>/<id>.webp */
+  iconDir?: string;
+}) {
   const params = useSearchParams();
   const [query, setQuery] = useState(() => params.get("q") ?? "");
   const [sort, setSort] = useState<Sort>("default");
@@ -58,7 +67,7 @@ export function MechanicList({ sections, lang }: { sections: MechanicSection[]; 
   if (sections.length === 0)
     return (
       <p className="rounded-sm border border-dashed border-[var(--border)] p-10 text-center text-[var(--muted)]">
-        Nothing here for this theme yet.
+        Nothing here yet.
       </p>
     );
   return (
@@ -106,13 +115,25 @@ export function MechanicList({ sections, lang }: { sections: MechanicSection[]; 
           Nothing matches “{query}”.
         </p>
       ) : (
-        sections.map((s) => <Section key={s.id} section={s} lang={lang} q={q} sort={sort} />)
+        sections.map((s) => <Section key={s.id} section={s} lang={lang} q={q} sort={sort} iconDir={iconDir} />)
       )}
     </div>
   );
 }
 
-function Section({ section: s, lang, q, sort }: { section: MechanicSection; lang: Lang; q: string; sort: Sort }) {
+function Section({
+  section: s,
+  lang,
+  q,
+  sort,
+  iconDir,
+}: {
+  section: MechanicSection;
+  lang: Lang;
+  q: string;
+  sort: Sort;
+  iconDir: string;
+}) {
   // group filter: empty = all groups
   const [only, setOnly] = useState<Set<string>>(new Set());
   const groups = s.groups?.filter((g) => s.entries.some((e) => e.group === g.id)) ?? [];
@@ -194,25 +215,60 @@ function Section({ section: s, lang, q, sort }: { section: MechanicSection; lang
               )}
             </span>
           </h3>
-          <Grid entries={entries.filter((e) => e.group === g.id)} kind={s.kind} lang={lang} />
+          <Grid entries={entries.filter((e) => e.group === g.id)} kind={s.kind} hideFlavor={s.hideFlavor} skillLayout={s.skillLayout} lang={lang} iconDir={iconDir} />
         </div>
       ))}
-      {ungrouped.length > 0 && <Grid entries={ungrouped} kind={s.kind} lang={lang} />}
+      {ungrouped.length > 0 && <Grid entries={ungrouped} kind={s.kind} hideFlavor={s.hideFlavor} skillLayout={s.skillLayout} lang={lang} iconDir={iconDir} />}
     </section>
   );
 }
 
-function Grid({ entries, kind, lang }: { entries: MechanicEntry[]; kind: MechanicKind; lang: Lang }) {
+function Grid({
+  entries,
+  kind,
+  hideFlavor,
+  skillLayout,
+  lang,
+  iconDir,
+}: {
+  entries: MechanicEntry[];
+  kind: MechanicKind;
+  hideFlavor?: boolean;
+  skillLayout?: boolean;
+  lang: Lang;
+  iconDir: string;
+}) {
   return (
-    <ul className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
+    <ul
+      className={
+        skillLayout
+          ? // cards keep their own height (items-start), so expanding one never stretches the others
+            "grid grid-cols-[repeat(auto-fill,minmax(min(320px,100%),1fr))] items-start gap-4"
+          : "grid gap-3 sm:grid-cols-2 xl:grid-cols-3"
+      }
+    >
       {entries.map((e) => (
-        <Card key={e.id} entry={e} kind={kind} lang={lang} />
+        <Card key={e.id} entry={e} kind={kind} hideFlavor={hideFlavor} skillLayout={skillLayout} lang={lang} iconDir={iconDir} />
       ))}
     </ul>
   );
 }
 
-function Card({ entry: e, kind, lang }: { entry: MechanicEntry; kind: MechanicKind; lang: Lang }) {
+function Card({
+  entry: e,
+  kind,
+  hideFlavor,
+  skillLayout,
+  lang,
+  iconDir,
+}: {
+  entry: MechanicEntry;
+  kind: MechanicKind;
+  hideFlavor?: boolean;
+  skillLayout?: boolean;
+  lang: Lang;
+  iconDir: string;
+}) {
   const { text, lang: shown, fallback } = pickText<MechanicText>(e.text, lang);
   const textLang = htmlLang(shown);
   const effective: MechanicKind = e.positive === undefined ? kind : e.positive ? "buff" : "debuff";
@@ -226,7 +282,7 @@ function Card({ entry: e, kind, lang }: { entry: MechanicEntry; kind: MechanicKi
           {e.icon ? (
             // Static, pre-sized 128px WebP files; next/image optimization adds nothing here.
             // eslint-disable-next-line @next/next/no-img-element
-            <img src={`/mechanics/${e.id}.webp`} alt="" width={48} height={48} loading="lazy" decoding="async" />
+            <img src={`${iconDir}/${e.id}.webp`} alt="" width={48} height={48} loading="lazy" decoding="async" />
           ) : (
             <span className="text-lg font-semibold text-[var(--muted)]" aria-hidden lang={textLang}>
               {[...text.name.replace(/^[“"'‘]/, "")][0]}
@@ -247,30 +303,142 @@ function Card({ entry: e, kind, lang }: { entry: MechanicEntry; kind: MechanicKi
               </span>
             )}
             {e.sp && <span className="rounded border border-[var(--border)] px-1.5 py-0.5 text-[var(--ink-2)]">Special</span>}
+            {e.stats?.map((s) => (
+              <span key={s.key} className="rounded border border-[var(--border)] px-1.5 py-0.5 font-mono text-[var(--ink-2)]">
+                {STAT_LABEL[s.key][lang] ?? STAT_LABEL[s.key].en} {s.value}
+              </span>
+            ))}
             <SourceTags tl={shown === "en" ? e.text.en.tl : undefined} fallback={fallback} />
           </div>
         </div>
       </div>
-      {text.effect && (
-        <p className="text-sm leading-relaxed" lang={textLang}>
+      {skillLayout && text.effect && <Skills text={text.effect} lang={textLang} />}
+      {skillLayout &&
+        text.levels?.map((l, i) => <ClampedLevel key={i} label={l.label ?? `Lv ${i + 1}`} text={l.effect} lang={textLang} />)}
+      {!skillLayout && text.effect && (
+        <p className="whitespace-pre-line text-sm leading-relaxed" lang={textLang}>
           {text.effect}
         </p>
       )}
-      {text.levels && (
+      {!skillLayout && text.levels && (
         <dl className="flex flex-col gap-1.5 text-sm" lang={textLang}>
           {text.levels.map((l, i) => (
             <div key={i} className="grid grid-cols-[auto_1fr] gap-2">
               <dt className="min-w-12 font-medium text-[var(--ink-2)]">{l.label ?? `Lv ${i + 1}`}</dt>
-              <dd className="leading-relaxed">{l.effect}</dd>
+              <dd className="whitespace-pre-line leading-relaxed">{l.effect}</dd>
             </div>
           ))}
         </dl>
       )}
-      {text.flavor && (
-        <p className="whitespace-pre-line text-sm italic leading-relaxed text-[var(--muted)]" lang={textLang}>
-          {text.flavor}
-        </p>
-      )}
+      {text.flavor && (hideFlavor ? <HiddenFlavor text={text.flavor} lang={textLang} /> : <Flavor text={text.flavor} lang={textLang} />)}
     </li>
+  );
+}
+
+/** "[Name] text" (EN) / "【Name】：text" (JP) / "【Name】text" (CN): a named skill. */
+const SKILL_LINE = /^[\[【]([^\]】]+)[\]】][：:]?\s*([\s\S]*)$/;
+
+function splitSkills(text: string) {
+  const plain: string[] = [];
+  const skills: { name: string; text: string }[] = [];
+  for (const line of text.split("\n")) {
+    if (!line.trim()) continue;
+    const m = line.match(SKILL_LINE);
+    if (m) skills.push({ name: m[1], text: m[2] });
+    else plain.push(line);
+  }
+  return { plain, skills };
+}
+
+/** Ability lines: plain sentences first, then one block per named skill (heading + muted text). */
+function Skills({ text, lang }: { text: string; lang?: string }) {
+  const { plain, skills } = splitSkills(text);
+  return (
+    <div className="flex flex-col gap-2.5 text-[13px] leading-[1.45]" lang={lang}>
+      {plain.map((p, i) => (
+        <p key={`p${i}`}>{p}</p>
+      ))}
+      {skills.map((s, i) => (
+        <div key={`s${i}`} className="flex flex-col gap-0.5">
+          <h5 className="font-semibold text-[var(--ink)]">{s.name}</h5>
+          {s.text && <p className="text-[var(--ink-2)]">{s.text}</p>}
+        </div>
+      ))}
+    </div>
+  );
+}
+
+/**
+ * A labelled ability block (Hidden Core): label above the text, clamped to 4 lines with a fade.
+ * The Show more toggle only appears when the text actually overflows the clamp.
+ */
+export function ClampedLevel({ label, text, lang }: { label: string; text: string | null; lang?: string }) {
+  const ref = useRef<HTMLDivElement>(null);
+  const [open, setOpen] = useState(false);
+  const [overflows, setOverflows] = useState(false);
+  useEffect(() => {
+    const el = ref.current;
+    if (!el || open) return;
+    // ResizeObserver fires once on observe, then on every width change (font load, resize)
+    const ro = new ResizeObserver(() => setOverflows(el.scrollHeight > el.clientHeight + 1));
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, [open, text]);
+  const clamped = !open && overflows;
+  return (
+    <section className="flex flex-col gap-1.5 border-t border-[var(--border)] pt-2.5">
+      <h5 className="text-[11px] font-semibold uppercase tracking-[0.08em] text-[var(--series-1)]">{label}</h5>
+      {text && (
+        <div
+          ref={ref}
+          // 4 lines of 13px × 1.45; a plain max-height clamp (not -webkit-line-clamp) so it also
+          // clamps text split across several skill blocks
+          className={open ? "" : "max-h-[calc(13px*1.45*4)] overflow-hidden"}
+          style={
+            clamped
+              ? { maskImage: "linear-gradient(to bottom, #000 55%, transparent)", WebkitMaskImage: "linear-gradient(to bottom, #000 55%, transparent)" }
+              : undefined
+          }
+        >
+          <Skills text={text} lang={lang} />
+        </div>
+      )}
+      {(overflows || open) && (
+        <button
+          type="button"
+          onClick={() => setOpen((v) => !v)}
+          aria-expanded={open}
+          className="self-start font-mono text-xs uppercase tracking-wider text-[var(--muted)] hover:text-[var(--series-1)]"
+        >
+          {open ? "▾ Show less" : "▸ Show more"}
+        </button>
+      )}
+    </section>
+  );
+}
+
+function Flavor({ text, lang }: { text: string; lang?: string }) {
+  return (
+    <p className="whitespace-pre-line text-sm italic leading-relaxed text-[var(--muted)]" lang={lang}>
+      {text}
+    </p>
+  );
+}
+
+/** Lore kept out of the way until asked for: a button that reveals it, and hides it again. */
+export function HiddenFlavor({ text, lang }: { text: string; lang?: string }) {
+  const [open, setOpen] = useState(false);
+  return (
+    <div className="flex flex-col gap-1.5">
+      <button
+        type="button"
+        onClick={() => setOpen((v) => !v)}
+        aria-expanded={open}
+        className="self-start font-mono text-xs uppercase tracking-wider text-[var(--muted)] hover:text-[var(--series-1)]"
+      >
+        {open ? "▾ Hide description" : "▸ Show description"}
+      </button>
+      {open && <Flavor text={text} lang={lang} />}
+    </div>
   );
 }

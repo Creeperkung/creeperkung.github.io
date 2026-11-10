@@ -1,5 +1,6 @@
 import { mechanicData } from "@/lib/mechanics";
 import { relicData } from "@/lib/relics";
+import { seasonBanner, strongholdData } from "@/lib/stronghold";
 
 /** A game mode with its own section of the site. Add new modes here; the home page lists them in this order. */
 export interface Mode {
@@ -17,6 +18,7 @@ export interface Mode {
 }
 
 const latestIs = relicData.themes[relicData.themes.length - 1];
+const latestSeason = strongholdData.seasons.at(-1);
 const isEntries = Object.values(mechanicData.themes).reduce(
   (n, secs) => n + secs.reduce((m, s) => m + s.entries.length, 0),
   0,
@@ -35,8 +37,12 @@ export const MODES: Mode[] = [
     id: "stronghold",
     name: "Stronghold Protocol",
     href: "/stronghold",
-    blurb: "A new game mode. Not released on the CN server yet; its data will be added once it's out.",
-    stats: [],
-    comingSoon: true,
+    blurb: "The auto-battler mode: each season's operator pool, alliances, opening strategies, bosses and special enemy types.",
+    image: latestSeason?.banner ? seasonBanner(latestSeason.id) : undefined,
+    stats: [
+      `${strongholdData.seasons.length} season${strongholdData.seasons.length === 1 ? "" : "s"}`,
+      // distinct operators across every season
+      `${new Set(strongholdData.seasons.flatMap((s) => s.operators.map((o) => o.id))).size} operators`,
+    ],
   },
 ];
